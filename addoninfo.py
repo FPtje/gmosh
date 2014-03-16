@@ -19,16 +19,16 @@ class AddonNotFoundError(Exception):
     def __str__(self):
         return "Addon not found in " + os.path.abspath(self.value)
 
-def findAddon(location):
+def find_addon(location):
     """Try to find an addon.json file at location or any of the parents
-        e.g. findAddon("a/b/c/") will try to find the following files in order:
+        e.g. find_addon("a/b/c/") will try to find the following files in order:
          - a/b/c/addon.json
          - a/b/addon.json
          - a/addon.json
          - /addon.json
 
         An exception will be thrown if the addon.json is not found.
-        >>> findAddon("/etc/")
+        >>> find_addon("/etc/")
         Traceback (most recent call last):
         ...
         AddonNotFoundError: Addon not found in /etc
@@ -46,7 +46,7 @@ def findAddon(location):
     else:
         raise AddonNotFoundError(location)
 
-def getAddonInfo(file):
+def get_addon_info(file):
     """Get the contents of addon.json in a dictionary"""
     with open(file, 'r') as f:
         data = json.load(f)
