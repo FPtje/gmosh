@@ -4,6 +4,14 @@ import os.path
 import os
 import json
 
+class GModAddon:
+    """Represents a Garry's mod addon based on the addon.jason data"""
+    def __init__(self, data):
+        self.data = data
+
+    def has_workshop_id(self):
+        return u'workshopid' in self.data
+
 class AddonNotFoundError(Exception):
     def __init__(self, path):
         self.value = path
@@ -43,7 +51,7 @@ def getAddonInfo(file):
     with open(file, 'r') as f:
         data = json.load(f)
 
-    return data
+    return GModAddon(data)
 
 if __name__ == '__main__':
     import doctest
