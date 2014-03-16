@@ -6,13 +6,19 @@ import json
 
 class GModAddon:
     """Represents a Garry's mod addon based on the addon.json data"""
-    def __init__(self, data):
+    def __init__(self, data, path):
         self.data = data
+        self.file = path
 
     def has_workshop_id(self):
+        """Whether this addon has a workshop id (and thus exists on the workshop)"""
         return u'workshopid' in self.data
 
     def default_changelog(self):
+        """The default changelog of the addon.
+
+            Used when the changelog is omitted from the command line.
+        """
         return u'default_changelog' in self.data and self.data[u'default_changelog'] or ''
 
 class AddonNotFoundError(Exception):
@@ -34,7 +40,7 @@ def find_addon(location):
         >>> find_addon("/etc/")
         Traceback (most recent call last):
         ...
-        AddonNotFoundError: Addon not found in /etc
+        AddonNotFoundError: No GMod addon found in /etc
     """
     curLocation = location
 
@@ -49,12 +55,12 @@ def find_addon(location):
     else:
         raise AddonNotFoundError(location)
 
-def get_addon_info(file):
+def get_addon_info(path):
     """Get the contents of addon.json in a dictionary"""
-    with open(file, 'r') as f:
+    with open(path, 'r') as f:
         data = json.load(f)
 
-    return GModAddon(data)
+    return GModAddon(data, os.path.dirname(path))
 
 if __name__ == '__main__':
     import doctest
