@@ -29,8 +29,10 @@ def main():
 		return
 	elif uploaded:
 		request_workshopid()
+		publisher.update()
+		return
 
-
+	publisher.create()
 
 def request_uploaded():
 	"""Ask whether the addon exists on the workshop"""
