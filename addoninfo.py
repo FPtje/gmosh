@@ -5,7 +5,7 @@ import os
 import json
 
 class AddonNotFoundError(Exception):
-    def __init(self, path):
+    def __init__(self, path):
         self.value = path
 
     def __str__(self):
@@ -20,6 +20,10 @@ def findAddon(location):
          - /addon.json
 
         An exception will be thrown if the addon.json is not found.
+        >>> findAddon("/etc/")
+        Traceback (most recent call last):
+        ...
+        AddonNotFoundError: Addon not found in /etc
     """
     curLocation = location
 
