@@ -2,4 +2,6 @@
 
 class GMad:
 	"""Wrapper for GMAD"""
-	pass
+
+	def __init__(self, addon):
+		this.addon = addon
