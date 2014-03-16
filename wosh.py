@@ -18,8 +18,10 @@ def main():
 		print(err)
 		return
 
+	# The addon can be updated if it has a workshop id
 	if addon.has_workshop_id():
-		pass
+		publisher.update()
+	# otherwise the question must be asked whether it already exists
 	else:
 		pass
 

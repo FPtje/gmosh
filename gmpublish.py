@@ -6,3 +6,6 @@ class GmPublish:
 	def __init__(self, addon):
 		this.addon = addon
 
+	def update(self):
+		"""Push an update of the addon to the workshop"""
+		pass
