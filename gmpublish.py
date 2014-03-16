@@ -4,7 +4,7 @@ class GmPublish:
 	"""Wrapper for the GMPublish program"""
 	
 	def __init__(self, addon):
-		this.addon = addon
+		self.addon = addon
 
 	def update(self):
 		"""Push an update of the addon to the workshop"""
