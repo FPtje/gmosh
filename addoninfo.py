@@ -12,6 +12,9 @@ class GModAddon:
     def has_workshop_id(self):
         return u'workshopid' in self.data
 
+    def default_changelog(self):
+        return u'default_changelog' in self.data and self.data[u'default_changelog'] or ''
+
 class AddonNotFoundError(Exception):
     def __init__(self, path):
         self.value = path
