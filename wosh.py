@@ -21,9 +21,23 @@ def main():
 	# The addon can be updated if it has a workshop id
 	if addon.has_workshop_id():
 		publisher.update()
+		return
+
 	# otherwise the question must be asked whether it already exists
-	else:
-		pass
+	try:
+		uploaded = input("No workshop ID found in the addon. Has this addon been uploaded to the workshop yet? (y/n)")
+		uploaded = uploaded == 'y' or uploaded == 'yes' or uploaded == '\n'
+	except EOFError:
+		print("Setup cancelled")
+		return
+
+	# The addon is uploaded, but the workshop ID hasn't been registered yet
+	if uploaded:
+		try:
+			addon.set_workshopid(int(input("Please enter the workshop ID of the addon.")))
+		except NameError:
+			pass
+
 
 if __name__ == '__main__':
 	main()

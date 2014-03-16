@@ -21,6 +21,18 @@ class GModAddon:
         """
         return u'default_changelog' in self.data and self.data[u'default_changelog'] or ''
 
+    def set_workshopid(self, id):
+        """Set the workshop ID of the addon to id and store in addon.json"""
+        self.data[u'workshopid'] = id
+        save_changes()
+
+    def save_changes(self):
+        """Store the current state of the GModAddon to addon.json"""
+        with open(self.file, "w") as f:
+            json.dump(self.data, f)
+
+
+
 class AddonNotFoundError(Exception):
     def __init__(self, path):
         self.value = path
