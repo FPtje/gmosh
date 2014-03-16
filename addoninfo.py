@@ -20,7 +20,7 @@ class AddonNotFoundError(Exception):
         self.value = path
 
     def __str__(self):
-        return "Addon not found in " + os.path.abspath(self.value)
+        return "No GMod addon found in " + os.path.abspath(self.value)
 
 def find_addon(location):
     """Try to find an addon.json file at location or any of the parents
