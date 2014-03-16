@@ -23,20 +23,33 @@ def main():
 		publisher.update()
 		return
 
-	# otherwise the question must be asked whether it already exists
+	uploaded = request_uploaded()
+
+	if uploaded == None:
+		return
+	elif uploaded:
+		request_workshopid()
+
+
+
+def request_uploaded():
+	"""Ask whether the addon exists on the workshop"""
 	try:
-		uploaded = input("No workshop ID found in the addon. Has this addon been uploaded to the workshop yet? (y/n)")
-		uploaded = uploaded == 'y' or uploaded == 'yes' or uploaded == '\n'
+		uploaded = input("No workshop ID found in the addon. Has this addon been uploaded to the workshop yet? (y/n)\n")
+		return uploaded == 'y' or uploaded == 'yes' or uploaded == '\n'
 	except EOFError:
 		print("Setup cancelled")
-		return
+		return None
 
-	# The addon is uploaded, but the workshop ID hasn't been registered yet
-	if uploaded:
-		try:
-			addon.set_workshopid(int(input("Please enter the workshop ID of the addon.")))
-		except NameError:
-			pass
+def request_workshopid():
+	"""The addon is uploaded, but the workshop ID hasn't been registered yet
+		This function requests the workshop ID
+	"""
+	try:
+		addon.set_workshopid(int(input("Please enter the workshop ID of the addon.")))
+	except NameError:
+		print("Not a valid workshop ID.")
+		request_workshopid()
 
 
 if __name__ == '__main__':
