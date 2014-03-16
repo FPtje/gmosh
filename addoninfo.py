@@ -2,6 +2,7 @@
 
 import os.path
 import os
+import json
 
 class AddonNotFoundError(Exception):
     def __init(self, path):
@@ -33,7 +34,12 @@ def findAddon(location):
     else:
         raise AddonNotFoundError(location)
 
+def getAddonInfo(file):
+    """Get the contents of addon.json in a dictionary"""
+    with open(file, 'r') as f:
+        data = json.load(f)
 
+    return data
 
 if __name__ == '__main__':
     import doctest
