@@ -5,7 +5,7 @@ import os
 import json
 
 class GModAddon:
-    """Represents a Garry's mod addon based on the addon.jason data"""
+    """Represents a Garry's mod addon based on the addon.json data"""
     def __init__(self, data):
         self.data = data
 
