@@ -28,7 +28,7 @@ def main():
 	if uploaded == None:
 		return
 	elif uploaded:
-		request_workshopid()
+		request_workshopid(addon)
 		publisher.update()
 		return
 
@@ -43,12 +43,13 @@ def request_uploaded():
 		print("Setup cancelled")
 		return None
 
-def request_workshopid():
+def request_workshopid(addon):
 	"""The addon is uploaded, but the workshop ID hasn't been registered yet
 		This function requests the workshop ID
 	"""
 	try:
-		addon.set_workshopid(int(input("Please enter the workshop ID of the addon.")))
+		inp = input("Please enter the workshop ID of the addon: ")
+		addon.set_workshopid(int(inp))
 	except NameError:
 		print("Not a valid workshop ID.")
 		request_workshopid()

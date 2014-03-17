@@ -24,11 +24,11 @@ class GModAddon:
     def set_workshopid(self, id):
         """Set the workshop ID of the addon to id and store in addon.json"""
         self.data[u'workshopid'] = id
-        save_changes()
+        self.save_changes()
 
     def save_changes(self):
         """Store the current state of the GModAddon to addon.json"""
-        with open(self.file, "w") as f:
+        with open(os.path.join(self.file, "addon.json"), "w") as f:
             json.dump(self.data, f)
 
 
