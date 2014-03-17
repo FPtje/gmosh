@@ -28,8 +28,9 @@ class GModAddon:
 
     def save_changes(self):
         """Store the current state of the GModAddon to addon.json"""
+        serialized = json.dumps(self.data, indent = 4, sort_keys = True)
         with open(os.path.join(self.file, "addon.json"), "w") as f:
-            json.dump(self.data, f)
+            f.write(serialized)
 
 
 
