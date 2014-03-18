@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+from functools import partial
 
 class GMad:
 	"""Class to verify files for, create and extract Garry's Mod Addon (gma) files"""
@@ -11,9 +13,14 @@ class GMad:
 		"""Return a list of files in the addon
 		all files are relative to the addon path
 		"""
-		ignore = []
+		ignore = ['addon.json']
 		if self.addon is not None:
-			ignore = self.addon.getignored()
+			ignore += self.addon.getignored()
+
+		file_list = []
+		for dir, _, files in os.walk(self.path):
+			rel = os.path.relpath(dir, self.path)
+			file_list += list(map(partial(os.path.join, rel), files))
 
 
 	def verify_files(self):
