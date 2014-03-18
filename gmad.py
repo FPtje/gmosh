@@ -13,7 +13,7 @@ class GMad:
 		"""Return a list of files in the addon
 		all files are relative to the addon path
 		"""
-		ignore = ['addon.json']
+		ignore = ['*addon.json']
 		if self.addon is not None:
 			ignore += self.addon.getignored()
 
@@ -22,6 +22,11 @@ class GMad:
 			rel = os.path.relpath(dir, self.path)
 			file_list += list(map(partial(os.path.join, rel), files))
 
+		filter(_file_ignored, file_list)
+
+	def _file_ignored(ignore, file):
+		"""Whether a given file is in the ignore list"""
+		pass
 
 	def verify_files(self):
 		"""Check if all files in the path are allowed in a GMA file.
