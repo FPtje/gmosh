@@ -5,7 +5,8 @@ import os
 import json
 
 class GModAddon:
-    """Represents a Garry's mod addon based on the addon.json data"""
+    """Represents a Garry's mod addon based on the addon.json data
+    """
     def __init__(self, data, path):
         self.data = data
         self.file = path
@@ -50,6 +51,9 @@ def find_addon(location):
          - /addon.json
 
         An exception will be thrown if the addon.json is not found.
+        >>> find_addon("test")
+        'test/addon.json'
+
         >>> find_addon("/etc/")
         Traceback (most recent call last):
         ...
@@ -69,7 +73,15 @@ def find_addon(location):
         raise AddonNotFoundError(location)
 
 def get_addon_info(path):
-    """Get the contents of addon.json in a dictionary"""
+    """Get the contents of addon.json in a dictionary
+    >>> isinstance(get_addon_info(find_addon("test")), GModAddon)
+    True
+
+    >>> get_addon_info("WrongPath")
+    """
+    if not os.path.isfile(path):
+        return
+
     with open(path, 'r') as f:
         data = json.load(f)
 
