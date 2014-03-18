@@ -30,8 +30,6 @@ class GModAddon:
             return []
         return self.data[u'ignore']
 
-
-
     def set_workshopid(self, id):
         """Set the workshop ID of the addon to id and store in addon.json"""
         self.data[u'workshopid'] = id

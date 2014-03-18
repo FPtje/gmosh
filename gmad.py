@@ -16,7 +16,6 @@ class GMad:
 			ignore = self.addon.getignored()
 
 
-
 	def verify_files(self):
 		"""Check if all files in the path are allowed in a GMA file.
 		#>>> GMad("test").verify_files()
