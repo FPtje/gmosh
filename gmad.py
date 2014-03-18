@@ -11,7 +11,11 @@ class GMad:
 		"""Return a list of files in the addon
 		all files are relative to the addon path
 		"""
-		pass
+		ignore = []
+		if self.addon is not None:
+			ignore = self.addon.getignored()
+
+
 
 	def verify_files(self):
 		"""Check if all files in the path are allowed in a GMA file.

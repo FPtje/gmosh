@@ -22,6 +22,16 @@ class GModAddon:
         """
         return u'default_changelog' in self.data and self.data[u'default_changelog'] or ''
 
+    def getignored(self):
+        """Get the list of files to be ignored in this addon
+        Always returns a list, even if the addon does not provide a list of ignored files
+        """
+        if u'ignore' not in self.data:
+            return []
+        return self.data[u'ignore']
+
+
+
     def set_workshopid(self, id):
         """Set the workshop ID of the addon to id and store in addon.json"""
         self.data[u'workshopid'] = id
