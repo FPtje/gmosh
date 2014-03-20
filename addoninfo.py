@@ -80,20 +80,24 @@ def find_addon(location):
     else:
         raise AddonNotFoundError(location)
 
-def get_addon_info(path):
+def get_addon_info(addon_info_path):
     """Get the contents of addon.json in a dictionary
-    >>> isinstance(get_addon_info(find_addon("test")), GModAddon)
+    >>> isinstance(addon_info_from_path("test"), GModAddon)
     True
 
     >>> get_addon_info("WrongPath")
     """
-    if not os.path.isfile(path):
+    if not os.path.isfile(addon_info_path):
         return
 
-    with open(path, 'r') as f:
+    with open(addon_info_path, 'r') as f:
         data = json.load(f)
 
-    return GModAddon(data, os.path.dirname(path))
+    return GModAddon(data, os.path.dirname(addon_info_path))
+
+def addon_info_from_path(path):
+    """Get the addon info from a folder path."""
+    return get_addon_info(find_addon(path))
 
 if __name__ == '__main__':
     import doctest

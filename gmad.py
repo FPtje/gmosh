@@ -35,7 +35,7 @@ class GMad:
 
 	def verify_files(self):
 		"""Check if all files in the path are allowed in a GMA file.
-		>>> from addoninfo import *;GMad("test", get_addon_info(find_addon("test"))).verify_files()
+		>>> from addoninfo import *;GMad("test", addon_info_from_path("test")).verify_files()
 		(True, [])
 		"""
 		file_list = self.getfiles()
