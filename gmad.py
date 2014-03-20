@@ -22,7 +22,7 @@ class GMad:
 			rel = os.path.relpath(dir, self.path)
 			file_list += list(map(partial(os.path.join, rel), files))
 
-		filter(_file_ignored, file_list)
+		return filter(_file_ignored, file_list)
 
 	def _file_ignored(ignore, file):
 		"""Whether a given file is in the ignore list"""
