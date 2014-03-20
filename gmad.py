@@ -26,7 +26,12 @@ class GMad:
 		return list(filter(partial(self._file_nomatch, ignore), file_list))
 
 	def _file_nomatch(self, ignore, f):
-		"""Whether a given file is in the ignore list"""
+		"""Whether a given file is not in the blacklist
+		>>> GMad("test")._file_nomatch(['*.psd'], 'a/b/c.psd')
+		False
+		>>> GMad("test")._file_nomatch(['*.psd', '*.svn*'], 'a/b/c.lua')
+		True
+		"""
 		for pattern in ignore:
 			if fnmatch(f, pattern):
 				return False
