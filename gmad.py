@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 from functools import partial
+from fnmatch import fnmatch
 
 class GMad:
 	"""Class to verify files for, create and extract Garry's Mod Addon (gma) files"""
@@ -22,11 +23,15 @@ class GMad:
 			rel = os.path.relpath(dir, self.path)
 			file_list += list(map(partial(os.path.join, rel), files))
 
-		return filter(_file_ignored, file_list)
+		return list(filter(partial(_file_ignored, ignore), file_list))
 
-	def _file_ignored(ignore, file):
+	def _file_ignored(ignore, f):
 		"""Whether a given file is in the ignore list"""
-		pass
+		for pattern in ignore:
+			if fnmatch(f, pattern):
+				return False
+
+		return True
 
 	def verify_files(self):
 		"""Check if all files in the path are allowed in a GMA file.
