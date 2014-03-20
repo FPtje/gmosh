@@ -2,13 +2,20 @@
 import argparse
 import os
 import addoninfo
+from gmad import *
 from gmpublish import GmPublish
 
 def main():
+	curdir = os.getcwd()
+
 	# Define command line parameters
 	parser = argparse.ArgumentParser(description = "Garry's mod workshop cli wrapper.")
+	parser.add_argument('-l', '--logo', nargs=1, help='Path of the logo image.', metavar='path')
+	parser.add_argument('-d', '--dir', nargs=1, help='Directory of the addon.', metavar='path')
+	parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder.')
+
 	args = parser.parse_args()
-	curdir = os.getcwd()
+	curdir = args.dir and args.dir[0] or curdir
 
 	# Try to get the addon information
 	try:
@@ -16,6 +23,10 @@ def main():
 		publisher = GmPublish(addon)
 	except addoninfo.AddonNotFoundError as err:
 		print(err)
+		return
+
+	if args.verify:
+		verify_files(curdir, addon)
 		return
 
 	# The addon can be updated if it has a workshop id
@@ -54,6 +65,16 @@ def request_workshopid(addon):
 		print("Not a valid workshop ID.")
 		request_workshopid()
 
+def verify_files(dir, addon):
+	"""Verify if the files in the path can be compressed in a gma"""
+	verified, disallowed = GMad(dir, addon).verify_files()
+
+	if verified:
+		print("Current addon can be packed in a gma.\nNo illegal files were found.")
+	else:
+		print("Illegal files were found:")
+		for f in disallowed: print('\t' + f)
+		print("Please remove these files or add them to the ignore list of your addon.")
 
 if __name__ == '__main__':
 	main()
