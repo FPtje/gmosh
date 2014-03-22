@@ -2,7 +2,6 @@
 import argparse
 import os
 import addoninfo
-from gmad import *
 from gmpublish import GmPublish
 
 def main():
