@@ -28,7 +28,7 @@ def main():
 
 	# Try to get the addon information
 	try:
-		addon = addoninfo.get_addon_info(addoninfo.find_addon(curdir))
+		addon = addoninfo.addon_info_from_path(curdir)
 		publisher = GmPublish(addon)
 	except addoninfo.AddonNotFoundError as err:
 		print(err)

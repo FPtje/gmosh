@@ -7,7 +7,7 @@ from time import time
 from binascii import crc32
 from struct import pack
 
-GMA_VERSION = "\x03"
+GMA_VERSION = b"\x03"
 
 GMAFile = Struct("GMAFile",
     ULInt32("file_number"),
@@ -81,7 +81,7 @@ def build_gma(addon, file_list, addon_path='.'):
             contents = f.read()
 
             file_meta.append(Container(
-                file_name = file_list[i],
+                file_name = bytes(file_list[i], "utf-8"),
                 file_number = i + 1,
                 file_crc = crc32(contents) & 0xffffffff,
                 file_size = len(contents)
@@ -96,10 +96,10 @@ def build_gma(addon, file_list, addon_path='.'):
     container.format_version = GMA_VERSION
     container.steamid = addon.getsteamid()
     container.timestamp = int(time())
-    container.required_content = ""
-    container.addon_name = addon.gettitle()
-    container.addon_description = addon.get_description_json()
-    container.addon_author = addon.getauthor()
+    container.required_content = b""
+    container.addon_name = bytes(addon.gettitle(), "utf-8")
+    container.addon_description = bytes(addon.get_description_json(), "utf-8")
+    container.addon_author = bytes(addon.getauthor(), "utf-8")
     container.addon_version = addon.getversion()
     container.GMAFile = file_meta
     container.all_file_contents = file_contents
@@ -112,14 +112,15 @@ def write(addon, destination_path='.'):
     gma = build_gma(addon, file_list, addon_path)
     crc = crc32(gma)
 
-    destination = os.path.isfile(destination_path) and destination_path or os.path.join(destination_path, "out.gma")
+    file_name, extension = os.path.splitext(destination_path)
+    destination = extension and destination_path or os.path.join(destination_path, "out.gma")
 
     # Force .gma extension
     destination = os.path.splitext(destination)[0] + ".gma"
 
     with open(destination, 'wb+') as file:
         file.write(gma)
-        file.write(pack('i', crc))
+        file.write(pack('I', crc))
 
 
 def extract(file_path, destination_path):

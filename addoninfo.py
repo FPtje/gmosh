@@ -10,10 +10,10 @@ from fnmatch import fnmatch
 class GModAddon:
     """Represents a Garry's mod addon based on the addon.json data
     """
-    def __init__(self, data, file_path):
+    def __init__(self, data, path):
         self.data = data
-        self.file = file_path
-        self.path = os.path.dirname(file_path)
+        self.file = os.path.join(path, "addon.json")
+        self.path = path
 
     def has_workshop_id(self):
         """Whether this addon has a workshop id (and thus exists on the workshop)"""
@@ -78,6 +78,7 @@ class GModAddon:
         ignore += self.getignored()
 
         file_list = []
+
         for dir, _, files in os.walk(self.path):
             rel = os.path.relpath(dir, self.path)
             file_list += list(map(partial(os.path.join, rel), files))
@@ -118,7 +119,7 @@ class GModAddon:
 
         gmafile.write(self, output)
 
-        return true, []
+        return True, []
 
 
 
