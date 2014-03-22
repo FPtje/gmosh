@@ -109,11 +109,6 @@ class GModAddon:
         """Compress the contents of a folder into a .gma file"""
         pass
 
-    def decompress(self, file):
-        """Decompress a .gma file to the working path"""
-        pass
-
-
 
 class AddonNotFoundError(Exception):
     def __init__(self, path):
