@@ -69,7 +69,7 @@ def request_workshopid(addon):
 
 def verify_files(dir, addon):
 	"""Verify if the files in the path can be compressed in a gma"""
-	verified, disallowed = GMad(dir, addon).verify_files()
+	verified, disallowed = addon.verify_files()
 
 	if verified:
 		print("Current addon can be packed in a gma.\nNo illegal files were found.")
