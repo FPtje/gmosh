@@ -14,13 +14,16 @@ def main():
 	parser.add_argument('-o', '--out', nargs=1, help='The output file or directory (used when creating or extracting gma files).', metavar='path')
 	parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder and exit.')
 	parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
-	parser.add_argument('-x', '-e', '--extract', nargs=1, help='Extract a GMA file and exit.', metavar='path', default=['out.gma'])
+	parser.add_argument('-x', '-e', '--extract', nargs='?', help='Extract a GMA file and exit.', metavar='path', const='out.gma')
 
 	args = parser.parse_args()
 	curdir = args.dir and args.dir[0] or curdir
+	out = args.out and args.out[0] or curdir
 
+	# Extract a GMA file
 	if args.extract:
-		extract(args.extract[0], args.out and args.out[0] or curdir)
+		print("extract")
+		extract(args.extract[0], out)
 		return
 
 	# Try to get the addon information
@@ -32,24 +35,17 @@ def main():
 		return
 
 	if args.verify:
+		print("verify")
+		# Verify the addon files
 		verify_files(curdir, addon)
-		return
-
-	# The addon can be updated if it has a workshop id
-	if addon.has_workshop_id():
-		publisher.update()
-		return
-
-	uploaded = request_uploaded()
-
-	if uploaded == None:
-		return
-	elif uploaded:
-		request_workshopid(addon)
-		publisher.update()
-		return
-
-	publisher.create()
+	elif args.create_gma:
+		print("create")
+		# Create a GMA file from an existing addon
+		creategma(addon, out)
+	else:
+		print("publish")
+		# Publish the addon
+		publish(addon, publisher)
 
 def request_uploaded():
 	"""Ask whether the addon exists on the workshop"""
@@ -82,8 +78,32 @@ def verify_files(dir, addon):
 		for f in disallowed: print('\t' + f)
 		print("Please remove these files or add them to the ignore list of your addon.")
 
+def creategma(addon, output_file):
+	pass
+
 def extract(gma_file, output_dir):
 	pass
 
+
+def publish(addon, publisher):
+	if addon.has_workshop_id():
+		publisher.update()
+		return
+
+	uploaded = request_uploaded()
+
+	if uploaded == None:
+		return
+	elif uploaded:
+		request_workshopid(addon)
+		publisher.update()
+		return
+
+	publisher.create()
+
 if __name__ == '__main__':
-	main()
+	try:
+		main()
+	except KeyboardInterrupt:
+		# keyboard interrupts are allowed, print a newline
+		print()
