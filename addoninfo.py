@@ -3,6 +3,7 @@
 import os.path
 import os
 import json
+import gmafile
 from functools import partial
 from fnmatch import fnmatch
 
@@ -83,6 +84,10 @@ class GModAddon:
 
         return list(filter(partial(self._file_nomatch, ignore), file_list))
 
+    def getpath(self):
+        """The path of the addon folder"""
+        return self.path
+
     def _file_nomatch(self, ignore, f):
         """Whether a given file is not in the blacklist
         >>> addon_info_from_path("test")._file_nomatch(['*.psd'], 'a/b/c.psd')
@@ -105,9 +110,16 @@ class GModAddon:
         disallowed = list(filter(partial(self._file_nomatch, addon_whitelist), file_list))
         return not disallowed, disallowed
 
-    def compress(self, addon):
+    def compress(self, output):
         """Compress the contents of a folder into a .gma file"""
-        pass
+        allowed, illegal_files = self.verify_files()
+        if not allowed:
+            return false, illegal_files
+
+        gmafile.write(self, output)
+
+        return true, []
+
 
 
 class AddonNotFoundError(Exception):

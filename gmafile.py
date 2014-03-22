@@ -106,7 +106,9 @@ def build_gma(addon, file_list, addon_path='.'):
 
     return GMAContents.build(container)
 
-def write(addon, file_list, addon_path='.', destination_path='.'):
+def write(addon, destination_path='.'):
+    file_list = addon.getfiles()
+    addon_path = addon.getpath()
     gma = build_gma(addon, file_list, addon_path)
     crc = crc32(gma)
 
