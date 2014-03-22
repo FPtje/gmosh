@@ -118,10 +118,11 @@ def write(addon, destination_path='.'):
     # Force .gma extension
     destination = os.path.splitext(destination)[0] + ".gma"
 
-    with open(destination, 'wb+') as file:
+    with open(destination, 'wb') as file:
         file.write(gma)
         file.write(pack('I', crc))
 
-
 def extract(file_path, destination_path):
-    pass
+    with open(file_path, 'rb') as file:
+        contents = file.read()
+        gma = GMAVerifiedContents.parse(contents)

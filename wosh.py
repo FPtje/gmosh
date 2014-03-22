@@ -2,6 +2,7 @@
 import argparse
 import os
 import addoninfo
+import gmafile
 from gmpublish import GmPublish
 
 def main():
@@ -22,8 +23,7 @@ def main():
 
 	# Extract a GMA file
 	if args.extract:
-		print("extract")
-		extract(args.extract[0], out)
+		extract(args.extract, out)
 		return
 
 	# Try to get the addon information
@@ -86,7 +86,7 @@ def creategma(addon, output_file):
 		print("Please remove these files or add them to the ignore list of your addon.")
 
 def extract(gma_file, output_dir):
-	pass
+	gmafile.extract(gma_file, output_dir)
 
 
 def publish(addon, publisher):
