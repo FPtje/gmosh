@@ -11,10 +11,17 @@ def main():
 	parser = argparse.ArgumentParser(description = "Garry's mod workshop cli wrapper.")
 	parser.add_argument('-l', '--logo', nargs=1, help='Path of the logo image.', metavar='path')
 	parser.add_argument('-d', '--dir', nargs=1, help='Directory of the addon.', metavar='path')
-	parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder.')
+	parser.add_argument('-o', '--out', nargs=1, help='The output file or directory (used when creating or extracting gma files).', metavar='path')
+	parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder and exit.')
+	parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
+	parser.add_argument('-x', '-e', '--extract', nargs=1, help='Extract a GMA file and exit.', metavar='path', default=['out.gma'])
 
 	args = parser.parse_args()
 	curdir = args.dir and args.dir[0] or curdir
+
+	if args.extract:
+		extract(args.extract[0], args.out and args.out[0] or curdir)
+		return
 
 	# Try to get the addon information
 	try:
@@ -74,6 +81,9 @@ def verify_files(dir, addon):
 		print("Illegal files were found:")
 		for f in disallowed: print('\t' + f)
 		print("Please remove these files or add them to the ignore list of your addon.")
+
+def extract(gma_file, output_dir):
+	pass
 
 if __name__ == '__main__':
 	main()
