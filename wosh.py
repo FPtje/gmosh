@@ -11,19 +11,19 @@ def main():
 	# Define command line parameters
 	parser = argparse.ArgumentParser(description = "Garry's mod workshop cli wrapper.")
 	parser.add_argument('-l', '--logo', nargs=1, help='Path of the logo image.', metavar='path')
-	parser.add_argument('-d', '--dir', nargs=1, help='Directory of the addon.', metavar='path')
-	parser.add_argument('-o', '--out', nargs=1, help='The output file or directory (used when creating or extracting gma files).', metavar='path')
+	parser.add_argument('-d', '--dir', nargs=1, help='Path where the addon is located.', metavar='path')
+	parser.add_argument('out', metavar='path', type=str, nargs='?', help='The output file or directory (used when creating or extracting gma files).')
 	parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder and exit.')
 	parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
-	parser.add_argument('-x', '-e', '--extract', nargs='?', help='Extract a GMA file and exit.', metavar='path', const='out.gma')
+	parser.add_argument('-x', '-e', '--extract', nargs=1, help='Extract a GMA file and exit.', metavar='file')
 
 	args = parser.parse_args()
 	curdir = args.dir and args.dir[0] or curdir
-	out = args.out and args.out[0] or curdir
+	out = args.out and args.out or curdir
 
 	# Extract a GMA file
 	if args.extract:
-		extract(args.extract, out)
+		extract(args.extract[0], out)
 		return
 
 	# Try to get the addon information
