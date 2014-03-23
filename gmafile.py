@@ -135,7 +135,7 @@ def extract(file_path, destination_path):
             if not os.path.exists(file_folder):
                 os.makedirs(file_folder)
 
-            print("Extracting %s..." % file_name)
+            print(file_name)
 
             with open(file_name, 'wb') as output:
                 output.write(gma.all_file_contents.value[i])
