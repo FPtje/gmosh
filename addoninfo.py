@@ -115,7 +115,7 @@ class GModAddon:
         """Compress the contents of a folder into a .gma file"""
         allowed, illegal_files = self.verify_files()
         if not allowed:
-            return false, illegal_files
+            return False, illegal_files
 
         gmafile.write(self, output)
 
