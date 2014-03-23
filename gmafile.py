@@ -9,7 +9,7 @@ from struct import pack
 
 GMA_VERSION = b"\x03"
 
-GMAFile = Struct("GMAFile",
+GMAFile = Struct("all_file_meta",
     ULInt32("file_number"),
     If(lambda ctx: ctx["file_number"] != 0,
         Embed(
@@ -29,7 +29,7 @@ class FileContents(Adapter):
     def _decode(self, obj, context):
         contents = []
         begin = 0
-        for filemeta in context.GMAFile:
+        for filemeta in context.all_file_meta:
             # ignore the dummy file with file number 0
             if filemeta.file_number == 0:
                 break
@@ -42,7 +42,7 @@ class FileContents(Adapter):
 
 def file_content_size(context):
     total = 0
-    for filemeta in context.GMAFile:
+    for filemeta in context.all_file_meta:
         if filemeta.file_number == 0:
             return total
 
@@ -101,7 +101,7 @@ def build_gma(addon, file_list, addon_path='.'):
     container.addon_description = bytes(addon.get_description_json(), "utf-8")
     container.addon_author = bytes(addon.getauthor(), "utf-8")
     container.addon_version = addon.getversion()
-    container.GMAFile = file_meta
+    container.all_file_meta = file_meta
     container.all_file_contents = file_contents
 
     return GMAContents.build(container)
@@ -126,3 +126,17 @@ def extract(file_path, destination_path):
     with open(file_path, 'rb') as file:
         contents = file.read()
         gma = GMAVerifiedContents.parse(contents)
+
+        for i in range(0, len(gma.all_file_meta) - 1):
+            meta = gma.all_file_meta[i]
+            file_name = os.path.join(destination_path, meta.file_name.decode("utf-8"))
+            file_folder = os.path.dirname(file_name)
+
+            if not os.path.exists(file_folder):
+                os.makedirs(file_folder)
+
+            print("Extracting %s..." % file_name)
+
+            with open(file_name, 'wb') as output:
+                output.write(gma.all_file_contents.value[i])
+
