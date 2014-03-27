@@ -62,9 +62,9 @@ def request_workshopid(addon):
 	try:
 		inp = input("Please enter the workshop ID of the addon: ")
 		addon.set_workshopid(int(inp))
-	except NameError:
+	except ValueError:
 		print("Not a valid workshop ID.")
-		request_workshopid()
+		request_workshopid(addon)
 
 #
 # Actions that can be called from the command line
