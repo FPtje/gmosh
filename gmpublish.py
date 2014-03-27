@@ -10,6 +10,7 @@ class GmPublish:
 		"""Upload to the workshop as a new addon"""
 		pass
 
-	def update(self):
+	def update(self, message=None):
 		"""Push an update of the addon to the workshop"""
-		pass
+		message = message or addon.getdefault_changelog()
+

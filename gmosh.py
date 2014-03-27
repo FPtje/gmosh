@@ -16,6 +16,7 @@ def main():
 	parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder and exit.')
 	parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
 	parser.add_argument('-x', '-e', '--extract', nargs=1, help='Extract a GMA file and exit.', metavar='file')
+	parser.add_argument('-m', '--message', nargs=1, help='Update message when updating the addon.', metavar='msg')
 
 	args = parser.parse_args()
 	curdir = args.dir and args.dir[0] or curdir
@@ -43,9 +44,10 @@ def main():
 		# Create a GMA file from an existing addon
 		creategma(addon, out)
 	else:
+		message = args.message and args.message[0] or addon.getdefault_changelog()
 		print("publish")
 		# Publish the addon
-		publish(addon, publisher)
+		publish(addon, publisher, message)
 
 def request_uploaded():
 	"""Ask whether the addon exists on the workshop"""
@@ -89,9 +91,9 @@ def extract(gma_file, output_dir):
 	gmafile.extract(gma_file, output_dir)
 
 
-def publish(addon, publisher):
+def publish(addon, publisher, message):
 	if addon.has_workshop_id():
-		publisher.update()
+		publisher.update(message)
 		return
 
 	uploaded = request_uploaded()
@@ -100,7 +102,7 @@ def publish(addon, publisher):
 		return
 	elif uploaded:
 		request_workshopid(addon)
-		publisher.update()
+		publisher.update(message)
 		return
 
 	publisher.create()
