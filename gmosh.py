@@ -5,21 +5,21 @@ import addoninfo
 import gmafile
 from gmpublish import GmPublish
 
+# Define command line parameters
+parser = argparse.ArgumentParser(description = "Garry's mod workshop cli wrapper.")
+parser.add_argument('-l', '--logo', nargs=1, help='Path of the logo image.', metavar='path')
+parser.add_argument('-d', '--dir', '--path', nargs=1, help='Path where the addon is located.', metavar='path')
+parser.add_argument('out', metavar='path', type=str, nargs='?', help='The output file or directory (used when creating or extracting gma files).')
+parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder and exit.')
+parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
+parser.add_argument('-x', '-e', '--extract', nargs=1, help='Extract a GMA file and exit.', metavar='file')
+parser.add_argument('-m', '--message', nargs=1, help='Update message when updating the addon.', metavar='msg')
+
 def main():
-	curdir = os.getcwd()
-
-	# Define command line parameters
-	parser = argparse.ArgumentParser(description = "Garry's mod workshop cli wrapper.")
-	parser.add_argument('-l', '--logo', nargs=1, help='Path of the logo image.', metavar='path')
-	parser.add_argument('-d', '--dir', '--path', nargs=1, help='Path where the addon is located.', metavar='path')
-	parser.add_argument('out', metavar='path', type=str, nargs='?', help='The output file or directory (used when creating or extracting gma files).')
-	parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder and exit.')
-	parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
-	parser.add_argument('-x', '-e', '--extract', nargs=1, help='Extract a GMA file and exit.', metavar='file')
-	parser.add_argument('-m', '--message', nargs=1, help='Update message when updating the addon.', metavar='msg')
-
 	args = parser.parse_args()
-	curdir = args.dir and args.dir[0] or curdir
+	# working directory
+	curdir = args.dir and args.dir[0] or os.getcwd()
+	# directory to output things to
 	out = args.out and args.out or curdir
 
 	# Extract a GMA file
@@ -30,23 +30,20 @@ def main():
 	# Try to get the addon information
 	try:
 		addon = addoninfo.addon_info_from_path(curdir)
-		publisher = GmPublish(addon)
 	except addoninfo.AddonNotFoundError as err:
 		print(err)
 		return
 
 	if args.verify:
-		print("verify")
 		# Verify the addon files
 		verify_files(curdir, addon)
 	elif args.create_gma:
-		print("create")
 		# Create a GMA file from an existing addon
 		creategma(addon, out)
 	else:
-		message = args.message and args.message[0] or addon.getdefault_changelog()
-		print("publish")
 		# Publish the addon
+		message = args.message and args.message[0] or addon.getdefault_changelog()
+		publisher = GmPublish(addon)
 		publish(addon, publisher, message)
 
 def request_uploaded():
@@ -69,6 +66,10 @@ def request_workshopid(addon):
 		print("Not a valid workshop ID.")
 		request_workshopid()
 
+#
+# Actions that can be called from the command line
+#
+
 def verify_files(dir, addon):
 	"""Verify if the files in the path can be compressed in a gma"""
 	verified, disallowed = addon.verify_files()
@@ -89,7 +90,6 @@ def creategma(addon, output_file):
 
 def extract(gma_file, output_dir):
 	gmafile.extract(gma_file, output_dir)
-
 
 def publish(addon, publisher, message):
 	if addon.has_workshop_id():
