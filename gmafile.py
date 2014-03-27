@@ -9,14 +9,14 @@ from struct import pack
 
 GMA_VERSION = b"\x03"
 
-GMAFile = Struct("all_file_meta",
-    ULInt32("file_number"),
-    If(lambda ctx: ctx["file_number"] != 0,
+GMAFile = Struct('all_file_meta',
+    ULInt32('file_number'),
+    If(lambda ctx: ctx['file_number'] != 0,
         Embed(
-            Struct("GMAFileMeta",
-                CString("file_name"),
-                SLInt64("file_size"),
-                ULInt32("file_crc")
+            Struct('GMAFileMeta',
+                CString('file_name'),
+                SLInt64('file_size'),
+                ULInt32('file_crc')
             )
         )
     )
@@ -24,7 +24,7 @@ GMAFile = Struct("all_file_meta",
 
 class FileContents(Adapter):
     def _encode(self, obj, context):
-        return b"".join(obj)
+        return b''.join(obj)
 
     def _decode(self, obj, context):
         contents = []
@@ -48,25 +48,25 @@ def file_content_size(context):
 
         total += filemeta.file_size
 
-GMAContents = Struct("GMAContents",
-    Magic(b"GMAD"),
-    String("format_version", 1),
-    SLInt64("steamid"),
-    SLInt64("timestamp"),
-    CString("required_content"),
-    CString("addon_name"),
-    CString("addon_description"),
-    CString("addon_author"),
-    SLInt32("addon_version"),
+GMAContents = Struct('GMAContents',
+    Magic(b'GMAD'),
+    String('format_version', 1),
+    SLInt64('steamid'),
+    SLInt64('timestamp'),
+    CString('required_content'),
+    CString('addon_name'),
+    CString('addon_description'),
+    CString('addon_author'),
+    SLInt32('addon_version'),
     # For each file get the metadata
-    RepeatUntil(lambda obj, ctx: obj["file_number"] == 0, GMAFile),
-    OnDemand(FileContents(Field("all_file_contents", file_content_size))),
+    RepeatUntil(lambda obj, ctx: obj['file_number'] == 0, GMAFile),
+    OnDemand(FileContents(Field('all_file_contents', file_content_size))),
 
 )
 
-GMAVerifiedContents = Struct("GMAVerifiedContents",
+GMAVerifiedContents = Struct('GMAVerifiedContents',
     Embed(GMAContents),
-    Optional(ULInt32("addon_crc")),
+    Optional(ULInt32('addon_crc')),
     Terminator
 )
 
@@ -81,7 +81,7 @@ def build_gma(addon, file_list, addon_path='.'):
             contents = f.read()
 
             file_meta.append(Container(
-                file_name = bytes(file_list[i], "utf-8"),
+                file_name = bytes(file_list[i], 'utf-8'),
                 file_number = i + 1,
                 file_crc = crc32(contents) & 0xffffffff,
                 file_size = len(contents)
@@ -96,10 +96,10 @@ def build_gma(addon, file_list, addon_path='.'):
     container.format_version = GMA_VERSION
     container.steamid = addon.getsteamid()
     container.timestamp = int(time())
-    container.required_content = b""
-    container.addon_name = bytes(addon.gettitle(), "utf-8")
-    container.addon_description = bytes(addon.get_description_json(), "utf-8")
-    container.addon_author = bytes(addon.getauthor(), "utf-8")
+    container.required_content = b''
+    container.addon_name = bytes(addon.gettitle(), 'utf-8')
+    container.addon_description = bytes(addon.get_description_json(), 'utf-8')
+    container.addon_author = bytes(addon.getauthor(), 'utf-8')
     container.addon_version = addon.getversion()
     container.all_file_meta = file_meta
     container.all_file_contents = file_contents
@@ -113,10 +113,10 @@ def write(addon, destination_path='.'):
     crc = crc32(gma)
 
     file_name, extension = os.path.splitext(destination_path)
-    destination = extension and destination_path or os.path.join(destination_path, "out.gma")
+    destination = extension and destination_path or os.path.join(destination_path, 'out.gma')
 
     # Force .gma extension
-    destination = os.path.splitext(destination)[0] + ".gma"
+    destination = os.path.splitext(destination)[0] + '.gma'
 
     with open(destination, 'wb') as file:
         file.write(gma)
@@ -129,7 +129,7 @@ def extract(file_path, destination_path):
 
         for i in range(0, len(gma.all_file_meta) - 1):
             meta = gma.all_file_meta[i]
-            file_name = os.path.join(destination_path, meta.file_name.decode("utf-8"))
+            file_name = os.path.join(destination_path, meta.file_name.decode('utf-8'))
             file_folder = os.path.dirname(file_name)
 
             if not os.path.exists(file_folder):

@@ -12,7 +12,7 @@ class GModAddon:
     """
     def __init__(self, data, path):
         self.data = data
-        self.file = os.path.join(path, "addon.json")
+        self.file = os.path.join(path, 'addon.json')
         self.path = path
 
     def has_workshop_id(self):
@@ -28,7 +28,7 @@ class GModAddon:
 
     def gettitle(self):
         """Get the title (name) of the addon"""
-        return "title" in self.data and self.data["title"] or "No title"
+        return 'title' in self.data and self.data['title'] or "No title"
 
     def getignored(self):
         """Get the list of files to be ignored in this addon
@@ -40,20 +40,20 @@ class GModAddon:
 
     def getsteamid(self):
         """Unused. Get the SteamID64 of the addon as an int."""
-        return "steamid64" in self.data and self.data["steamid64"] or 0
+        return 'steamid64' in self.data and self.data['steamid64'] or 0
 
     def get_description_json(self):
         """The "description" of this addon (includes description, type and tags)
         This description is used in the GMA file.
         """
-        a_description = "description" in self.data and self.data["description"] or "Description"
-        a_type = self.data["type"]
-        a_tags = self.data["tags"]
-        return json.dumps({"description": a_description, "type": a_type, "tags": a_tags})
+        a_description = 'description' in self.data and self.data['description'] or 'Description'
+        a_type = self.data['type']
+        a_tags = self.data['tags']
+        return json.dumps({'description': a_description, 'type': a_type, 'tags': a_tags})
 
     def getauthor(self):
         """The author of the addon"""
-        return "author" in self.data and self.data["author"] or "Author Name"
+        return 'author' in self.data and self.data['author'] or "Author Name"
 
     def getversion(self):
         """The addon version. This field is not used and will always return 1."""
@@ -67,7 +67,7 @@ class GModAddon:
     def save_changes(self):
         """Store the current state of the GModAddon to addon.json"""
         serialized = json.dumps(self.data, indent = 4, sort_keys = True)
-        with open(os.path.join(self.file, "addon.json"), "w") as f:
+        with open(os.path.join(self.file, 'addon.json'), 'w') as f:
             f.write(serialized)
 
     def getfiles(self):
@@ -151,7 +151,7 @@ def find_addon(location):
 
     # Try at most 10 levels up
     for k in range(1, 10):
-        filename = os.path.join(curLocation, "addon.json")
+        filename = os.path.join(curLocation, 'addon.json')
 
         if os.path.isfile(filename):
             return filename
@@ -162,10 +162,10 @@ def find_addon(location):
 
 def get_addon_info(addon_info_path):
     """Get the contents of addon.json in a dictionary
-    >>> isinstance(addon_info_from_path("test"), GModAddon)
+    >>> isinstance(addon_info_from_path('test'), GModAddon)
     True
 
-    >>> get_addon_info("WrongPath")
+    >>> get_addon_info('WrongPath')
     """
     if not os.path.isfile(addon_info_path):
         return
