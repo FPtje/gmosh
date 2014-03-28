@@ -140,3 +140,14 @@ def extract(file_path, destination_path):
             with open(file_name, 'wb') as output:
                 output.write(gma.all_file_contents.value[i])
 
+def getfiles(file_path):
+    """Get the list of files that exist in the GMA file"""
+    with open(file_path, 'rb') as file:
+        contents = file.read()
+        gma = GMAVerifiedContents.parse(contents)
+
+    res = []
+    for i in range(0, len(gma.all_file_meta) - 1):
+        res.append(gma.all_file_meta[i].file_name.decode('utf-8'))
+
+    return res

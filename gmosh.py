@@ -7,13 +7,14 @@ from gmpublish import GmPublish
 
 # Define command line parameters
 parser = argparse.ArgumentParser(description = "Garry's mod workshop cli wrapper.")
-parser.add_argument('-l', '--logo', nargs=1, help='Path of the logo image.', metavar='path')
+parser.add_argument('--logo', nargs=1, help='Path of the logo image.', metavar='path')
 parser.add_argument('-d', '--dir', '--path', nargs=1, help='Path where the addon is located.', metavar='path')
 parser.add_argument('out', metavar='path', type=str, nargs='?', help='The output file or directory (used when creating or extracting gma files).')
 parser.add_argument('-p', '--publish', action='store_true', help='Publish the addon to the workshop.')
 parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder and exit.')
 parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
 parser.add_argument('-x', '-e', '--extract', nargs=1, help='Extract a GMA file and exit.', metavar='file')
+parser.add_argument('-l', '--list', nargs=1, help='List the files contained in a GMA file.', metavar='file')
 parser.add_argument('-m', '--message', nargs=1, help='Update message when updating the addon.', metavar='msg')
 
 def main():
@@ -26,6 +27,9 @@ def main():
 	# Extract a GMA file
 	if args.extract:
 		extract(args.extract[0], out)
+		return
+	elif args.list:
+		list_files(args.list[0])
 		return
 
 	# Try to get the addon information
@@ -91,6 +95,11 @@ def creategma(addon, output_file):
 
 def extract(gma_file, output_dir):
 	gmafile.extract(gma_file, output_dir)
+
+def list_files(gma_file):
+	lst = gmafile.getfiles(gma_file)
+	for f in lst:
+		print(f)
 
 def publish(addon, publisher, message):
 	if addon.has_workshop_id():
