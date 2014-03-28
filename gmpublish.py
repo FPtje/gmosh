@@ -12,5 +12,5 @@ class GmPublish:
 
 	def update(self, message=None):
 		"""Push an update of the addon to the workshop"""
-		message = message or addon.getdefault_changelog()
+		message = message or self.addon.getdefault_changelog()
 
