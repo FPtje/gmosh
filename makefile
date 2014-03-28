@@ -5,4 +5,6 @@ linux:
 	cxfreeze gmosh.py --target-dir=bin --include-modules=$(MODULES)
 
 clean:
-	rm -r bin
+	if [ -d bin ]; then rm -r bin; fi
+	if [ -f *.pyc ]; then rm *.pyc; fi
+	if [ -d __pycache__ ]; then rm -r __pycache__; fi
