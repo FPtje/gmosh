@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser(description = "Garry's mod workshop cli wrapper
 parser.add_argument('-l', '--logo', nargs=1, help='Path of the logo image.', metavar='path')
 parser.add_argument('-d', '--dir', '--path', nargs=1, help='Path where the addon is located.', metavar='path')
 parser.add_argument('out', metavar='path', type=str, nargs='?', help='The output file or directory (used when creating or extracting gma files).')
+parser.add_argument('-p', '--publish', action='store_true', help='Publish the addon to the workshop.')
 parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder and exit.')
 parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
 parser.add_argument('-x', '-e', '--extract', nargs=1, help='Extract a GMA file and exit.', metavar='file')
