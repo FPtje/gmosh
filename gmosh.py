@@ -12,6 +12,7 @@ parser.add_argument('-d', '--dir', '--path', nargs=1, help='Path where the addon
 parser.add_argument('out', metavar='path', type=str, nargs='?', help='The output file or directory (used when creating or extracting gma files).')
 parser.add_argument('-p', '--publish', action='store_true', help='Publish the addon to the workshop.')
 parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder and exit.')
+parser.add_argument('--new', '--new-addon', action='store_true', help='Create a new addon.json at the current location. This is required before an addon can be uploaded to the workshop.')
 parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
 parser.add_argument('-x', '-e', '--extract', nargs=1, help='Extract a GMA file and exit.', metavar='file')
 parser.add_argument('-l', '--list', nargs=1, help='List the files contained in a GMA file.', metavar='file')
@@ -30,6 +31,9 @@ def main():
 		return
 	elif args.list:
 		list_files(args.list[0])
+		return
+	elif args.new:
+		new_addon(curdir)
 		return
 
 	# Try to get the addon information
@@ -86,6 +90,90 @@ def verify_files(dir, addon):
 		print("Please remove these files or add them to the ignore list of your addon.")
 
 	return verified, disallowed
+
+
+possible_types = ["gamemode", "map", "weapon", "vehicle", "npc", "tool", "effects", "model"]
+possible_tags =  ["fun", "roleplay", "scenic", "movie", "realism", "cartoon", "water", "comic", "build"]
+def new_addon(path):
+	print("Turning \"%s\" into a workshoppable addon. Press Ctrl+C at any time to cancel." % path)
+	data = dict()
+	data['title'] = input("What will be the name of your addon?\n")
+
+	print()
+
+	# Choosing the type
+	print("What will be the type of your addon? You can choose only one.")
+	for i in range(0, len(possible_types)):
+		print("%s: %s" % (str(i), possible_types[i]))
+
+	while 'type' not in data or data['type'] < 0 or data['type'] >= len(possible_types):
+		try:
+			data['type'] = int(input("? "))
+		except ValueError:
+			print("Not a number")
+
+	data['type'] = possible_types[data['type']]
+
+	print()
+
+	# Choosing tags
+	print("Your addon can have up to two tags. You can choose from the following:")
+	for i in range(0, len(possible_tags)):
+		print("%s: %s" % (str(i), possible_tags[i]))
+
+	data['tags'] = []
+	for i in range(0, 2):
+		if i > 0 and data['tags'][i-1] == -1: break
+
+		while len(data['tags']) <= i or data['tags'][i] >= len(possible_tags):
+			try:
+				data['tags'].append(int(input("Choose tag #%s. Enter -1 to stop adding tags.\n" % str(i + 1))))
+			except ValueError:
+				print("Not a number")
+
+	pop = data['tags'].pop()
+	if pop != -1: data['tags'].append(pop)
+	for i in range(0, len(data['tags'])): data['tags'][i] = possible_tags[data['tags'][i]]
+
+	print()
+
+	# Ignore list
+	data['ignore'] = []
+	print("Now it's time to select which files you do NOT want to ship with your addon!")
+	print("Please list the file names of the files you want to ignore in the addon. Use wildcards!")
+	print("Checking current directory for files that are not allowed to be in a workshop addon...")
+	allowed, disallowed = addoninfo.GModAddon(data, path).verify_files()
+	if allowed:
+		print("No illegal files found. But maybe you still have ideas for files to ignore?")
+	else:
+		print("The following illegal files were found:")
+		for k in disallowed: print(k)
+
+	print("Please enter the files you want to ignore. Enter nothing or -1 to continue to the next step.")
+	while True:
+		ignore = input("? ")
+		if ignore == "-1" or ignore == "": break
+		data['ignore'].append(ignore)
+
+	print()
+
+	# Default changelog
+	print("When updating the addon on the workshop. Do you want to have a default changelog? Leave this field empty or enter -1 if you don't.")
+	default_changelog = input("? ")
+	if default_changelog != "" and default_changelog != "-1":
+		data['default_changelog'] = default_changelog
+	else:
+		print("No default changelog chosen")
+
+	print()
+
+	# Store to addon
+	addoninfo.GModAddon(data, path).save_changes()
+
+	print("Alright! That's it! This is the data:")
+	print(data)
+	print("Don't worry if you've made a mistake. You can either run this wizard again or edit the addon.json file with an editor.")
+	print("Addon.json saved successfully")
 
 def creategma(addon, output_file):
 	allowed, illegal_files = addon.compress(output_file)
