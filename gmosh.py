@@ -7,7 +7,7 @@ from gmpublish import GmPublish
 
 # Define command line parameters
 parser = argparse.ArgumentParser(description = "Garry's mod workshop cli wrapper.")
-parser.add_argument('--logo', nargs=1, help='Path of the logo image.', metavar='path')
+parser.add_argument('--logo', '--icon', nargs=1, help='Path of the logo image.', metavar='path')
 parser.add_argument('-d', '--dir', '--path', nargs=1, help='Path where the addon is located.', metavar='path')
 parser.add_argument('out', metavar='path', type=str, nargs='?', help='The output file or directory (used when creating or extracting gma files).')
 parser.add_argument('-p', '--publish', action='store_true', help='Publish the addon to the workshop.')
