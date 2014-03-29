@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import subprocess
 
 class GmPublish:
 	"""Wrapper for the GMPublish program"""
@@ -8,8 +9,15 @@ class GmPublish:
 		self.addon = addon
 
 	def create(self, logo):
-		"""Upload to the workshop as a new addon"""
-		pass
+		"""Upload to the workshop as a new addon.
+		precondition: Assumes that the files of the addon have been verified.
+		"""
+		outfile = 'temp.gma'
+		self.addon.compress(outfile)
+
+		output = subprocess.check_output([self._get_executable(), 'create', '-addon', outfile, '-icon', logo])
+		output = output.decode('utf-8')
+		print(output)
 
 	def update(self, message=None):
 		"""Push an update of the addon to the workshop"""
