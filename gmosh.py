@@ -48,8 +48,7 @@ def main():
 	else:
 		# Publish the addon
 		message = args.message and args.message[0] or addon.getdefault_changelog()
-		publisher = GmPublish(addon)
-		publish(addon, publisher, message)
+		publish(addon, args.logo and args.logo[0], message)
 
 def request_uploaded():
 	"""Ask whether the addon exists on the workshop"""
@@ -101,7 +100,9 @@ def list_files(gma_file):
 	for f in lst:
 		print(f)
 
-def publish(addon, publisher, message):
+def publish(addon, logo, message):
+	publisher = GmPublish(addon)
+
 	if addon.has_workshop_id():
 		publisher.update(message)
 		return
@@ -115,7 +116,16 @@ def publish(addon, publisher, message):
 		publisher.update(message)
 		return
 
-	publisher.create()
+	while True:
+		if not logo:
+			print("Please provide a 512x512 logo jpg file for the initial upload.")
+		elif not os.path.isfile(logo):
+			print("The file \"%s\" does not exist." % logo)
+		else:
+			break
+		logo = input("What is the path of the logo file?\n")
+
+	publisher.create(logo)
 
 if __name__ == '__main__':
 	try:
