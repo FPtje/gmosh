@@ -79,7 +79,7 @@ def verify_files(dir, addon):
 	verified, disallowed = addon.verify_files()
 
 	if verified:
-		print("Current addon can be packed in a gma.\nNo illegal files were found.")
+		print("No illegal files were found.")
 	else:
 		print("Illegal files were found:")
 		for f in disallowed: print('\t' + f)
@@ -103,10 +103,15 @@ def list_files(gma_file):
 def publish(addon, logo, message):
 	publisher = GmPublish(addon)
 
+	# Verify files first
+	verify_files(addon.getpath(), addon)
+
+	# Update if workshop ID exists in addon.json
 	if addon.has_workshop_id():
 		publisher.update(message)
 		return
 
+	# Ask whether the addon has been uploaded before
 	uploaded = request_uploaded()
 
 	if uploaded == None:
@@ -116,6 +121,7 @@ def publish(addon, logo, message):
 		publisher.update(message)
 		return
 
+	# New addons require a logo file
 	while True:
 		if not logo:
 			print("Please provide a 512x512 logo jpg file for the initial upload.")
@@ -123,6 +129,7 @@ def publish(addon, logo, message):
 			print("The file \"%s\" does not exist." % logo)
 		else:
 			break
+
 		logo = input("What is the path of the logo file?\n")
 
 	publisher.create(logo)
