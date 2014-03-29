@@ -6,6 +6,7 @@
     [
         "*.psd",
         "*.vcproj",
-        "*.svn*"
+        "*.svn*",
+        "./test.jpg"
     ]
 }
