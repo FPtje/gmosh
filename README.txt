@@ -18,7 +18,7 @@ Compiling on Linux:
 
 Compiling on Windows:
 	Open the command prompt in the root of the repository
-	run make.bat.
+	run compile_windows.bat.
 		Note: You might have to change the path of cxfreeze in the batch file. Currently it's C:\Python33\Scripts\cxfreeze.
 
 FAQ:
