@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import subprocess
+import re
 
 class GmPublish:
 	"""Wrapper for the GMPublish program"""
@@ -17,7 +18,15 @@ class GmPublish:
 
 		output = subprocess.check_output([self._get_executable(), 'create', '-addon', outfile, '-icon', logo])
 		output = output.decode('utf-8')
-		print(output)
+		match = re.search('UID: ([0-9]+)', output)
+
+		if match and match.group(1):
+			self.addon.set_workshopid(int(match.group(1)))
+			print("Publishing to workshop succeeded!")
+			print("Workshop ID set to ", match.group(1))
+		else:
+			print("Publishing to workshop failed!")
+			print(output)
 
 	def update(self, message=None):
 		"""Push an update of the addon to the workshop"""
