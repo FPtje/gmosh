@@ -19,6 +19,9 @@ class GModAddon:
         """Whether this addon has a workshop id (and thus exists on the workshop)"""
         return u'workshopid' in self.data
 
+    def getworkshopid(self):
+        return u'workshopid' in self.data and self.data[u'workshopid'] or 0
+
     def getdefault_changelog(self):
         """The default changelog of the addon.
 

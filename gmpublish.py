@@ -17,10 +17,16 @@ class GmPublish:
 		outfile = 'temp.gma'
 		self.addon.compress(outfile)
 
-		output = subprocess.check_output([self._get_executable(), 'create', '-addon', outfile, '-icon', logo])
+		# Call gmpublish to create the addon
+		output = subprocess.check_output([self._get_executable(), 'create',
+			'-addon', outfile,
+			'-icon', logo
+		])
+
 		output = output.decode('utf-8')
 		match = re.search('UID: ([0-9]+)', output)
 
+		# Try to find the addon ID
 		if match and match.group(1):
 			self.addon.set_workshopid(int(match.group(1)))
 			print("Publishing to workshop succeeded!")
@@ -34,6 +40,17 @@ class GmPublish:
 	def update(self, message=None):
 		"""Push an update of the addon to the workshop"""
 		message = message or self.addon.getdefault_changelog()
+		outfile = 'temp.gma'
+		self.addon.compress(outfile)
+
+		# Call GMPublish to update
+		output = subprocess.check_output([self._get_executable(), 'update',
+			'-addon', outfile,
+			'-id', str(self.addon.getworkshopid()),
+			'-changes', message
+		])
+
+		print(output.decode('utf-8'))
 
 	def _get_executable(self):
 		"""Retrieve the path of the gmpublish executable"""
