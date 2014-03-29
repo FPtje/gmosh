@@ -91,7 +91,6 @@ def verify_files(dir, addon):
 
 	return verified, disallowed
 
-
 possible_types = ["gamemode", "map", "weapon", "vehicle", "npc", "tool", "effects", "model"]
 possible_tags =  ["fun", "roleplay", "scenic", "movie", "realism", "cartoon", "water", "comic", "build"]
 def new_addon(path):
