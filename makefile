@@ -15,9 +15,23 @@ install:
 	@echo "Checking existence of libsteam.so"
 	if [ ! -f ~/.steam/linux32/libsteam.so ]; then mkdir -p ~/.steam/linux32/ && cp required/libsteam.so ~/.steam/linux32/; fi
 
-
 uninstall:
 	if [ -f /usr/bin/gmosh ]; then rm /usr/bin/gmosh; fi
+
+# Make a Linux distributable package
+package: linux
+	if [ ! -d package ]; then mkdir package; fi
+	if [ ! -d package/bin ]; then mkdir package/bin; fi
+	cp makefile package/
+	cp bin/gmosh package/bin/
+
+	echo "Installation: open a terminal in this folder and use \"sudo make install\"" > package/README.txt
+
+	if [ ! -d package/required ]; then mkdir package/required; fi
+	cp required/gmpublish_linux package/required/
+	cp required/libsteam_api.so package/required/
+	cp required/libsteam.so package/required/
+
 
 clean:
 	if [ -d bin ]; then rm -r bin; fi
