@@ -90,7 +90,7 @@ def creategma(addon, output_file):
 	allowed, illegal_files = addon.compress(output_file)
 	if not allowed:
 		print("Illegal files were found:")
-		for f in disallowed: print('\t' + f)
+		for f in illegal_files: print('\t' + f)
 		print("Please remove these files or add them to the ignore list of your addon.")
 
 def extract(gma_file, output_dir):
