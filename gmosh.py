@@ -85,6 +85,8 @@ def verify_files(dir, addon):
 		for f in disallowed: print('\t' + f)
 		print("Please remove these files or add them to the ignore list of your addon.")
 
+	return verified, disallowed
+
 def creategma(addon, output_file):
 	allowed, illegal_files = addon.compress(output_file)
 	if not allowed:
@@ -104,7 +106,8 @@ def publish(addon, logo, message):
 	publisher = GmPublish(addon)
 
 	# Verify files first
-	verify_files(addon.getpath(), addon)
+	allowed, _ = verify_files(addon.getpath(), addon)
+	if not allowed: return
 
 	# Update if workshop ID exists in addon.json
 	if addon.has_workshop_id():
