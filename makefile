@@ -12,5 +12,5 @@ uninstall:
 
 clean:
 	if [ -d bin ]; then rm -r bin; fi
-	if [ -f *.pyc ]; then rm *.pyc; fi
+	if ls *.pyc 2> /dev/null; then rm *.pyc; fi
 	if [ -d __pycache__ ]; then rm -r __pycache__; fi
