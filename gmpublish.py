@@ -2,6 +2,7 @@
 import sys
 import subprocess
 import re
+import os
 
 class GmPublish:
 	"""Wrapper for the GMPublish program"""
@@ -23,10 +24,12 @@ class GmPublish:
 		if match and match.group(1):
 			self.addon.set_workshopid(int(match.group(1)))
 			print("Publishing to workshop succeeded!")
-			print("Workshop ID set to ", match.group(1))
+			print("Workshop ID set to", match.group(1))
 		else:
 			print("Publishing to workshop failed!")
 			print(output)
+
+		os.remove(outfile)
 
 	def update(self, message=None):
 		"""Push an update of the addon to the workshop"""
