@@ -52,6 +52,8 @@ class GmPublish:
 
 		print(output.decode('utf-8'))
 
+		os.remove(outfile)
+
 	def _get_executable(self):
 		"""Retrieve the path of the gmpublish executable"""
 		platform = sys.platform
