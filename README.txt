@@ -45,7 +45,24 @@ How to use gmosh:
 	or
 	gmosh --new-addon addons/MyAddon
 
+Extra fields in addon.json
+	The addon.json file contains the necessary information to publish addons to the workshop.
+	In addition to the default fields, gmosh understands some more.
 
+	default_changelog, string: When you're too lazy to type a new changelog every time you update your addon,
+	the default changelog is the right thing for you.
+	"default_changelog": "All changes can be found on my website"
+
+	workshopid, int: The ID of the addon on the workshop. gmosh uses this ID to know where to upload the addon to.
+	If you do not enter this yourself, gmosh will ask it once and then store it in the addon.json file.
+	"workshopid": 123456789
+
+	The following fields are read and then put in the GMA, but I am unsure what they do.
+	They might cause problems when you fill them in.
+
+	steamid64, int
+	description, string
+	author, string
 
 Compiling prerequisites (all platforms):
 	Make sure python 3.3 is installed. 3.4 is untested.
