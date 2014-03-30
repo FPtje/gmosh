@@ -1,5 +1,9 @@
 #Installation:
-Please see HOW TO INSTALL.txt
+When you just want to install it, please download the binaries from sourceforge:
+https://sourceforge.net/projects/gmosh/
+
+When building from source, please see section Compiling.
+
 
 #How to use gmosh:
 gmosh is a command line interface (cli) program. This means that the program has no visual interface.
