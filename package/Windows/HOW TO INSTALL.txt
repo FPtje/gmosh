@@ -1,3 +1,7 @@
-Installation on Windows as of yet is unsupported.
+Right click install.bat and click "Run as administrator".
 
-Figure something out will ya.
+Not running it as administrator might prevent the gmosh executable from being added to the PATH variable.
+That will give you a "Command not found" when you enter "gmosh" in the command prompt.
+
+Uninstalling is done in much the same way:
+Right click uninstall.bat and click "Run as administrator".
