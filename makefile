@@ -4,6 +4,10 @@ linux:
 	if [ ! -d bin ]; then mkdir bin; fi
 	cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
 
+osx:
+	if [ ! -d bin ]; then mkdir bin; fi
+	/Library/Frameworks/Python.framework/Versions/3.3/bin/cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
+
 install:
 	cp bin/gmosh /usr/bin
 	cp required/gmpublish_linux /usr/bin
