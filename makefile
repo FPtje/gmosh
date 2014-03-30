@@ -2,14 +2,14 @@ MODULES=addoninfo,gmafile,gmpublish
 
 linux:
 	if [ ! -d bin ]; then mkdir bin; fi
-	cxfreeze gmosh.py --target-dir=bin --include-modules=$(MODULES)
+	cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
 
 install:
 	cp bin/gmosh /usr/bin
 	cp required/gmpublish_linux /usr/bin
 	cp required/libsteam_api.so /usr/lib/
 
-	echo "4000" > /usr/bin/steam_appid.txt # Has to be in same folder as gmpublish_linux
+	cp required/steam_appid.txt /usr/bin/steam_appid.txt # Has to be in same folder as gmpublish_linux
 	chmod +x /usr/bin/gmpublish_linux
 
 	@echo "Checking existence of libsteam.so"
@@ -17,6 +17,9 @@ install:
 
 uninstall:
 	if [ -f /usr/bin/gmosh ]; then rm /usr/bin/gmosh; fi
+	if [ -f /usr/bin/gmpublish_linux ]; then rm /usr/bin/gmpublish_linux; fi
+	if [ -f /usr/bin/steam_appid.txt ]; then rm /usr/bin/steam_appid.txt; fi
+	if [ -f /usr/lib/libsteam_api.so ]; then rm /usr/lib/libsteam_api.so; fi
 
 # Make a Linux distributable package
 package: linux
