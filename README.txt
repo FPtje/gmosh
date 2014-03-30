@@ -1,3 +1,52 @@
+Installation:
+	Please see HOW TO INSTALL.txt
+
+How to use gmosh:
+	gmosh is a command line interface (cli) program. This means that the program has no visual interface.
+	Rather, it is run from the command prompt/terminal. This might sound frightening, but it makes sense:
+	Typing is faster than pointing and clicking, this program was made so updates can be pushed to the workshop /super fast/.
+	Gmosh was loosely inspired by the git cli. Pushing an update to a git repository is as easy as entering "git push" in the terminal.
+	Likewise, publishing an update to the workshop is as easy as entering "gmosh" in the terminal.
+
+	Cli justification aside, you can do many things with gmosh. When you don't know how to do something,
+	you can run gmosh --help in the terminal. Here are some examples:
+
+	-- Publish an addon to the workshop
+	gmosh --logo test.jpg
+	or just
+	gmosh
+
+	Note: If the addon has been published to the workshop before, gmosh will ask for the workshop ID once (and only once!)
+	This workshop ID can be found in the URL of the workshop addon.
+
+	-- Extract a gma file:
+	gmosh -e SomeGMAFile.gma out/directory/
+	or
+	gmosh --extract SomeGMAFile.gma out/directory/
+
+	-- Create a gma file from an addon
+	gmosh -c addon_directory --out output.gma
+	or
+	gmosh --create-gma # creates out.gma based on the current directory
+
+	-- Check for "illegal" files in the current folder.
+	-- Illegal files are files that are not allowed to be in a gma file.
+	gmosh -v
+	or
+	gmosh --verify directory
+
+	-- List the contents of a gma file
+	gmosh -l SomeGMAFile.gma
+	or
+	gmosh --list SomeGMAFile.gma
+
+	-- Generate an addon.json file
+	gmosh --new
+	or
+	gmosh --new-addon addons/MyAddon
+
+
+
 Compiling prerequisites (all platforms):
 	Make sure python 3.3 is installed. 3.4 is untested.
 
@@ -7,9 +56,8 @@ Compiling prerequisites (all platforms):
 	Make sure the module construct is installed.
 		https://pypi.python.org/pypi/construct
 
-	cx_freeze for Python 3.3. cx_freeze for Python 3.4 appears not to work on Windows at least.
+	cx_freeze for Python 3.3. cx_freeze for Python 3.4 appears not to work on Windows.
 		Note: the cx_freeze package on the Ubuntu repositories is for Python 2.7. Compile the right version from source.
-
 
 Compiling on Linux:
 	cd to the root of the repository
@@ -22,14 +70,17 @@ Compiling on Windows:
 		Note: You might have to change the path of cxfreeze in the batch file. Currently it's C:\Python33\Scripts\cxfreeze.
 
 FAQ:
-	Any: error about "construct" missing when running executable
+	Compiling any: Errors about "No module named 'addoninfo'"
+		You're trying to compile the pre-built version. Please download the source.
+
+	Compiling any: error about "construct" missing when running executable
 		The modules six and/or construct were not installed properly at the time of compiling
 
-	Windows: Error about zip or something when running compiled executable
+	Compiling Windows: Error about zip or something when running compiled executable
 		This happened to me when I tried to compile with Python 3.4 and cx_freeze for 3.4. Roll back to Python 3.3 and cx_freeze for 3.4
 
-	Windows: Error during compiling: C:\Python33\Scripts\cxfreeze not found
+	Compiling Windows: Error during compiling: C:\Python33\Scripts\cxfreeze not found
 		Open the batch file and change the path of cxfreeze to the real path. For some strange reason cxfreeze wasn't added to $PATH for me.
 
-	Linux: All sorts of exceptions when running the compiled program
+	Compiling Linux: All sorts of exceptions when running the compiled program
 		You might have compiled with cx_freeze for Python 2.7, which is the default cx_freeze in some package repositories.

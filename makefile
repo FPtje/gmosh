@@ -36,6 +36,7 @@ package: linux
 	cp required/steam_appid.txt package/Linux/required/
 	cp required/libsteam_api.so package/Linux/required/
 	cp required/libsteam.so package/Linux/required/
+	cp README.txt package/Linux/
 
 	@echo "Packaging completed successfully"
 
