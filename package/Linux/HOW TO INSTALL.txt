@@ -1,0 +1,16 @@
+# How to install gmosh on Linux
+
+This is the "prebuilt" package for gmosh on Linux. That means that you don't have to compile anything yourself.
+All you have to do is install it.
+
+First make sure the program make is installed.
+	"sudo apt-get install make" on Debian based systems
+	"pacman -S make" on Arch based systems
+	"yum install make" on distros that have yum
+	or whatever package manager you use. Seriously though, it should already be on your system.
+
+
+Open a terminal in this folder (the folder with "makefile" in it) and run
+	sudo make install
+
+This installs the program to your system.

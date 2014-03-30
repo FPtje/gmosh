@@ -1,0 +1,3 @@
+Installation on OSX as of yet is unsupported.
+
+Figure something out will ya.
