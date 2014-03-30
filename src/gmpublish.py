@@ -59,7 +59,7 @@ class GmPublish:
 		platform = sys.platform
 		if platform == 'linux':
 			return 'gmpublish_linux'
-		elif platform == 'windows':
+		elif platform == 'windows' or platform == "win32":
 			return 'gmpublish.exe'
 		elif platform == 'darwin': #untested
 			return 'gmpublish_osx'
