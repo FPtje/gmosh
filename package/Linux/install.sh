@@ -1,0 +1,38 @@
+#!/usr/bin/env /bin/bash
+tty -s; if [ $? -ne 0 ]; then
+	[ "$UID" -eq 0 ] || exec gksu bash "$0" "$@"
+else
+	[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+fi
+
+echo "Install log:" > install.log
+
+cp bin/gmosh /usr/bin >> install.log 2>> install.log
+cp required/gmpublish_linux /usr/bin >> install.log 2>> install.log
+cp required/libsteam_api.so /usr/lib/ >> install.log 2>> install.log
+
+cp required/steam_appid.txt /usr/bin/steam_appid.txt >> install.log  2>> install.log # Has to be in same folder as gmpublish_linux
+chmod +x /usr/bin/gmpublish_linux >> install.log 2>> install.log
+
+echo "Checking existence of libsteam.so" >> install.log
+if [ ! -f ~/.steam/linux32/libsteam.so ]; then
+	echo "    libsteam does not exist" >> install.log
+	echo "    Attempting to copy libsteam to ~/.steam/linux32/" >> install.log
+	echo "    If this fails you should copy it yourself. Gmosh will not work otherwise" >> install.log
+	echo "    cp required/libsteam.so ~/.steam/linux32/" >> install.log
+	mkdir -p ~/.steam/linux32/ 2>> install.log
+	cp required/libsteam.so ~/.steam/linux32/ >> install.log 2>> install.log
+else
+	echo "    libsteam exists. " >> install.log
+fi
+
+echo "" >> install.log
+echo "Installation completed" >> install.log
+
+tty -s; if [ $? -ne 0 ]; then
+	xmessage -file install.log
+	rm install.log
+else
+	cat install.log
+	rm install.log
+fi
