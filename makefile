@@ -8,7 +8,7 @@ osx:
 	if [ ! -d bin ]; then mkdir bin; fi
 	/Library/Frameworks/Python.framework/Versions/3.3/bin/cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
 
-install:
+install_linux:
 	cp bin/gmosh /usr/bin
 	cp required/gmpublish_linux /usr/bin
 	cp required/libsteam_api.so /usr/lib/
@@ -33,7 +33,7 @@ install_osx:
 	@echo "Installation completed successfully"
 
 
-uninstall:
+uninstall_linux:
 	if [ -f /usr/bin/gmosh ]; then rm /usr/bin/gmosh; fi
 	if [ -f /usr/bin/gmpublish_linux ]; then rm /usr/bin/gmpublish_linux; fi
 	if [ -f /usr/bin/steam_appid.txt ]; then rm /usr/bin/steam_appid.txt; fi
@@ -44,7 +44,6 @@ package: linux
 	if [ ! -d package ]; then mkdir package; fi
 	if [ ! -d package/Linux ]; then mkdir package/Linux; fi
 	if [ ! -d package/Linux/bin ]; then mkdir package/Linux/bin; fi
-	cp makefile package/Linux/
 	cp bin/gmosh package/Linux/bin/
 
 
