@@ -1,4 +1,6 @@
 @ECHO OFF
+@setlocal enableextensions
+@cd /d "%~dp0"
 
 :: Remove gmosh' directory in program files
 rmdir "%ProgramFiles%\gmosh" /Q /S
