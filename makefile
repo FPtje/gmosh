@@ -42,7 +42,7 @@ uninstall_linux:
 	if [ -L /usr/bin/gmosh ]; then rm /usr/bin/gmosh; fi
 	if [ -d /opt/gmosh ]; then rm -r /opt/gmosh; fi
 
-uninstall_osx: uninstall
+uninstall_osx: uninstall_linux
 
 # Make a Linux distributable package
 package_linux: linux
