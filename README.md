@@ -1,6 +1,6 @@
 #Installation:
-When you just want to install it, please download the binaries from sourceforge:
-https://sourceforge.net/projects/gmosh/
+When you just want to install it, please download the binaries from here:
+https://github.com/FPtje/gmosh/releases
 
 When building from source, please see section Compiling.
 
@@ -121,6 +121,11 @@ cx_freeze for Python 3.3. cx_freeze for Python 3.4 appears not to work on Window
 cd to the root of the repository
 enter "make" in the terminal
 enter "sudo make install" in the terminal to install it on your system
+
+### Compiling on OS X:
+cd to the root of the repository
+enter "make osx" in the terminal
+enter "sudo make install_osx" in the terminal to install it on your system
 
 ### Compiling on Windows:
 Open the command prompt in the root of the repository

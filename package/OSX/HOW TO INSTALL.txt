@@ -1,3 +1,22 @@
-Installation on OSX as of yet is unsupported.
+# How to install gmosh on OS X
 
-Figure something out will ya.
+This is the "prebuilt" package for gmosh on OS X. That means that you don't have to compile anything yourself.
+All you have to do is install it.
+
+First make sure the program "make" is installed.
+Open Terminal (/Applications/Utilities) and type "whereis make". If nothing is outputted then you need to install make.
+Installation of make depends on what version of OS X you have:
+	OS X 10.9 and later:
+		Run "xcode-select --install" in the Terminal and follow the prompts
+		Despite the name, this does not require Xcode and does not install Xcode in the process (unless you pick "Get Xcode")
+	OS X 10.8 and earlier:
+		You have a few options:
+			Check https://github.com/kennethreitz/osx-gcc-installer,
+			Install the "Command Line Tools" from https://developer.apple.com/downloads/ - Apple account required,
+			Or install Xcode from the App Store (it's a large download) and go to Preferences > Downloads and install the "Command Line Tools".
+There are other options for both but these are the easiest.
+
+Now open a terminal in this folder (the folder with "makefile" in it) and run
+	sudo make install_osx
+
+This installs the program to your system.
