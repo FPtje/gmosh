@@ -40,6 +40,10 @@ uninstall:
 	if [ -f /usr/bin/steam_appid.txt ]; then rm /usr/bin/steam_appid.txt; fi
 	if [ -f /usr/lib/libsteam_api.so ]; then rm /usr/lib/libsteam_api.so; fi
 
+uninstall_osx:
+	if [ -L /usr/bin/gmosh ]; then rm /usr/bin/gmosh; fi
+	if [ -d /usr/lib/gmosh ]; then rm -r /usr/lib/gmosh; fi
+
 # Make a Linux distributable package
 package: linux
 	if [ ! -d package ]; then mkdir package; fi
