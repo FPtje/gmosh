@@ -10,37 +10,37 @@ osx:
 
 
 install:
-	if [ ! -d /usr/lib/gmosh ]; then mkdir /usr/lib/gmosh; fi
-	cp bin/* /usr/lib/gmosh
-	cp required/gmpublish_linux /usr/lib/gmosh
-	cp required/libsteam_api.so /usr/lib/gmosh
+	if [ ! -d /opt/gmosh ]; then mkdir /opt/gmosh; fi
+	cp bin/* /opt/gmosh
+	cp required/gmpublish_linux /opt/gmosh
+	cp required/libsteam_api.so /opt/gmosh
 
-	ln -sf /usr/lib/gmosh/gmosh /usr/bin/gmosh
+	ln -sf /opt/gmosh/gmosh /usr/bin/gmosh
 
-	cp required/steam_appid.txt /usr/lib/gmosh/steam_appid.txt # Has to be in same folder as gmpublish_linux
-	chmod +x /usr/lib/gmosh/gmpublish_linux
+	cp required/steam_appid.txt /opt/gmosh/steam_appid.txt # Has to be in same folder as gmpublish_linux
+	chmod +x /opt/gmosh/gmpublish_linux
 
 	@echo "Checking existence of libsteam.so"
 	if [ ! -f ~/.steam/linux32/libsteam.so ]; then mkdir -p ~/.steam/linux32/ && cp required/libsteam.so ~/.steam/linux32/; fi
 	@echo "Installation completed successfully"
 
 install_osx:
-	if [ ! -d /usr/lib/gmosh ]; then mkdir /usr/lib/gmosh; fi
-	cp bin/* /usr/lib/gmosh
-	cp required/gmpublish_osx /usr/lib/gmosh
-	cp required/libsteam_api.dylib /usr/lib/gmosh
+	if [ ! -d /opt/gmosh ]; then mkdir /opt/gmosh; fi
+	cp bin/* /opt/gmosh
+	cp required/gmpublish_osx /opt/gmosh
+	cp required/libsteam_api.dylib /opt/gmosh
 
-	ln -sf /usr/lib/gmosh/gmosh /usr/bin/gmosh
+	ln -sf /opt/gmosh/gmosh /usr/bin/gmosh
 
-	cp required/steam_appid.txt /usr/lib/gmosh/steam_appid.txt # Has to be in same folder as gmpublish_osx
-	chmod +x /usr/lib/gmosh/gmpublish_osx
+	cp required/steam_appid.txt /opt/gmosh/steam_appid.txt # Has to be in same folder as gmpublish_osx
+	chmod +x /opt/gmosh/gmpublish_osx
 
 	@echo "Installation completed successfully"
 
 
 uninstall:
 	if [ -L /usr/bin/gmosh ]; then rm /usr/bin/gmosh; fi
-	if [ -d /usr/lib/gmosh ]; then rm -r /usr/lib/gmosh; fi
+	if [ -d /opt/gmosh ]; then rm -r /opt/gmosh; fi
 uninstall_osx: uninstall
 
 
