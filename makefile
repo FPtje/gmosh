@@ -42,7 +42,7 @@ uninstall_linux:
 	if [ -L /usr/bin/gmosh ]; then rm /usr/bin/gmosh; fi
 	if [ -d /opt/gmosh ]; then rm -r /opt/gmosh; fi
 
-uninstall_osx: uninstall
+uninstall_osx: uninstall_linux
 
 # Make a Linux distributable package
 package_linux: linux
@@ -66,7 +66,7 @@ package_osx: osx
 	if [ ! -d package ]; then mkdir package; fi
 	if [ ! -d package/OSX ]; then mkdir package/OSX; fi
 	if [ ! -d package/OSX/bin ]; then mkdir package/OSX/bin; fi
-	cp makefile package/OSX/
+
 	cp bin/* package/OSX/bin/
 
 	if [ ! -d package/OSX/required ]; then mkdir package/OSX/required; fi

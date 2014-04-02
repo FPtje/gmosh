@@ -7,12 +7,16 @@ fi
 
 echo "Install log:" > install.log
 
-cp bin/gmosh /usr/bin >> install.log 2>> install.log
-cp required/gmpublish_linux /usr/bin >> install.log 2>> install.log
-cp required/libsteam_api.so /usr/lib/ >> install.log 2>> install.log
+if [ ! -d /opt/gmosh ]; then mkdir /opt/gmosh >> install.log 2>> install.log; fi
+cp bin/* /opt/gmosh >> install.log 2>> install.log
+cp required/gmpublish_linux /opt/gmosh >> install.log 2>> install.log
+cp required/libsteam_api.so /opt/gmosh >> install.log 2>> install.log
 
-cp required/steam_appid.txt /usr/bin/steam_appid.txt >> install.log  2>> install.log # Has to be in same folder as gmpublish_linux
-chmod +x /usr/bin/gmpublish_linux >> install.log 2>> install.log
+ln -sf /opt/gmosh/gmosh /usr/bin/gmosh >> install.log 2>> install.log
+
+cp required/steam_appid.txt /opt/gmosh/steam_appid.txt >> install.log  2>> install.log # Has to be in same folder as gmpublish_linux
+chmod +x /opt/gmosh/gmpublish_linux >> install.log 2>> install.log
+chmod +x /opt/gmosh/gmosh >> install.log 2>> install.log
 
 echo "Checking existence of libsteam.so" >> install.log
 if [ ! -f ~/.steam/linux32/libsteam.so ]; then

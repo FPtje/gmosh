@@ -79,7 +79,7 @@ Compiling prerequisites (all platforms):
 Compiling on Linux:
 	cd to the root of the repository
 	enter "make" in the terminal
-	enter "sudo make install" in the terminal to install it on your system
+	enter "sudo make install_linux" in the terminal to install it on your system
 
 Compiling on OS X:
 	cd to the root of the repository

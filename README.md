@@ -1,5 +1,5 @@
 #Installation:
-When you just want to install it, please download the binaries from here:
+When you just want to install it, please download the binaries from here:  
 https://github.com/FPtje/gmosh/releases
 
 When building from source, please see section Compiling.
@@ -118,7 +118,7 @@ Note: the cx_freeze package on the Ubuntu repositories is for Python 2.7. Compil
 ### Compiling on Linux:
 cd to the root of the repository  
 enter "make" in the terminal  
-enter "sudo make install" in the terminal to install it on your system
+enter "sudo make install_linux" in the terminal to install it on your system
 
 ### Compiling on OS X:
 cd to the root of the repository  
