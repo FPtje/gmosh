@@ -1,5 +1,6 @@
 #!/usr/bin/env /bin/bash
 [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+cd `dirname $0`
 
 echo "Install log:" > install.log
 
