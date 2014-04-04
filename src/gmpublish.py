@@ -11,7 +11,7 @@ class GmPublish:
 		self.addon = addon
 
 	def create(self, logo):
-		"""Upload to the workshop as a new addon.
+		"""Upload to the workshop as a new addon. Returns (succeeded, strResult)
 		precondition: Assumes that the files of the addon have been verified.
 		"""
 		outfile = 'temp.gma'
@@ -22,6 +22,8 @@ class GmPublish:
 			'-addon', outfile,
 			'-icon', logo
 		])
+		# Remove the temporary file
+		os.remove(outfile)
 
 		output = output.decode('utf-8')
 		match = re.search('UID: ([0-9]+)', output)
@@ -29,13 +31,11 @@ class GmPublish:
 		# Try to find the addon ID
 		if match and match.group(1):
 			self.addon.set_workshopid(int(match.group(1)))
-			print("Publishing to workshop succeeded!")
-			print("Workshop ID set to", match.group(1))
-		else:
-			print("Publishing to workshop failed!")
-			print(output)
+			return True, match.group(1)
 
-		os.remove(outfile)
+		# Assumption: something must have gone wrong when no addon ID could be found
+		return False, output
+
 
 	def update(self, message=None):
 		"""Push an update of the addon to the workshop"""

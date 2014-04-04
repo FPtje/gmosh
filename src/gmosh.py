@@ -222,7 +222,13 @@ def publish(addon, logo, message):
 
 		logo = input("What is the path of the logo file?\n")
 
-	publisher.create(logo)
+	succeeded, result = publisher.create(logo)
+	if succeeded:
+		print("Publishing to workshop succeeded!")
+		print("Workshop ID set to", result)
+	else:
+		print("Publishing to workshop failed!")
+		print(result)
 
 if __name__ == '__main__':
 	try:
