@@ -4,6 +4,7 @@ import os
 import addoninfo
 import gmafile
 from gmpublish import GmPublish
+from glob import glob
 
 # Define command line parameters
 parser = argparse.ArgumentParser(description = "Garry's mod workshop cli wrapper.")
@@ -28,7 +29,7 @@ def main():
 
 	if args.extract:
 		# Extract a GMA file
-		extract(args.extract[0], out)
+		extract(glob(args.extract[0]), out)
 		return
 	elif args.dump:
 		# Dump the contents of a GMA file
@@ -198,8 +199,14 @@ def creategma(addon, output_file):
 		for f in illegal_files: print('\t' + f)
 		print("Please remove these files or add them to the ignore list of your addon.")
 
-def extract(gma_file, output_dir):
-	gmafile.extract(gma_file, output_dir)
+def extract(gma_files, output_dir):
+	out = output_dir
+	for f in gma_files:
+		if len(gma_files) > 1:
+			file_name, extension = os.path.splitext(f)
+			out = os.path.join(output_dir, file_name)
+
+		gmafile.extract(f, out)
 
 def list_files(gma_file):
 	lst = gmafile.getfiles(gma_file)
