@@ -11,6 +11,8 @@ if [ ! -d /opt/gmosh ]; then mkdir /opt/gmosh >> install.log 2>> install.log; fi
 cp bin/* /opt/gmosh >> install.log 2>> install.log
 cp required/gmpublish_linux /opt/gmosh >> install.log 2>> install.log
 cp required/libsteam_api.so /opt/gmosh >> install.log 2>> install.log
+ln -sf /opt/gmosh/libsteam_api.so /usr/lib/libsteam_api.so >> install.log 2>> install.log
+ln -sf /opt/gmosh/gmpublish_linux /usr/bin/gmpublish_linux >> install.log 2>> install.log
 
 ln -sf /opt/gmosh/gmosh /usr/bin/gmosh >> install.log 2>> install.log
 

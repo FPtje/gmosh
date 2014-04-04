@@ -8,6 +8,8 @@ cp bin/* /opt/gmosh >> install.log 2>> install.log
 cp required/gmpublish_osx /opt/gmosh >> install.log 2>> install.log
 cp required/libsteam_api.dylib /opt/gmosh >> install.log 2>> install.log
 
+ln -sf /opt/gmosh/libsteam_api.dylib /usr/lib/libsteam_api.dylib >> install.log 2>> install.log
+ln -sf /opt/gmosh/gmpublish_osx /usr/bin/gmpublish_osx >> install.log 2>> install.log
 ln -sf /opt/gmosh/gmosh /usr/bin/gmosh >> install.log 2>> install.log
 
 cp required/steam_appid.txt /opt/gmosh/steam_appid.txt >> install.log  2>> install.log # Has to be in same folder as gmpublish_linux
