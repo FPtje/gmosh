@@ -3,7 +3,7 @@
 
 echo "Install log:" > install.log
 
-if [ ! -d /opt/gmosh ]; then mkdir /opt/gmosh >> install.log 2>> install.log; fi
+if [ ! -d /opt/gmosh ]; then mkdir -p /opt/gmosh >> install.log 2>> install.log; fi
 cp bin/* /opt/gmosh >> install.log 2>> install.log
 cp required/gmpublish_osx /opt/gmosh >> install.log 2>> install.log
 cp required/libsteam_api.dylib /opt/gmosh >> install.log 2>> install.log

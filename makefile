@@ -9,7 +9,7 @@ osx:
 	/Library/Frameworks/Python.framework/Versions/3.3/bin/cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
 
 install_linux:
-	if [ ! -d /opt/gmosh ]; then mkdir /opt/gmosh; fi
+	if [ ! -d /opt/gmosh ]; then mkdir -p /opt/gmosh; fi
 	cp bin/* /opt/gmosh
 	cp required/gmpublish_linux /opt/gmosh
 	cp required/libsteam_api.so /opt/gmosh
@@ -27,7 +27,7 @@ install_linux:
 	@echo "Installation completed successfully"
 
 install_osx:
-	if [ ! -d /opt/gmosh ]; then mkdir /opt/gmosh; fi
+	if [ ! -d /opt/gmosh ]; then mkdir -p /opt/gmosh; fi
 	cp bin/* /opt/gmosh
 	cp required/gmpublish_osx /opt/gmosh
 	cp required/libsteam_api.dylib /opt/gmosh
