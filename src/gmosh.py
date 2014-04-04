@@ -33,7 +33,7 @@ def main():
 		return
 	elif args.dump:
 		# Dump the contents of a GMA file
-		dump_gma(out)
+		dump_gma(glob(out))
 		return
 	elif args.list:
 		# List the files contained in a GMA file
@@ -182,15 +182,16 @@ def new_addon(path):
 	print("Don't worry if you've made a mistake. You can either run this wizard again or edit the addon.json file with an editor.")
 	print("Addon.json saved successfully")
 
-def dump_gma(input_file):
-	if not os.path.isfile(input_file):
-		print("\"%s\" is not a GMA file!" % input_file)
-		return
+def dump_gma(input_files):
+	for f in input_files:
+		if not os.path.isfile(f):
+			print("\"%s\" is not a GMA file!" % f)
+			continue
 
-	try:
-		print(gmafile.dump(input_file))
-	except:
-		print("Unable to parse \"%s\"" % input_file)
+		try:
+			print(gmafile.dump(f))
+		except:
+			print("Unable to parse \"%s\"" % f)
 
 def creategma(addon, output_file):
 	allowed, illegal_files = addon.compress(output_file)
