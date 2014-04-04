@@ -164,21 +164,17 @@ addon version         = {addon_version}
 Files: {files}
 """
 
-filemetaStr = """
-    name    = {name}
-    size    = {size}
-    crc     = {crc}
-"""
+filemetaStr = "{name} ({size}, crc: {crc})"
 
 def sizeof_fmt(num):
     n = num
-    if num < 1024: return "%s bytes" % num
+    if num < 1024: return "%.0f bytes" % num
 
     for x in ['bytes','KB','MB','GB']:
         if num < 1024.0:
-            return "%s %s (%s bytes)" % (num, x, n)
+            return "%.0f %s, %s bytes" % (num, x, n)
         num /= 1024.0
-    return "%s %s (%s bytes)" % (num, 'TB', n)
+    return "%.0f %s, %s bytes" % (num, 'TB', n)
 
 def dump(file_path):
     with open(file_path, 'rb') as file:
@@ -205,5 +201,5 @@ def dump(file_path):
             addon_description   = gma.addon_description.decode('utf-8'),
             addon_author        = gma.addon_author.decode('utf-8'),
             addon_version       = gma.addon_version,
-            files               = "".join(files)
+            files               = "\n".join(files)
             )
