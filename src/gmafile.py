@@ -2,6 +2,7 @@
 """The structure of a GMA file, parsing and building"""
 
 import os
+from datetime import datetime
 from construct import *
 from time import time
 from binascii import crc32
@@ -61,7 +62,6 @@ GMAContents = Struct('GMAContents',
     # For each file get the metadata
     RepeatUntil(lambda obj, ctx: obj['file_number'] == 0, GMAFile),
     OnDemand(FileContents(Field('all_file_contents', file_content_size))),
-
 )
 
 GMAVerifiedContents = Struct('GMAVerifiedContents',
@@ -151,3 +151,59 @@ def getfiles(file_path):
         res.append(gma.all_file_meta[i].file_name.decode('utf-8'))
 
     return res
+
+gmaStr = """format version        = {format_version!r}
+Steam ID              = {steamid}
+Time created          = {timestamp}
+required content      = "{required_content}"
+addon name            = "{addon_name}"
+addon description     = "{addon_description}"
+addon author          = "{addon_author}"
+addon version         = {addon_version}
+
+Files: {files}
+"""
+
+filemetaStr = """
+    name    = {name}
+    size    = {size}
+    crc     = {crc}
+"""
+
+def sizeof_fmt(num):
+    n = num
+    if num < 1024: return "%3.0f bytes" % num
+
+    for x in ['bytes','KB','MB','GB']:
+        if num < 1024.0:
+            return "%3.0f %s (%s bytes)" % (num, x, n)
+        num /= 1024.0
+    return "%3.0f %s (%s bytes)" % (num, 'TB', n)
+
+def dump(file_path):
+    with open(file_path, 'rb') as file:
+        contents = file.read()
+        gma = GMAVerifiedContents.parse(contents)
+
+        files = []
+
+        for filemeta in gma.all_file_meta:
+            if filemeta.file_number == 0: break
+
+            files.append(filemetaStr.format(
+                name = filemeta.file_name,
+                size = sizeof_fmt(filemeta.file_size),
+                crc  = filemeta.file_crc
+            ))
+
+        return gmaStr.format(
+            format_version      = gma.format_version,
+            steamid             = gma.steamid,
+            timestamp           = datetime.fromtimestamp(int(gma.timestamp)).strftime('%Y-%m-%d %H:%M:%S'),
+            required_content    = gma.required_content,
+            addon_name          = gma.addon_name,
+            addon_description   = gma.addon_description,
+            addon_author        = gma.addon_author,
+            addon_version       = gma.addon_version,
+            files               = "".join(files)
+            )
