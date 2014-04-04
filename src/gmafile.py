@@ -124,8 +124,7 @@ def write(addon, destination_path='.'):
 
 def extract(file_path, destination_path):
     with open(file_path, 'rb') as file:
-        contents = file.read()
-        gma = GMAVerifiedContents.parse(contents)
+        gma = GMAVerifiedContents.parse_stream(file)
 
         for i in range(0, len(gma.all_file_meta) - 1):
             meta = gma.all_file_meta[i]
@@ -143,8 +142,7 @@ def extract(file_path, destination_path):
 def getfiles(file_path):
     """Get the list of files that exist in the GMA file"""
     with open(file_path, 'rb') as file:
-        contents = file.read()
-        gma = GMAVerifiedContents.parse(contents)
+        gma = GMAVerifiedContents.parse_stream(file)
 
     res = []
     for i in range(0, len(gma.all_file_meta) - 1):
@@ -177,9 +175,8 @@ def sizeof_fmt(num):
     return "%.0f %s, %s bytes" % (num, 'TB', n)
 
 def dump(file_path):
-    with open(file_path, 'rb') as file:
-        contents = file.read()
-        gma = GMAVerifiedContents.parse(contents)
+    with open(file_path, 'rb', 0) as file:
+        gma = GMAVerifiedContents.parse_stream(file)
 
         files = []
 
