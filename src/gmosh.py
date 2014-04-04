@@ -14,6 +14,7 @@ parser.add_argument('-p', '--publish', action='store_true', help='Publish the ad
 parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder and exit.')
 parser.add_argument('--new', '--new-addon', action='store_true', help='Create a new addon.json at the current location. This is required before an addon can be uploaded to the workshop.')
 parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
+parser.add_argument('--dump', '--dump-gma', action='store_true', help='Dump a textual representation of a gma file to console.')
 parser.add_argument('-x', '-e', '--extract', nargs=1, help='Extract a GMA file and exit.', metavar='file')
 parser.add_argument('-l', '--list', nargs=1, help='List the files contained in a GMA file.', metavar='file')
 parser.add_argument('-m', '--message', nargs=1, help='Update message when updating the addon.', metavar='msg')
@@ -25,14 +26,20 @@ def main():
 	# directory to output things to
 	out = args.out and args.out or curdir
 
-	# Extract a GMA file
 	if args.extract:
+		# Extract a GMA file
 		extract(args.extract[0], out)
 		return
+	elif args.dump:
+		# Dump the contents of a GMA file
+		dump_gma(out)
+		return
 	elif args.list:
+		# List the files contained in a GMA file
 		list_files(args.list[0])
 		return
 	elif args.new:
+		# Wizard for creating an addon.json file
 		new_addon(curdir)
 		return
 
@@ -173,6 +180,16 @@ def new_addon(path):
 	print(data)
 	print("Don't worry if you've made a mistake. You can either run this wizard again or edit the addon.json file with an editor.")
 	print("Addon.json saved successfully")
+
+def dump_gma(input_file):
+	if not os.path.isfile(input_file):
+		print("\"%s\" is not a GMA file!" % input_file)
+		return
+
+	try:
+		print(gmafile.dump(input_file))
+	except:
+		print("Unable to parse \"%s\"" % input_file)
 
 def creategma(addon, output_file):
 	allowed, illegal_files = addon.compress(output_file)

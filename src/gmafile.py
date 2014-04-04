@@ -172,13 +172,13 @@ filemetaStr = """
 
 def sizeof_fmt(num):
     n = num
-    if num < 1024: return "%3.0f bytes" % num
+    if num < 1024: return "%s bytes" % num
 
     for x in ['bytes','KB','MB','GB']:
         if num < 1024.0:
-            return "%3.0f %s (%s bytes)" % (num, x, n)
+            return "%s %s (%s bytes)" % (num, x, n)
         num /= 1024.0
-    return "%3.0f %s (%s bytes)" % (num, 'TB', n)
+    return "%s %s (%s bytes)" % (num, 'TB', n)
 
 def dump(file_path):
     with open(file_path, 'rb') as file:
@@ -191,19 +191,19 @@ def dump(file_path):
             if filemeta.file_number == 0: break
 
             files.append(filemetaStr.format(
-                name = filemeta.file_name,
+                name = filemeta.file_name.decode('utf-8'),
                 size = sizeof_fmt(filemeta.file_size),
                 crc  = filemeta.file_crc
             ))
 
         return gmaStr.format(
-            format_version      = gma.format_version,
+            format_version      = gma.format_version.decode('utf-8'),
             steamid             = gma.steamid,
             timestamp           = datetime.fromtimestamp(int(gma.timestamp)).strftime('%Y-%m-%d %H:%M:%S'),
-            required_content    = gma.required_content,
-            addon_name          = gma.addon_name,
-            addon_description   = gma.addon_description,
-            addon_author        = gma.addon_author,
+            required_content    = gma.required_content.decode('utf-8'),
+            addon_name          = gma.addon_name.decode('utf-8'),
+            addon_description   = gma.addon_description.decode('utf-8'),
+            addon_author        = gma.addon_author.decode('utf-8'),
             addon_version       = gma.addon_version,
             files               = "".join(files)
             )
