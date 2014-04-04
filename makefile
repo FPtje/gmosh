@@ -15,6 +15,8 @@ install_linux:
 	cp required/libsteam_api.so /opt/gmosh
 
 	ln -sf /opt/gmosh/gmosh /usr/bin/gmosh
+	ln -sf /opt/gmosh/libsteam_api.so /usr/lib/libsteam_api.so
+	ln -sf /opt/gmosh/gmpublish_linux /usr/bin/gmpublish_linux
 
 	cp required/steam_appid.txt /opt/gmosh/steam_appid.txt # Has to be in same folder as gmpublish_linux
 	chmod +x /opt/gmosh/gmpublish_linux
@@ -30,6 +32,9 @@ install_osx:
 	cp required/gmpublish_osx /opt/gmosh
 	cp required/libsteam_api.dylib /opt/gmosh
 
+	ln -sf /opt/gmosh/libsteam_api.dylib /usr/lib/libsteam_api.dylib
+	ln -sf /opt/gmosh/gmpublish_osx /usr/bin/gmpublish_osx
+
 	ln -sf /opt/gmosh/gmosh /usr/bin/gmosh
 
 	cp required/steam_appid.txt /opt/gmosh/steam_appid.txt # Has to be in same folder as gmpublish_osx
@@ -41,6 +46,10 @@ install_osx:
 uninstall_linux:
 	if [ -L /usr/bin/gmosh ]; then rm /usr/bin/gmosh; fi
 	if [ -d /opt/gmosh ]; then rm -r /opt/gmosh; fi
+	if [ -L /usr/lib/libsteam_api.so ]; then rm /usr/lib/libsteam_api.so; fi
+	if [ -L /usr/lib/libsteam_api.dylib ]; then rm /usr/lib/libsteam_api.dylib; fi
+	if [ -L /usr/bin/gmpublish_linux ]; then rm /usr/bin/gmpublish_linux; fi
+	if [ -L /usr/bin/gmpublish_osx ]; then rm /usr/bin/gmpublish_osx; fi
 
 uninstall_osx: uninstall_linux
 
