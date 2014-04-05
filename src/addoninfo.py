@@ -4,6 +4,7 @@ import os.path
 import os
 import json
 import gmafile
+import re
 from functools import partial
 from fnmatch import fnmatch
 
@@ -86,6 +87,8 @@ class GModAddon:
             rel = os.path.relpath(dir, self.path)
             file_list += list(map(partial(os.path.join, rel), files))
 
+        # Remove './' at the start of some paths
+        file_list = list(map(partial(re.sub, r'^\./', ''), file_list))
         return list(filter(partial(self._file_nomatch, ignore), file_list))
 
     def getpath(self):
