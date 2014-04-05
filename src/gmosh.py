@@ -5,19 +5,20 @@ import addoninfo
 import gmafile
 from gmpublish import GmPublish
 from glob import glob
+from itertools import chain
 
 # Define command line parameters
 parser = argparse.ArgumentParser(description = "Garry's mod workshop cli wrapper.")
 parser.add_argument('--logo', '--icon', nargs=1, help='Path of the logo image.', metavar='path')
 parser.add_argument('-d', '--dir', '--path', nargs=1, help='Path where the addon is located.', metavar='path')
-parser.add_argument('out', metavar='path', type=str, nargs='?', help='The output file or directory (used when creating or extracting gma files).')
+parser.add_argument('out', metavar='path', type=str, nargs='*', help='The output file or directory (used when creating or extracting gma files).')
 parser.add_argument('-p', '--publish', action='store_true', help='Publish the addon to the workshop.')
 parser.add_argument('-v', '--verify', action='store_true', help='Verify the contents of the current folder and exit.')
 parser.add_argument('--new', '--new-addon', action='store_true', help='Create a new addon.json at the current location. This is required before an addon can be uploaded to the workshop.')
 parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
 parser.add_argument('--dump', '--dump-gma', action='store_true', help='Dump a textual representation of a gma file to console.')
-parser.add_argument('-x', '-e', '--extract', nargs=1, help='Extract a GMA file and exit.', metavar='file')
-parser.add_argument('-l', '--list', nargs=1, help='List the files contained in a GMA file.', metavar='file')
+parser.add_argument('-x', '-e', '--extract', action='store_true', help='Extract a GMA file and exit.')
+parser.add_argument('-l', '--list', action='store_true', help='List the files contained in a GMA file.')
 parser.add_argument('-m', '--message', nargs=1, help='Update message when updating the addon.', metavar='msg')
 
 def main():
@@ -25,19 +26,22 @@ def main():
 	# working directory
 	curdir = args.dir and args.dir[0] or os.getcwd()
 	# directory to output things to
-	out = args.out and args.out or curdir
+	out = args.out and args.out or [curdir]
+	file_list = list(filter(os.path.isfile, chain.from_iterable(map(glob, out))))
+	# include folders that do not exist yet:
+	folder_list = list(filter(lambda x: not os.path.isfile(x), out))
 
 	if args.extract:
 		# Extract a GMA file
-		extract(glob(args.extract[0]), out)
+		extract(file_list, folder_list or ['out'])
 		return
 	elif args.dump:
-		# Dump the contents of a GMA file
-		dump_gma(glob(out))
+		# Dump the contents of GMA files
+		dump_gma(file_list)
 		return
 	elif args.list:
-		# List the files contained in a GMA file
-		list_files(args.list[0])
+		# List the files contained in a GMA file(s)
+		list_files(file_list)
 		return
 	elif args.new:
 		# Wizard for creating an addon.json file
@@ -193,26 +197,24 @@ def dump_gma(input_files):
 		except:
 			print("Unable to parse \"%s\"" % f)
 
-def creategma(addon, output_file):
+def creategma(addon, files):
+	output_file = files[0]
 	allowed, illegal_files = addon.compress(output_file)
 	if not allowed:
 		print("Illegal files were found:")
 		for f in illegal_files: print('\t' + f)
 		print("Please remove these files or add them to the ignore list of your addon.")
 
-def extract(gma_files, output_dir):
-	out = output_dir
-	for f in gma_files:
-		if len(gma_files) > 1:
-			file_name, extension = os.path.splitext(f)
-			out = os.path.join(output_dir, file_name)
+def extract(gma_files, directories):
+	for file in gma_files:
+		for output_dir in directories:
+			gmafile.extract(file, output_dir)
 
-		gmafile.extract(f, out)
-
-def list_files(gma_file):
-	lst = gmafile.getfiles(gma_file)
-	for f in lst:
-		print(f)
+def list_files(files):
+	for gma_file in files:
+		lst = gmafile.getfiles(gma_file)
+		for f in lst:
+			print(f)
 
 def publish(addon, logo, message):
 	publisher = GmPublish(addon)
