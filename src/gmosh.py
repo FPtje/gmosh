@@ -259,6 +259,9 @@ def publish(addon, logo, message):
 
 if __name__ == '__main__':
 	try:
+		# Prevent "pipe closed" exceptions
+		from signal import signal, SIGPIPE, SIG_DFL
+		signal(SIGPIPE, SIG_DFL)
 		main()
 	except KeyboardInterrupt:
 		# keyboard interrupts are allowed, print a newline
