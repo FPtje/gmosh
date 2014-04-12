@@ -67,6 +67,7 @@ GMAContents = Struct('GMAContents',
 GMAVerifiedContents = Struct('GMAVerifiedContents',
     Embed(GMAContents),
     Optional(ULInt32('addon_crc')),
+    Optional(ULInt8("MagicValue")),
     Terminator
 )
 
@@ -150,7 +151,9 @@ def getfiles(file_path):
 
     return res
 
-gmaStr = """format version        = {format_version!r}
+gmaStr = """crc                   = {crc}
+Magic value           = {magic}
+format version        = {format_version!r}
 Steam ID              = {steamid}
 Time created          = {timestamp}
 required content      = "{required_content}"
@@ -190,6 +193,8 @@ def dump(file_path):
             ))
 
         return gmaStr.format(
+            crc                 = gma.addon_crc,
+            magic               = gma.MagicValue,
             format_version      = gma.format_version.decode('utf-8'),
             steamid             = gma.steamid,
             timestamp           = datetime.fromtimestamp(int(gma.timestamp)).strftime('%Y-%m-%d %H:%M:%S'),
