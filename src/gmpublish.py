@@ -18,10 +18,15 @@ class GmPublish:
 		self.addon.compress(outfile)
 
 		# Call gmpublish to create the addon
-		output = subprocess.check_output([self._get_executable(), 'create',
-			'-addon', outfile,
-			'-icon', logo
-		])
+		try:
+			output = subprocess.check_output([self._get_executable(), 'create',
+						'-addon', outfile,
+						'-icon', logo
+					])
+		except subprocess.CalledProcessError as e:
+			os.remove(outfile)
+			return False, e.output.decode('utf-8')
+
 		# Remove the temporary file
 		os.remove(outfile)
 
