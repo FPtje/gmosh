@@ -89,6 +89,6 @@ package_osx: osx
 
 
 clean:
-	if [ -d bin ]; then rm -r bin; fi
-	if ls *.pyc 2> /dev/null; then rm *.pyc; fi
-	if [ -d __pycache__ ]; then rm -r __pycache__; fi
+	if [ -d bin ]; then rm -rf bin; fi
+	if ls *.pyc 2> /dev/null; then rm -f *.pyc; fi
+	if [ -d __pycache__ ]; then rm -rf __pycache__; fi
