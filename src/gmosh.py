@@ -21,9 +21,9 @@ parser.add_argument('--dump', '--dump-gma', action='store_true', help='Dump a te
 parser.add_argument('-x', '-e', '--extract', action='store_true', help='Extract a GMA file and exit.')
 parser.add_argument('-l', '--list', action='store_true', help='List the files contained in a GMA file.')
 parser.add_argument('-m', '--message', nargs=1, help='Update message when updating the addon.', metavar='msg')
+parser.add_argument('-i', '--interactive', action='store_true', help='Run GMosh interactively')
 
-def main():
-	args = parser.parse_args()
+def main(args):
 	# working directory
 	curdir = args.dir and args.dir[0] or os.getcwd()
 	# directory to output things to
@@ -260,12 +260,15 @@ def publish(addon, logo, message):
 
 if __name__ == '__main__':
 	try:
+		args = parser.parse_args()
 		# Prevent "pipe closed" exceptions
 		if sys.platform == 'linux':
 			from signal import signal, SIGPIPE, SIG_DFL
 			signal(SIGPIPE, SIG_DFL)
 
-		main()
+		main(args)
+		if args.interactive:
+			input("Press Enter to continue")
 	except KeyboardInterrupt:
 		# keyboard interrupts are allowed, print a newline
 		print()
