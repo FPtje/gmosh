@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import sys
 import os
 import addoninfo
 import gmafile
@@ -260,8 +261,10 @@ def publish(addon, logo, message):
 if __name__ == '__main__':
 	try:
 		# Prevent "pipe closed" exceptions
-		from signal import signal, SIGPIPE, SIG_DFL
-		signal(SIGPIPE, SIG_DFL)
+		if sys.platform == 'linux':
+			from signal import signal, SIGPIPE, SIG_DFL
+			signal(SIGPIPE, SIG_DFL)
+
 		main()
 	except KeyboardInterrupt:
 		# keyboard interrupts are allowed, print a newline
