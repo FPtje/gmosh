@@ -89,6 +89,8 @@ class GModAddon:
 
         # Remove './' at the start of some paths
         file_list = sorted(list(map(partial(re.sub, r'^\.[/\\]', ''), file_list)))
+        # Replace backslashes with forward slashes (Windows)
+        file_list = list(map(partial(re.sub, r'\\', '/'), file_list))
         return list(filter(partial(self._file_nomatch, ignore), file_list))
 
     def getpath(self):
