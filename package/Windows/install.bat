@@ -9,6 +9,7 @@ xcopy "README.txt" "%ProgramFiles%\gmosh\" /Y
 :: https://code.google.com/p/pathed/
 :: Add the gmosh bin directory to %PATH% so you can run it from the command prompt
 pathed.exe -a "%ProgramFiles%\gmosh\bin"
+setx PATH "%ProgramFiles%\gmosh\bin;%path%"
 :: Add context menu items!
 REGEDIT.EXE /S contextmenu.reg
 
