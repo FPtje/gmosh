@@ -195,6 +195,7 @@ addon_whitelist = [
             "maps/*.ain",
             "sound/*.wav",
             "sound/*.mp3",
+            "sound/*.ogg",
             "lua/*.lua",
             "materials/*.vmt",
             "materials/*.vtf",
