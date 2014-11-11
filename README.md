@@ -42,11 +42,11 @@ gmosh --extract SomeGMAFile.gma out/directory/
 
 ### Create a gma file from an addon
 ```
-gmosh -c addon_directory --out output.gma
+gmosh -c --dir addon_directory output.gma
 ```
 or
 ```
-gmosh --create-gma # creates out.gma based on the current directory
+gmosh --create-gma # creates `out.gma` from the addon in `addon_directory`
 ```
 
 ### Check for "illegal" files in the current folder.
