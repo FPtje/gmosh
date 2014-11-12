@@ -21,7 +21,8 @@ parser.add_argument('--dump', '--dump-gma', action='store_true', help='Dump a te
 parser.add_argument('-x', '-e', '--extract', action='store_true', help='Extract a GMA file and exit.')
 parser.add_argument('-l', '--list', action='store_true', help='List the files contained in a GMA file.')
 parser.add_argument('-m', '--message', nargs=1, help='Update message when updating the addon.', metavar='msg')
-parser.add_argument('-i', '--interactive', action='store_true', help='Run GMosh interactively')
+parser.add_argument('-i', '--interactive', action='store_true', help='Run GMosh interactively.')
+parser.add_argument('-a', '--addon', nargs=1, help='Use a different addon.json file.', metavar='addon.json')
 
 def main(args):
 	# working directory
@@ -31,6 +32,8 @@ def main(args):
 	file_list = list(filter(os.path.isfile, chain.from_iterable(map(glob, out))))
 	# include folders that do not exist yet:
 	folder_list = list(filter(lambda x: not os.path.isfile(x), out))
+	# the addon.json file
+	addonFile = args.addon and args.addon[0] or 'addon.json'
 
 	if args.extract:
 		# Extract a GMA file
@@ -46,12 +49,12 @@ def main(args):
 		return
 	elif args.new:
 		# Wizard for creating an addon.json file
-		new_addon(curdir)
+		new_addon(curdir, addonFile)
 		return
 
 	# Try to get the addon information
 	try:
-		addon = addoninfo.addon_info_from_path(curdir)
+		addon = addoninfo.addon_info_from_path(curdir, addonFile)
 	except addoninfo.AddonNotFoundError as err:
 		print(err)
 		return
@@ -106,7 +109,7 @@ def verify_files(dir, addon):
 
 possible_types = ["gamemode", "map", "weapon", "vehicle", "npc", "tool", "effects", "model"]
 possible_tags =  ["fun", "roleplay", "scenic", "movie", "realism", "cartoon", "water", "comic", "build"]
-def new_addon(path):
+def new_addon(path, addonFile = "addon.json"):
 	print("Turning \"%s\" into a workshoppable addon. Press Ctrl+C at any time to cancel." % path)
 	data = dict()
 	data['title'] = input("What will be the name of your addon?\n")
@@ -180,12 +183,12 @@ def new_addon(path):
 	print()
 
 	# Store to addon
-	addoninfo.GModAddon(data, path).save_changes()
+	addoninfo.GModAddon(data, path, addonFile).save_changes()
 
 	print("Alright! That's it! This is the data:")
 	print(data)
-	print("Don't worry if you've made a mistake. You can either run this wizard again or edit the addon.json file with an editor.")
-	print("Addon.json saved successfully")
+	print("Don't worry if you've made a mistake. You can either run this wizard again or edit the %s file with an editor." % addonFile)
+	print("%s saved successfully" % addonFile)
 
 def dump_gma(input_files):
 	for f in input_files:

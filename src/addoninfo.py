@@ -11,9 +11,9 @@ from fnmatch import fnmatch
 class GModAddon:
     """Represents a Garry's mod addon based on the addon.json data
     """
-    def __init__(self, data, path):
+    def __init__(self, data, path, addonFile = 'addon.json'):
         self.data = data
-        self.file = os.path.join(path, 'addon.json')
+        self.file = os.path.join(path, addonFile)
         self.path = path
 
     def has_workshop_id(self):
@@ -78,7 +78,7 @@ class GModAddon:
         """Return a list of files in the addon
         all files are relative to the addon path
         """
-        ignore = ['*addon.json']
+        ignore = ['*' + os.path.relpath(self.file, self.path)] # Always add the addon.json file
         ignore += self.getignored()
 
         file_list = []
@@ -138,7 +138,7 @@ class AddonNotFoundError(Exception):
     def __str__(self):
         return "No GMod addon found in " + os.path.abspath(self.value)
 
-def find_addon(location):
+def find_addon(location, addonFile = 'addon.json'):
     """Try to find an addon.json file at location or any of the parents
         e.g. find_addon("a/b/c/") will try to find the following files in order:
          - a/b/c/addon.json
@@ -159,7 +159,7 @@ def find_addon(location):
 
     # Try at most 10 levels up
     for k in range(1, 10):
-        filename = os.path.join(curLocation, 'addon.json')
+        filename = os.path.join(curLocation, addonFile)
 
         if os.path.isfile(filename):
             return filename
@@ -181,11 +181,11 @@ def get_addon_info(addon_info_path):
     with open(addon_info_path, 'r') as f:
         data = json.load(f)
 
-    return GModAddon(data, os.path.dirname(addon_info_path))
+    return GModAddon(data, os.path.dirname(addon_info_path), addon_info_path)
 
-def addon_info_from_path(path):
+def addon_info_from_path(path, addonFile = 'addon.json'):
     """Get the addon info from a folder path."""
-    return get_addon_info(find_addon(path))
+    return get_addon_info(find_addon(path, addonFile))
 
 
 addon_whitelist = [
