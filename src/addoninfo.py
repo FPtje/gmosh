@@ -190,7 +190,7 @@ def addon_info_from_path(path, addonFile = 'addon.json'):
 
 addon_whitelist = [
             "maps/*.bsp",
-            "maps/thumb/*.png",
+            "maps/*.png",
             "maps/*.nav",
             "maps/*.ain",
             "sound/*.wav",
