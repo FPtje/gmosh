@@ -23,12 +23,14 @@ parser.add_argument('-l', '--list', action='store_true', help='List the files co
 parser.add_argument('-m', '--message', nargs=1, help='Update message when updating the addon.', metavar='msg')
 parser.add_argument('-i', '--interactive', action='store_true', help='Run GMosh interactively.')
 parser.add_argument('-a', '--addon', nargs=1, help='Use a different addon.json file.', metavar='addon.json')
+parser.add_argument('files', nargs='*')
 
 def main(args):
 	# working directory
 	curdir = args.dir and args.dir[0] or os.getcwd()
+
 	# directory to output things to
-	out = args.out and args.out or [curdir]
+	out = args.out and args.out or len(args.files) > 0 and args.files or [curdir]
 	file_list = list(filter(os.path.isfile, chain.from_iterable(map(glob, out))))
 	# include folders that do not exist yet:
 	folder_list = list(filter(lambda x: not os.path.isfile(x), out))
