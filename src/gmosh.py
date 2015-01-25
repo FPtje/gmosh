@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+__version__ = '1.1.0'
+
 import argparse
 import sys
 import os
@@ -24,6 +26,7 @@ parser.add_argument('-m', '--message', nargs=1, help='Update message when updati
 parser.add_argument('-i', '--interactive', action='store_true', help='Run GMosh interactively.')
 parser.add_argument('-a', '--addon', nargs=1, help='Use a different addon.json file.', metavar='addon.json')
 parser.add_argument('files', nargs='*')
+parser.add_argument('--version', action='version', help='Prints GMosh version information.', version='%(prog)s {version}'.format(version=__version__))
 
 def main(args):
 	# working directory
