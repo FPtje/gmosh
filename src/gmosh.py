@@ -6,6 +6,10 @@ import sys
 import os
 import addoninfo
 import gmafile
+import http.client
+import json
+import lzma
+from wgety.wgety import Wgety
 from gmpublish import GmPublish
 from glob import glob
 from itertools import chain
@@ -20,6 +24,7 @@ parser.add_argument('-v', '--verify', action='store_true', help='Verify the cont
 parser.add_argument('--new', '--new-addon', action='store_true', help='Create a new addon.json at the current location. This is required before an addon can be uploaded to the workshop.')
 parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
 parser.add_argument('--dump', '--dump-gma', action='store_true', help='Dump a textual representation of a gma file to console.')
+parser.add_argument('-D', '--download', action='store_true', help='Download a workshop addon.')
 parser.add_argument('-x', '-e', '--extract', action='store_true', help='Extract a GMA file and exit.')
 parser.add_argument('-l', '--list', action='store_true', help='List the files contained in a GMA file.')
 parser.add_argument('-m', '--message', nargs=1, help='Update message when updating the addon.', metavar='msg')
@@ -40,7 +45,10 @@ def main(args):
 	# the addon.json file
 	addonFile = args.addon and args.addon[0] or 'addon.json'
 
-	if args.extract:
+	if args.download:
+		download(folder_list, args.extract)
+		return
+	elif args.extract:
 		# Extract a GMA file
 		extract(file_list, folder_list or ['out'])
 		return
@@ -213,6 +221,47 @@ def creategma(addon, files):
 		print("Illegal files were found:")
 		for f in illegal_files: print('\t' + f)
 		print("Please remove these files or add them to the ignore list of your addon.")
+
+# TODO: improve code quality. This was written in too much of a hurry.
+def download(addons, extr):
+	url = "http://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1"
+	for addon in addons: # Get info in a quick request
+		data = "itemcount=1&publishedfileids[0]=%s" % addon
+		connection = http.client.HTTPConnection("api.steampowered.com")
+		connection.request("POST", url, body = data, headers = {"Content-type": "application/x-www-form-urlencoded"})
+		response = connection.getresponse()
+
+		if response.status < 200 or response.status > 300:
+			print("Error getting addon info! %s" % response.reason)
+			return
+
+		res = json.loads(response.read().decode("utf-8"))
+		res = res['response']['publishedfiledetails'][0]
+
+		if not "title" in res:
+			print("Addon does not exist!")
+			return
+
+		name = res['title']
+		download = res['file_url']
+
+		print("Downloading '%s' from the workshop" % name)
+
+		w = Wgety()
+		lzmafile = "%s.gma.lzma" % addon
+		gmafile = "%s.gma" % addon
+		w.execute(url = download, filename = lzmafile)
+
+		print("Downloaded '%s' from the workshop. Decompressing...")
+		with lzma.open(lzmafile) as lzmaF:
+			with open(gmafile, "wb") as gma:
+				gma.write(lzmaF.read())
+
+		os.remove(lzmafile)
+
+		if not extr: return
+		extract([gmafile], [name])
+
 
 def extract(gma_files, directories):
 	for file in gma_files:
