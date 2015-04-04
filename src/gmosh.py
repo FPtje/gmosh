@@ -248,22 +248,9 @@ def workshopinfo(addons):
 	return json.loads(response.read().decode("utf-8"))['response']['publishedfiledetails']
 
 
-# TODO: improve code quality. This was written in too much of a hurry.
 def download(addons, extr):
-	url = "http://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1"
-	for addon in addons: # Get info in a quick request
-		data = "itemcount=1&publishedfileids[0]=%s" % addon
-		connection = http.client.HTTPConnection("api.steampowered.com")
-		connection.request("POST", url, body = data, headers = {"Content-type": "application/x-www-form-urlencoded"})
-		response = connection.getresponse()
-
-		if response.status < 200 or response.status > 300:
-			print("Error getting addon info! %s" % response.reason)
-			return
-
-		res = json.loads(response.read().decode("utf-8"))
-		res = res['response']['publishedfiledetails'][0]
-
+	info = workshopinfo(addons)
+	for res in info:
 		if not "title" in res:
 			print("Addon does not exist!")
 			return
@@ -274,8 +261,8 @@ def download(addons, extr):
 		print("Downloading '%s' from the workshop" % name)
 
 		w = Wgety()
-		lzmafile = "%s.gma.lzma" % addon
-		gmafile = "%s.gma" % addon
+		lzmafile = "%s.gma.lzma" % res['publishedfileid']
+		gmafile = "%s.gma" % res['publishedfileid']
 		w.execute(url = download, filename = lzmafile)
 
 		print("Downloaded '%s' from the workshop. Decompressing..." % name)
