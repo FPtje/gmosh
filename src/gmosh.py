@@ -25,6 +25,7 @@ parser.add_argument('--new', '--new-addon', action='store_true', help='Create a 
 parser.add_argument('-c', '--create-gma', action='store_true', help='Create a GMA file of the addon and exit.')
 parser.add_argument('--dump', '--dump-gma', action='store_true', help='Dump a textual representation of a gma file to console.')
 parser.add_argument('-D', '--download', action='store_true', help='Download a workshop addon.')
+parser.add_argument('--workshopinfo', action='store_true', help='Get information about one or more workshop addons.')
 parser.add_argument('-x', '-e', '--extract', action='store_true', help='Extract a GMA file and exit.')
 parser.add_argument('-l', '--list', action='store_true', help='List the files contained in a GMA file.')
 parser.add_argument('-m', '--message', nargs=1, help='Update message when updating the addon.', metavar='msg')
@@ -47,6 +48,9 @@ def main(args):
 
 	if args.download:
 		download(folder_list, args.extract)
+		return
+	elif args.workshopinfo:
+		print(json.dumps(workshopinfo(folder_list), sort_keys=True, indent = 4))
 		return
 	elif args.extract:
 		# Extract a GMA file
@@ -221,6 +225,28 @@ def creategma(addon, files):
 		print("Illegal files were found:")
 		for f in illegal_files: print('\t' + f)
 		print("Please remove these files or add them to the ignore list of your addon.")
+
+def workshopinfo(addons):
+	url = "http://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1"
+	connection = http.client.HTTPConnection("api.steampowered.com")
+	addonStr = []
+
+	for i in range(len(addons)):
+		addonStr.insert(i, "publishedfileids[%i]=%s" % (i, addons[i]))
+
+	connection.request("POST", url,
+		body = "itemcount=%i&%s" % (len(addons), '&'.join(addonStr)),
+		headers = {"Content-type": "application/x-www-form-urlencoded"}
+		)
+
+	response = connection.getresponse()
+
+	if response.status < 200 or response.status > 300:
+		print("Error getting addon info! %s" % response.reason)
+		return
+
+	return json.loads(response.read().decode("utf-8"))['response']['publishedfiledetails']
+
 
 # TODO: improve code quality. This was written in too much of a hurry.
 def download(addons, extr):
