@@ -67,8 +67,9 @@ GMAContents = Struct('GMAContents',
 GMAVerifiedContents = Struct('GMAVerifiedContents',
     Embed(GMAContents),
     Optional(ULInt32('addon_crc')),
-    Optional(ULInt8("MagicValue")),
-    Terminator
+    Optional(ULInt8("MagicValue"))
+    # Don't enforce terminator. Some GMA files appear to have 0-padding after the magic value
+    # Terminator
 )
 
 def build_gma(addon, file_list, addon_path='.'):
