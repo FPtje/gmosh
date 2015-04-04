@@ -252,7 +252,7 @@ def download(addons, extr):
 		gmafile = "%s.gma" % addon
 		w.execute(url = download, filename = lzmafile)
 
-		print("Downloaded '%s' from the workshop. Decompressing...")
+		print("Downloaded '%s' from the workshop. Decompressing..." % name)
 		with lzma.open(lzmafile) as lzmaF:
 			with open(gmafile, "wb") as gma:
 				gma.write(lzmaF.read())
