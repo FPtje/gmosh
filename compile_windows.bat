@@ -9,3 +9,4 @@ xcopy README.txt package\Windows\ /y
 xcopy required\gmpublish.exe package\Windows\required\ /y
 xcopy required\steam_api.dll package\Windows\required\ /y
 xcopy required\steam_appid.txt package\Windows\required\ /y
+PAUSE

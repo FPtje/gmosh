@@ -9,6 +9,7 @@ import gmafile
 import http.client
 import json
 import lzma
+import re
 from wgety.wgety import Wgety
 from gmpublish import GmPublish
 from glob import glob
@@ -273,6 +274,8 @@ def download(addons, extr):
 		os.remove(lzmafile)
 
 		if not extr: return
+
+		name = re.sub('[\\/:"*?<>|]+', '_', name)
 		extract([gmafile], [name])
 
 
