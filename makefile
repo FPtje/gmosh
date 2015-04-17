@@ -1,10 +1,13 @@
 MODULES=addoninfo,gmafile,gmpublish,workshoputils
 
-linux:
+gui:
+	pyside-uic ui/mainwindow.ui -o src/view/mainwindow.py
+
+linux: gui
 	if [ ! -d bin ]; then mkdir bin; fi
 	cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
 
-osx:
+osx: gui
 	if [ ! -d bin ]; then mkdir bin; fi
 	/Library/Frameworks/Python.framework/Versions/3.3/bin/cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
 
