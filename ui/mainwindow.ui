@@ -13,7 +13,56 @@
   <property name="windowTitle">
    <string>GMosh ui</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="minimumSize">
+       <size>
+        <width>782</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tabPublish">
+       <attribute name="title">
+        <string>Publish</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tabGMA">
+       <attribute name="title">
+        <string>GMA tools</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tabWorkshop">
+       <attribute name="title">
+        <string>Workshop tools</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -24,7 +73,6 @@
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
