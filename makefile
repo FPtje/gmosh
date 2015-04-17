@@ -1,4 +1,4 @@
-MODULES=addoninfo,gmafile,gmpublish
+MODULES=addoninfo,gmafile,gmpublish,workshoputils
 
 linux:
 	if [ ! -d bin ]; then mkdir bin; fi

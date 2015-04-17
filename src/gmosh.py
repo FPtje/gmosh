@@ -5,12 +5,9 @@ import argparse
 import sys
 import os
 import addoninfo
+import workshoputils
 import gmafile
-import http.client
 import json
-import lzma
-import re
-from wgety.wgety import Wgety
 from gmpublish import GmPublish
 from glob import glob
 from itertools import chain
@@ -48,10 +45,10 @@ def main(args):
 	addonFile = args.addon and args.addon[0] or 'addon.json'
 
 	if args.download:
-		download(folder_list, args.extract)
+		workshoputils.download(folder_list, args.extract)
 		return
 	elif args.workshopinfo:
-		print(json.dumps(workshopinfo(folder_list), sort_keys=True, indent = 4))
+		print(json.dumps(workshoputils.workshopinfo(folder_list), sort_keys=True, indent = 4))
 		return
 	elif args.extract:
 		# Extract a GMA file
@@ -226,58 +223,6 @@ def creategma(addon, files):
 		print("Illegal files were found:")
 		for f in illegal_files: print('\t' + f)
 		print("Please remove these files or add them to the ignore list of your addon.")
-
-def workshopinfo(addons):
-	url = "http://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1"
-	connection = http.client.HTTPConnection("api.steampowered.com")
-	addonStr = []
-
-	for i in range(len(addons)):
-		addonStr.insert(i, "publishedfileids[%i]=%s" % (i, addons[i]))
-
-	connection.request("POST", url,
-		body = "itemcount=%i&%s" % (len(addons), '&'.join(addonStr)),
-		headers = {"Content-type": "application/x-www-form-urlencoded"}
-		)
-
-	response = connection.getresponse()
-
-	if response.status < 200 or response.status > 300:
-		print("Error getting addon info! %s" % response.reason)
-		return
-
-	return json.loads(response.read().decode("utf-8"))['response']['publishedfiledetails']
-
-
-def download(addons, extr):
-	info = workshopinfo(addons)
-	for res in info:
-		if not "title" in res:
-			print("Addon does not exist!")
-			return
-
-		name = res['title']
-		download = res['file_url']
-
-		print("Downloading '%s' from the workshop" % name)
-
-		w = Wgety()
-		lzmafile = "%s.gma.lzma" % res['publishedfileid']
-		gmafile = "%s.gma" % res['publishedfileid']
-		w.execute(url = download, filename = lzmafile)
-
-		print("Downloaded '%s' from the workshop. Decompressing..." % name)
-		with lzma.open(lzmafile) as lzmaF:
-			with open(gmafile, "wb") as gma:
-				gma.write(lzmaF.read())
-
-		os.remove(lzmafile)
-
-		if not extr: return
-
-		name = re.sub('[\\/:"*?<>|]+', '_', name)
-		extract([gmafile], [name])
-
 
 def extract(gma_files, directories):
 	for file in gma_files:
