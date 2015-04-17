@@ -17,7 +17,7 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
     <property name="spacing">
      <number>0</number>
     </property>
@@ -42,17 +42,422 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabPublish">
        <attribute name="title">
-        <string>Publish</string>
+        <string>Publish new addon</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tabGMA">
        <attribute name="title">
-        <string>GMA tools</string>
+        <string>Addon tools</string>
        </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <layout class="QFormLayout" name="formLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Publish your addon to the workshop</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QTextEdit" name="textEdit">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="placeholderText">
+             <string>OPTIONAL: Changelog</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="publish">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Publish</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Check for illegal files</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QPushButton" name="verify">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Verify</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Create GMA file</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QPushButton" name="createGMA">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Create GMA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0" colspan="2">
+           <widget class="Line" name="line">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Edit addon info:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="toolTip">
+             <string>This is the workshop id of the addon. You can find the workshop id of an addon by going to its workshop page and looking at the url after &quot;id=&quot;</string>
+            </property>
+            <property name="text">
+             <string>Workshop ID</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="1">
+           <widget class="QSpinBox" name="workshopid">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>This is the workshop id of the addon. You can find the workshop id of an addon by going to its workshop page and looking at the url after &quot;id=&quot;</string>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="showGroupSeparator" stdset="0">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="toolTip">
+             <string>The default changelog of this addon when none is given.</string>
+            </property>
+            <property name="text">
+             <string>Default changelog</string>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="1">
+           <widget class="QTextEdit" name="defaultChangelog">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>The default changelog of this addon when none is given.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Files to ignore</string>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="1">
+           <widget class="QTextEdit" name="ignorelist">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Type</string>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="1">
+           <widget class="QComboBox" name="addontype">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <item>
+             <property name="text">
+              <string>ServerContent</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>gamemode</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>map</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>weapon</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>vehicle</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>npc</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>tool</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>effects</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>model</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="15" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Tags</string>
+            </property>
+           </widget>
+          </item>
+          <item row="15" column="1">
+           <widget class="QComboBox" name="tag1">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="currentText">
+             <string>None</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>fun</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>roleplay</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>scenic</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>movie</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>realism</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>cartoon</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>water</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>comic</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>build</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="16" column="1">
+           <widget class="QComboBox" name="tag2">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="currentText">
+             <string>None</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>fun</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>roleplay</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>scenic</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>movie</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>realism</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>cartoon</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>water</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>comic</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>build</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="17" column="0" colspan="2">
+           <widget class="QDialogButtonBox" name="buttonBox">
+            <property name="standardButtons">
+             <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Title</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="1">
+           <widget class="QLineEdit" name="title">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="placeholderText">
+             <string>Title of the addon</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Add addons' json files here</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QListView" name="recentAddons"/>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QPushButton" name="addFolder">
+              <property name="text">
+               <string>Add addon</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="removeFolder">
+              <property name="text">
+               <string>Remove addon</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tabWorkshop">
        <attribute name="title">
