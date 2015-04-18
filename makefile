@@ -2,6 +2,7 @@ MODULES=addoninfo,gmafile,gmpublish,workshoputils
 
 gui:
 	pyside-uic ui/mainwindow.ui -o src/view/mainwindow.py
+	pyside-uic ui/progressdialog.ui -o src/view/progressdialog.py
 
 linux: gui
 	if [ ! -d bin ]; then mkdir bin; fi

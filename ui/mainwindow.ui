@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>611</height>
+    <height>643</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -779,9 +779,6 @@
             <property name="buttonSymbols">
              <enum>QAbstractSpinBox::NoButtons</enum>
             </property>
-            <property name="maximum">
-             <number>999999999</number>
-            </property>
            </widget>
           </item>
           <item row="12" column="1">
@@ -822,7 +819,7 @@
              <double>10000000000000000000000.000000000000000</double>
             </property>
             <property name="value">
-             <double>413008165.000000000000000</double>
+             <double>425998560.000000000000000</double>
             </property>
            </widget>
           </item>

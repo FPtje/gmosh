@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Starts the user interface of gmoshui."""
 
-from view import mainwindow
+from view import mainwindow, progressdialog
 from PySide import QtCore, QtGui
 from functools import partial
 import workshoputils
 import sys
+import shiboken
 
 class ControlMainWindow(QtGui.QMainWindow):
     """Spawns the main window"""
@@ -15,6 +16,7 @@ class ControlMainWindow(QtGui.QMainWindow):
         self.ui.setupUi(self)
 
 def main():
+    """Main method"""
     app = QtGui.QApplication(sys.argv)
     mySW = ControlMainWindow()
     connectMainWindowSignals(mySW.ui)
@@ -22,9 +24,71 @@ def main():
     sys.exit(app.exec_())
 
 def errorMsg(s):
+    """Show an error message box"""
     msgBox = QtGui.QMessageBox()
     msgBox.setText(s)
     msgBox.exec_()
+
+class OutLog:
+    def __init__(self, signal, out=None):
+        """
+        """
+        self.signal = signal
+        self.out = out
+
+    def write(self, m):
+        self.signal.emit(m)
+
+        if self.out:
+            self.out.write(m)
+
+    def flush(x): pass
+
+# Run something in the background
+class WorkBackground(QtCore.QThread):
+    target = id
+    signal = QtCore.Signal(str)
+    finished = QtCore.Signal()
+    def run(self):
+        oldstdout = sys.stdout
+        sys.stdout = OutLog(self.signal, sys.stdout)
+
+        self.target()
+        self.signal.emit("FINISHED")
+
+        sys.stdout = oldstdout
+        self.finished.emit()
+
+# Create progress dialog
+def createProgressDialog(work):
+    dialog = QtGui.QDialog()
+    ui = progressdialog.Ui_Dialog()
+    ui.setupUi(dialog)
+
+    def onThreadOutput(text):
+        if not shiboken.isValid(ui) or not shiboken.isValid(ui.progressText): return
+
+        ui.progressText.moveCursor(QtGui.QTextCursor.End)
+        if text[0] == "\r":
+            #cursor = QtGui.QTextCursor(ui.progressText.textCursor())
+            ui.progressText.moveCursor(QtGui.QTextCursor.StartOfLine, QtGui.QTextCursor.KeepAnchor)
+            ui.progressText.moveCursor(QtGui.QTextCursor.PreviousCharacter, QtGui.QTextCursor.KeepAnchor)
+
+        ui.progressText.insertPlainText(text)
+
+    def enableButtons():
+        ui.buttonBox.setEnabled(True)
+
+    thread = WorkBackground()
+    thread.target = work
+    thread.signal.connect(onThreadOutput)
+    thread.finished.connect(enableButtons)
+    thread.start()
+
+    dialog.show()
+    dialog.exec_()
+    thread.exit()
+
 
 #######
 # Workshop tools signals
@@ -63,10 +127,18 @@ def wsDownloadClicked(widget):
     if not dialog.exec_(): return
     selectedFiles = dialog.selectedFiles()
 
-    workshoputils.download([widget.wsID.value()], selectedFiles[0], widget.wsExtract.isChecked())
+    workshopid = widget.wsID.value()
+    extract = widget.wsExtract.isChecked()
+    def work():
+        workshoputils.download([workshopid], selectedFiles[0], extract)
+
+    createProgressDialog(work)
+
 
 def connectMainWindowSignals(widget):
     widget.wsGetInfo.clicked.connect(partial(wsGetInfoClicked, widget))
     widget.wsDownload.clicked.connect(partial(wsDownloadClicked, widget))
 
-main();
+try:
+    main();
+except KeyboardInterrupt: pass
