@@ -30,12 +30,18 @@ def errorMsg(s):
 # Workshop tools signals
 #######
 
-def wsGetInfoClicked(widget):
+def wsIdInfo(widget):
     workshopid = widget.wsID.value()
     info = workshoputils.workshopinfo([workshopid])
     if not info:
         errorMsg("Unable to retrieve addon info. Make sure the workshop ID is correct.")
         return
+
+    return info
+
+def wsGetInfoClicked(widget):
+    info = wsIdInfo(widget)
+    if not info: return
 
     info = info[0]
     widget.wsName.setText(info['title'])
@@ -50,8 +56,17 @@ def wsGetInfoClicked(widget):
     widget.wsSubscriptions.setValue(info['subscriptions'])
     widget.wsFavorites.setValue(info['favorited'])
 
+def wsDownloadClicked(widget):
+    dialog = QtGui.QFileDialog()
+    dialog.setFileMode(QtGui.QFileDialog.Directory)
+    dialog.setOption(QtGui.QFileDialog.ShowDirsOnly)
+    if not dialog.exec_(): return
+    selectedFiles = dialog.selectedFiles()
+
+    workshoputils.download([widget.wsID.value()], selectedFiles[0], widget.wsExtract.isChecked())
 
 def connectMainWindowSignals(widget):
     widget.wsGetInfo.clicked.connect(partial(wsGetInfoClicked, widget))
+    widget.wsDownload.clicked.connect(partial(wsDownloadClicked, widget))
 
 main();

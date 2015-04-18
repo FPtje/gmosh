@@ -7,7 +7,8 @@ import http.client
 import lzma
 import json
 import os
-from wgety.wgety import Wgety
+import sys
+import urllib.request
 
 def workshopinfo(addons):
     url = "http://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1"
@@ -31,7 +32,7 @@ def workshopinfo(addons):
     return json.loads(response.read().decode("utf-8"))['response']['publishedfiledetails']
 
 
-def download(addons, extr):
+def download(addons, path, extr):
     info = workshopinfo(addons)
     for res in info:
         if not "title" in res:
@@ -43,10 +44,12 @@ def download(addons, extr):
 
         print("Downloading '%s' from the workshop" % name)
 
-        w = Wgety()
-        lzmafile = "%s.gma.lzma" % res['publishedfileid']
-        outfile = "%s.gma" % res['publishedfileid']
-        w.execute(url = download, filename = lzmafile)
+        lzmafile = os.path.join(path, "%s.gma.lzma" % res['publishedfileid'])
+        outfile = os.path.join(path, "%s.gma" % res['publishedfileid'])
+
+        urllib.request.urlretrieve(download, lzmafile,
+            lambda x, y, z: sys.stdout.write("\r{0:.2f}%".format(x * y / z)))
+        sys.stdout.write("\r100.00%\n")
 
         print("Downloaded '%s' from the workshop. Decompressing..." % name)
         with lzma.open(lzmafile) as lzmaF:
@@ -57,5 +60,5 @@ def download(addons, extr):
 
         if not extr: return
 
-        name = re.sub('[\\/:"*?<>|]+', '_', name)
+        name = os.path.join(path, re.sub('[\\/:"*?<>|]+', '_', name))
         gmafile.extract(outfile, name)

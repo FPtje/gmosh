@@ -45,7 +45,7 @@ def main(args):
 	addonFile = args.addon and args.addon[0] or 'addon.json'
 
 	if args.download:
-		workshoputils.download(folder_list, args.extract)
+		workshoputils.download(folder_list, '.', args.extract)
 		return
 	elif args.workshopinfo:
 		print(json.dumps(workshoputils.workshopinfo(folder_list), sort_keys=True, indent = 4))
