@@ -7,6 +7,7 @@ from functools import partial
 import workshoputils
 import sys
 import shiboken
+from datetime import datetime
 
 class ControlMainWindow(QtGui.QMainWindow):
     """Spawns the main window"""
@@ -115,6 +116,12 @@ def wsGetInfoClicked(widget):
     widget.wsBanReason.setText(info['ban_reason'])
     tags = ', '.join(list(filter(lambda x: x != "Addon", map(lambda x: x['tag'], info['tags']))))
     widget.wsTags.setText(tags)
+
+
+    created = QtCore.QDateTime.fromTime_t(info['time_created'])
+    updated = QtCore.QDateTime.fromTime_t(info['time_updated'])
+    widget.wsTimeCreated.setDateTime(created)
+    widget.wsTimeUpdated.setDateTime(updated)
 
     widget.wsViews.setValue(info['views'])
     widget.wsSubscriptions.setValue(info['subscriptions'])
