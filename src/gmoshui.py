@@ -155,6 +155,8 @@ def openGmaFile(widget, fileName, error = True):
     widget.gmaAuthor.setText(info['addon_author'])
     widget.gmaAuthorID.setValue(float(info['steamid']))
     widget.gmaTimestamp.setDateTime(QtCore.QDateTime.fromTime_t(info['timestamp']))
+    widget.gmaTags.setText('tags' in info and ', '.join(info['tags']) or '')
+    widget.gmaType.setText('type' in info and info['type'] or '')
 
     # Tree view
     model = QtGui.QStandardItemModel()
