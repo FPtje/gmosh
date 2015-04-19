@@ -125,13 +125,29 @@ def write(addon, destination_path='.'):
         file.write(gma)
         file.write(pack('I', crc))
 
-def extract(file_path, destination_path):
+def extract(file_path, destination_path, fil = set()):
     with open(file_path, 'rb') as file:
         gma = GMAVerifiedContents.parse_stream(file)
 
         for i in range(0, len(gma.all_file_meta) - 1):
             meta = gma.all_file_meta[i]
-            file_name = os.path.join(destination_path, meta.file_name.decode('utf-8'))
+            gma_file_name = meta.file_name.decode('utf-8')
+
+            # Discontinue extracting this file if it's not in the filter
+            if fil:
+                for prefix in fil:
+                    if gma_file_name.startswith(prefix):
+                        print("YES", prefix, gma_file_name)
+                        # Remove prefix, so it won't create all subfolders
+                        strip, _ = os.path.split(prefix)
+                        gma_file_name = gma_file_name[len(strip) + 1:]
+                        print("new name", gma_file_name)
+                        break
+                else:
+                    continue
+
+            print("Prejoin", destination_path, gma_file_name)
+            file_name = os.path.join(destination_path, gma_file_name)
             file_folder = os.path.dirname(file_name)
 
             if not os.path.exists(file_folder):

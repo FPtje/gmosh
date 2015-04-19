@@ -134,10 +134,10 @@ def populate(model, hierarchy, root = None):
     """Populates the GMA file tree from a hierarchy created with folder_hierarchy"""
     node = QtGui.QStandardItem(hierarchy['name'])
     size = QtGui.QStandardItem(gmafile.sizeof_simple(hierarchy['size']))
-    node.filePath = hierarchy['path']
+    node.filePath = size.filePath = hierarchy['path']
     root.appendRow([node, size]) if root else model.appendRow([node, size])
 
-    for child in hierarchy['children']:
+    for child in iter(sorted(hierarchy['children'])):
         populate(model, hierarchy['children'][child], node)
 
     return node
@@ -148,9 +148,12 @@ def gmaSelectFile(widget):
         "Open GMA file", None, "GMA files (*.gma)")
 
     if not fileName: return
+
+    widget.gmaSelect.setText(fileName)
+
     try:
         info = gmafile.gmaInfo(fileName)
-    except FileNotFoundError:
+    except Exception:
         errorMsg("Could not recognise the format of this file!")
         return
 
@@ -179,6 +182,19 @@ def gmaSelectFile(widget):
     # Enable the extract button
     widget.gmaExtract.setEnabled(True)
 
+def gmaExtract(widget):
+    selected = widget.gmaFiles.selectedIndexes()
+    selectedPaths = set()
+    for i in selected:
+        selectedPaths.add(i.model().itemFromIndex(i).filePath)
+
+    dialog = QtGui.QFileDialog()
+    dialog.setFileMode(QtGui.QFileDialog.Directory)
+    dialog.setOption(QtGui.QFileDialog.ShowDirsOnly)
+    if not dialog.exec_(): return
+    selectedFiles = dialog.selectedFiles()
+
+    gmafile.extract(widget.gmaSelect.text(), selectedFiles[0], selectedPaths)
 
 #######
 # Workshop tools signals
@@ -235,6 +251,7 @@ def wsDownloadClicked(widget):
 def connectMainWindowSignals(widget):
     # GMA tools signals
     widget.gmaSelectFile.clicked.connect(partial(gmaSelectFile, widget))
+    widget.gmaExtract.clicked.connect(partial(gmaExtract, widget))
 
     # Workshop signals
     widget.wsGetInfo.clicked.connect(partial(wsGetInfoClicked, widget))
