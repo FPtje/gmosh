@@ -209,7 +209,8 @@ def gmaExtract(widget):
     if not selectedPaths:
         destination = os.path.join(destination, re.sub('[\\/:"*?<>|]+', '_', widget.gmaName.text()))
 
-    gmafile.extract(widget.gmaSelect.text(), destination, selectedPaths)
+    createProgressDialog(
+        partial(gmafile.extract, widget.gmaSelect.text(), destination, selectedPaths))
 
 #######
 # Workshop tools signals
