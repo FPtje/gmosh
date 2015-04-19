@@ -7,6 +7,7 @@ from construct import *
 from time import time
 from binascii import crc32
 from struct import pack
+import json
 
 GMA_VERSION = b"\x03"
 
@@ -206,3 +207,39 @@ def dump(file_path):
             addon_version       = gma.addon_version,
             files               = "\n".join(files)
             )
+
+def gmaInfo(file_path):
+    res = dict()
+    with open(file_path, 'rb', 0) as file:
+        gma = GMAVerifiedContents.parse_stream(file)
+
+        res['files']               = []
+        res['crc']                 = gma.addon_crc
+        res['magic']               = gma.MagicValue
+        res['format_version']      = gma.format_version.decode('utf-8')
+        res['steamid']             = gma.steamid
+        res['timestamp']           = int(gma.timestamp)
+        res['required_content']    = gma.required_content.decode('utf-8')
+        res['addon_name']          = gma.addon_name.decode('utf-8')
+        res['addon_description']   = gma.addon_description.decode('utf-8')
+        res['addon_author']        = gma.addon_author.decode('utf-8')
+        res['addon_version']       = gma.addon_version
+
+        try:
+            data = json.loads(res['addon_description'])
+            res['description'] = data['description']
+            res['tags'] = data['tags']
+            res['type'] = data['type']
+        except Exception: pass
+
+        for filemeta in gma.all_file_meta:
+            if filemeta.file_number == 0: break
+
+            res['files'].append({
+                'name': filemeta.file_name.decode('utf-8'),
+                'size': sizeof_fmt(filemeta.file_size),
+                'crc':  filemeta.file_crc
+            })
+
+        return res
+

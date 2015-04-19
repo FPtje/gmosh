@@ -5,6 +5,7 @@ from view import mainwindow, progressdialog
 from PySide import QtCore, QtGui
 from functools import partial
 import workshoputils
+import gmafile
 import sys
 import shiboken
 from datetime import datetime
@@ -31,6 +32,7 @@ def errorMsg(s):
     msgBox.exec_()
 
 class OutLog:
+    """Redirect stdout to ui of program"""
     def __init__(self, signal, out=None):
         """
         """
@@ -45,8 +47,8 @@ class OutLog:
 
     def flush(x): pass
 
-# Run something in the background
 class WorkBackground(QtCore.QThread):
+    """Run something in the background"""
     target = id
     signal = QtCore.Signal(str)
     finished = QtCore.Signal()
@@ -60,8 +62,8 @@ class WorkBackground(QtCore.QThread):
         sys.stdout = oldstdout
         self.finished.emit()
 
-# Create progress dialog
 def createProgressDialog(work):
+    """Create progress dialog"""
     dialog = QtGui.QDialog()
     ui = progressdialog.Ui_Dialog()
     ui.setupUi(dialog)
@@ -92,9 +94,30 @@ def createProgressDialog(work):
 
 
 #######
+# GMA tools signals
+#######
+def gmaSelectFile(widget):
+    # TODO: Save last folder location
+    fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
+        "Open GMA file", None, "GMA files (*.gma)")
+
+    if not fileName: return
+    try:
+        info = gmafile.gmaInfo(fileName)
+    except FileNotFoundError:
+        errorMsg("Could not recognise the format of this file!")
+        return
+
+    widget.gmaName.setText(info['addon_name'])
+    widget.gmaDescription.setText('description' in info and info['description'] or info['addon_description'])
+    widget.gmaAuthor.setText(info['addon_author'])
+    widget.gmaAuthorID.setValue(float(info['steamid']))
+    widget.gmaTimestamp.setDateTime(QtCore.QDateTime.fromTime_t(info['timestamp']))
+
+
+#######
 # Workshop tools signals
 #######
-
 def wsIdInfo(widget):
     workshopid = widget.wsID.value()
     info = workshoputils.workshopinfo([workshopid])
@@ -141,10 +164,17 @@ def wsDownloadClicked(widget):
 
     createProgressDialog(work)
 
-
+#######
+# Connect all signals
+#######
 def connectMainWindowSignals(widget):
+    # GMA tools signals
+    widget.gmaSelectFile.clicked.connect(partial(gmaSelectFile, widget))
+
+    # Workshop signals
     widget.wsGetInfo.clicked.connect(partial(wsGetInfoClicked, widget))
     widget.wsDownload.clicked.connect(partial(wsDownloadClicked, widget))
+
 
 try:
     main();
