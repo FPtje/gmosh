@@ -36,7 +36,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tabAddon">
        <attribute name="title">
@@ -812,6 +812,9 @@
             <property name="buttonSymbols">
              <enum>QAbstractSpinBox::NoButtons</enum>
             </property>
+            <property name="maximum">
+             <number>999999999</number>
+            </property>
            </widget>
           </item>
           <item row="12" column="1">
@@ -852,7 +855,7 @@
              <double>10000000000000000000000.000000000000000</double>
             </property>
             <property name="value">
-             <double>425998560.000000000000000</double>
+             <double>0.000000000000000</double>
             </property>
            </widget>
           </item>

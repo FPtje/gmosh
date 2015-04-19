@@ -19,11 +19,18 @@ class ControlMainWindow(QtGui.QMainWindow):
         self.ui = mainwindow.Ui_MainWindow()
         self.ui.setupUi(self)
 
+        # Create settings
+        QtCore.QCoreApplication.setOrganizationName("FPtje")
+        QtCore.QCoreApplication.setOrganizationDomain("github.com/FPtje/gmosh")
+        QtCore.QCoreApplication.setApplicationName("gmoshui")
+
+        self.ui.settings = QtCore.QSettings()
+
 def main():
     """Main method"""
     app = QtGui.QApplication(sys.argv)
     mySW = ControlMainWindow()
-    connectMainWindowSignals(mySW.ui)
+    initialiseUI(mySW.ui)
     mySW.show()
     sys.exit(app.exec_())
 
@@ -185,11 +192,14 @@ def gmaSelectEditingFinished(widget):
     openGmaFile(widget, widget.gmaSelect.text(), True)
 
 def gmaSelectFile(widget):
-    # TODO: Save last folder location
     fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
-        "Open GMA file", None, "GMA files (*.gma)")
+        "Open GMA file", widget.settings.value("selectGMALastFolder", None), "GMA files (*.gma)")
 
     if not fileName: return
+
+    folder, _ = os.path.split(fileName)
+    # Store last used folder location
+    widget.settings.setValue("selectGMALastFolder", folder)
 
     widget.gmaSelect.setText(fileName)
     openGmaFile(widget, fileName)
@@ -263,6 +273,18 @@ def wsDownloadClicked(widget):
 
     createProgressDialog(work)
 
+def wsIDEdit(widget, val):
+    widget.settings.setValue("workshoptools/lastworkshopid", val)
+
+#######
+# Perform startup tasks
+#######
+def initialiseUI(widget):
+    connectMainWindowSignals(widget)
+
+    # Workshop tools init
+    widget.wsID.setValue(float(widget.settings.value("workshoptools/lastworkshopid", 0)))
+
 #######
 # Connect all signals
 #######
@@ -276,6 +298,7 @@ def connectMainWindowSignals(widget):
     # Workshop signals
     widget.wsGetInfo.clicked.connect(partial(wsGetInfoClicked, widget))
     widget.wsDownload.clicked.connect(partial(wsDownloadClicked, widget))
+    widget.wsID.valueChanged.connect(partial(wsIDEdit, widget))
 
 
 try:
