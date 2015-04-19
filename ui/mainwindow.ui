@@ -615,6 +615,9 @@
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
              <widget class="QPushButton" name="gmaExtract">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Extract</string>
               </property>

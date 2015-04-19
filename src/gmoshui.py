@@ -103,34 +103,38 @@ def split_path(p):
     return (split_path(a) if len(a) and len(b) else []) + [b]
 
 def folder_hierarchy(files):
-    """Helper function that creates a hierarchy of folders"""
+    """Helper function that creates a hierarchy of folders and files"""
     hierarchy = dict()
     hierarchy['name'] = "GMA File" + ' ' * 40
     hierarchy['children'] = dict()
     hierarchy['size'] = 0
+    hierarchy['path'] = ''
 
     for f in files:
         split = split_path(f['name'])
         hierarchy['size'] = hierarchy['size'] + f['puresize']
         cur_h = hierarchy # Current hierarchy
 
+        i = 0
         for sub in split:
+            i = i + 1
             if not sub in cur_h['children']:
                 cur_h['children'][sub] = dict()
                 cur_h['children'][sub]['children'] = dict()
 
             cur_h = cur_h['children'][sub]
             cur_h['name'] = sub
-
+            cur_h['path'] = '/'.join(split[0:i])
             cur_h['size'] = 'size' in cur_h and cur_h['size'] + f['puresize'] or f['puresize']
 
     return hierarchy
 
 
 def populate(model, hierarchy, root = None):
-    """Populate the nodes from a hierarchy"""
+    """Populates the GMA file tree from a hierarchy created with folder_hierarchy"""
     node = QtGui.QStandardItem(hierarchy['name'])
     size = QtGui.QStandardItem(gmafile.sizeof_simple(hierarchy['size']))
+    node.filePath = hierarchy['path']
     root.appendRow([node, size]) if root else model.appendRow([node, size])
 
     for child in hierarchy['children']:
@@ -165,13 +169,15 @@ def gmaSelectFile(widget):
     hierarchy = folder_hierarchy(info['files'])
     root = populate(model, hierarchy)
     rootIndex = model.indexFromItem(root)
-    # widget.gmaFiles.setColumnWidth(0, widget.gmaFiles.)
     widget.gmaFiles.resizeColumnToContents(0)
 
     # Expand the root node
     widget.gmaFiles.expand(rootIndex)
     # Select root node
     widget.gmaFiles.selectionModel().select(rootIndex, QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+
+    # Enable the extract button
+    widget.gmaExtract.setEnabled(True)
 
 
 #######
