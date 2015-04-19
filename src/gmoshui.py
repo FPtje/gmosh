@@ -9,6 +9,7 @@ import gmafile
 import sys
 import shiboken
 from datetime import datetime
+import os
 
 class ControlMainWindow(QtGui.QMainWindow):
     """Spawns the main window"""
@@ -96,6 +97,47 @@ def createProgressDialog(work):
 #######
 # GMA tools signals
 #######
+def split_path(p):
+    """Helper to split a path into components"""
+    a,b = os.path.split(p)
+    return (split_path(a) if len(a) and len(b) else []) + [b]
+
+def folder_hierarchy(files):
+    """Helper function that creates a hierarchy of folders"""
+    hierarchy = dict()
+    hierarchy['name'] = "GMA File" + ' ' * 40
+    hierarchy['children'] = dict()
+    hierarchy['size'] = 0
+
+    for f in files:
+        split = split_path(f['name'])
+        hierarchy['size'] = hierarchy['size'] + f['puresize']
+        cur_h = hierarchy # Current hierarchy
+
+        for sub in split:
+            if not sub in cur_h['children']:
+                cur_h['children'][sub] = dict()
+                cur_h['children'][sub]['children'] = dict()
+
+            cur_h = cur_h['children'][sub]
+            cur_h['name'] = sub
+
+            cur_h['size'] = 'size' in cur_h and cur_h['size'] + f['puresize'] or f['puresize']
+
+    return hierarchy
+
+
+def populate(model, hierarchy, root = None):
+    """Populate the nodes from a hierarchy"""
+    node = QtGui.QStandardItem(hierarchy['name'])
+    size = QtGui.QStandardItem(gmafile.sizeof_simple(hierarchy['size']))
+    root.appendRow([node, size]) if root else model.appendRow([node, size])
+
+    for child in hierarchy['children']:
+        populate(model, hierarchy['children'][child], node)
+
+    return node
+
 def gmaSelectFile(widget):
     # TODO: Save last folder location
     fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
@@ -113,6 +155,23 @@ def gmaSelectFile(widget):
     widget.gmaAuthor.setText(info['addon_author'])
     widget.gmaAuthorID.setValue(float(info['steamid']))
     widget.gmaTimestamp.setDateTime(QtCore.QDateTime.fromTime_t(info['timestamp']))
+
+    # Tree view
+    model = QtGui.QStandardItemModel()
+    model.setHorizontalHeaderLabels(['File', 'Size'])
+    widget.gmaFiles.setModel(model)
+
+    # Fill in data
+    hierarchy = folder_hierarchy(info['files'])
+    root = populate(model, hierarchy)
+    rootIndex = model.indexFromItem(root)
+    # widget.gmaFiles.setColumnWidth(0, widget.gmaFiles.)
+    widget.gmaFiles.resizeColumnToContents(0)
+
+    # Expand the root node
+    widget.gmaFiles.expand(rootIndex)
+    # Select root node
+    widget.gmaFiles.selectionModel().select(rootIndex, QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
 
 
 #######
@@ -177,5 +236,5 @@ def connectMainWindowSignals(widget):
 
 
 try:
-    main();
+    if __name__ == '__main__': main()
 except KeyboardInterrupt: pass

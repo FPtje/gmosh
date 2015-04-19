@@ -169,15 +169,22 @@ Files: {files}
 
 filemetaStr = "{name} ({size}, crc: {crc})"
 
-def sizeof_fmt(num):
+def sizeof_simple(num):
     n = num
     if num < 1024: return "%.0f bytes" % num
 
     for x in ['bytes','KB','MB','GB']:
         if num < 1024.0:
-            return "%.0f %s, %s bytes" % (num, x, n)
+            return "%.0f %s" % (num, x)
         num /= 1024.0
-    return "%.0f %s, %s bytes" % (num, 'TB', n)
+    return "%.0f %s" % (num, 'TB')
+
+def sizeof_fmt(num):
+    if num < 1024: return "%.0f bytes" % num
+
+    size = sizeof_simple(num)
+
+    return "%s, %s bytes" % (size, num)
 
 def dump(file_path):
     with open(file_path, 'rb', 0) as file:
@@ -238,6 +245,7 @@ def gmaInfo(file_path):
             res['files'].append({
                 'name': filemeta.file_name.decode('utf-8'),
                 'size': sizeof_fmt(filemeta.file_size),
+                'puresize': filemeta.file_size,
                 'crc':  filemeta.file_crc
             })
 
