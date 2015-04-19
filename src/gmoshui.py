@@ -157,6 +157,8 @@ def openGmaFile(widget, fileName, error = True):
         if error: errorMsg("Could not recognise the format of this file!")
         return
 
+    widget.settings.setValue("gmatools/lastgmafile", fileName)
+
     widget.gmaName.setText(info['addon_name'])
     widget.gmaDescription.setText('description' in info and info['description'] or info['addon_description'])
     widget.gmaAuthor.setText(info['addon_author'])
@@ -281,6 +283,11 @@ def wsIDEdit(widget, val):
 #######
 def initialiseUI(widget):
     connectMainWindowSignals(widget)
+
+    # Gma tools init
+    lastGMA = widget.settings.value("gmatools/lastgmafile", '')
+    widget.gmaSelect.setText(lastGMA)
+    openGmaFile(widget, lastGMA, False)
 
     # Workshop tools init
     widget.wsID.setValue(float(widget.settings.value("workshoptools/lastworkshopid", 0)))
