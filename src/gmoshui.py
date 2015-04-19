@@ -143,19 +143,11 @@ def populate(model, hierarchy, root = None):
 
     return node
 
-def gmaSelectFile(widget):
-    # TODO: Save last folder location
-    fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
-        "Open GMA file", None, "GMA files (*.gma)")
-
-    if not fileName: return
-
-    widget.gmaSelect.setText(fileName)
-
+def openGmaFile(widget, fileName, error = True):
     try:
         info = gmafile.gmaInfo(fileName)
     except Exception:
-        errorMsg("Could not recognise the format of this file!")
+        if error: errorMsg("Could not recognise the format of this file!")
         return
 
     widget.gmaName.setText(info['addon_name'])
@@ -182,6 +174,23 @@ def gmaSelectFile(widget):
 
     # Enable the extract button
     widget.gmaExtract.setEnabled(True)
+
+
+def gmaSelectEdited(widget, fileName):
+    openGmaFile(widget, fileName, False)
+
+def gmaSelectEditingFinished(widget):
+    openGmaFile(widget, widget.gmaSelect.text(), True)
+
+def gmaSelectFile(widget):
+    # TODO: Save last folder location
+    fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
+        "Open GMA file", None, "GMA files (*.gma)")
+
+    if not fileName: return
+
+    widget.gmaSelect.setText(fileName)
+    openGmaFile(widget, fileName)
 
 def gmaExtract(widget):
     selected = widget.gmaFiles.selectedIndexes()
@@ -258,6 +267,8 @@ def connectMainWindowSignals(widget):
     # GMA tools signals
     widget.gmaSelectFile.clicked.connect(partial(gmaSelectFile, widget))
     widget.gmaExtract.clicked.connect(partial(gmaExtract, widget))
+    widget.gmaSelect.textEdited.connect(partial(gmaSelectEdited, widget))
+    widget.gmaSelect.returnPressed.connect(partial(gmaSelectEditingFinished, widget))
 
     # Workshop signals
     widget.wsGetInfo.clicked.connect(partial(wsGetInfoClicked, widget))
