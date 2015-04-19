@@ -10,6 +10,7 @@ import sys
 import shiboken
 from datetime import datetime
 import os
+import re
 
 class ControlMainWindow(QtGui.QMainWindow):
     """Spawns the main window"""
@@ -186,6 +187,7 @@ def gmaExtract(widget):
     selected = widget.gmaFiles.selectedIndexes()
     selectedPaths = set()
     for i in selected:
+        if not i.model().itemFromIndex(i).filePath: continue
         selectedPaths.add(i.model().itemFromIndex(i).filePath)
 
     dialog = QtGui.QFileDialog()
@@ -194,7 +196,11 @@ def gmaExtract(widget):
     if not dialog.exec_(): return
     selectedFiles = dialog.selectedFiles()
 
-    gmafile.extract(widget.gmaSelect.text(), selectedFiles[0], selectedPaths)
+    destination = selectedFiles[0]
+    if not selectedPaths:
+        destination = os.path.join(destination, re.sub('[\\/:"*?<>|]+', '_', widget.gmaName.text()))
+
+    gmafile.extract(widget.gmaSelect.text(), destination, selectedPaths)
 
 #######
 # Workshop tools signals

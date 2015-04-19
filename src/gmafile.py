@@ -137,16 +137,16 @@ def extract(file_path, destination_path, fil = set()):
             if fil:
                 for prefix in fil:
                     if gma_file_name.startswith(prefix):
-                        print("YES", prefix, gma_file_name)
+
                         # Remove prefix, so it won't create all subfolders
                         strip, _ = os.path.split(prefix)
+                        if not strip: break
+
                         gma_file_name = gma_file_name[len(strip) + 1:]
-                        print("new name", gma_file_name)
                         break
                 else:
                     continue
 
-            print("Prejoin", destination_path, gma_file_name)
             file_name = os.path.join(destination_path, gma_file_name)
             file_folder = os.path.dirname(file_name)
 
