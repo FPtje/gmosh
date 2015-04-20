@@ -124,6 +124,29 @@ def removeRecentAddon(widget, addon):
     recentAddons.remove(addon)
     widget.settings.setValue("addontools/recentaddons", recentAddons)
 
+illegalFilesFoundMessage = """\
+<h1>Illegal files found!</h1>
+<p>The addon contains some files that are not allowed to be in a GMA file.</p>
+<p>These are the illegal files:</p>
+
+%s
+
+<p>It is recommended to either remove those files or to copy paste the above list in the "Files to ignore" box</p>
+"""
+def addonVerifyClicked(widget, show_ok = True):
+    verified, badlist = widget.currentAddon.verify_files()
+    if verified:
+        if show_ok: errorMsg("No illegal files were found. You're good to go!")
+        return
+
+    dialog = QtGui.QDialog()
+    ui = progressdialog.Ui_Dialog()
+    ui.setupUi(dialog)
+    ui.progressText.setText(illegalFilesFoundMessage % '<br />'.join(badlist))
+    ui.buttonBox.setEnabled(True)
+    dialog.show()
+    dialog.exec_()
+
 def addRecentFolderClicked(widget):
     fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
         "Open addon.json file", widget.settings.value("selectAddonLastFolder", None), "addon.json files (*.json)")
@@ -488,6 +511,7 @@ def initialiseUI(widget):
 #######
 def connectMainWindowSignals(widget):
     # Addon tools signals
+    widget.addonVerify.clicked.connect(partial(addonVerifyClicked, widget))
     widget.addFolder.clicked.connect(partial(addRecentFolderClicked, widget))
     widget.removeFolder.clicked.connect(partial(removeRecentFolderClicked, widget))
     widget.recentAddons.clicked.connect(partial(recentFolderSelected, widget))

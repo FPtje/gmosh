@@ -494,7 +494,7 @@
                <bool>false</bool>
               </property>
               <property name="text">
-               <string>Remove </string>
+               <string>Remove From List</string>
               </property>
              </widget>
             </item>
