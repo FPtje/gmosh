@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>643</height>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,22 +45,22 @@
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <layout class="QFormLayout" name="formLayout_2">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
+          <item row="0" column="0" colspan="2">
+           <widget class="QLabel" name="label_2">
             <property name="text">
-             <string/>
+             <string>Publish your addon to the workshop</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QTextEdit" name="textEdit">
+           <widget class="QTextEdit" name="addonChangelog">
             <property name="enabled">
              <bool>false</bool>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QPushButton" name="publish">
+           <widget class="QPushButton" name="addonPublish">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -69,15 +69,15 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>Check for illegal files</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QPushButton" name="verify">
+          <item row="3" column="1">
+           <widget class="QPushButton" name="addonVerify">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -86,15 +86,15 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="label_5">
             <property name="text">
              <string>Create GMA file</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
-           <widget class="QPushButton" name="createGMA">
+          <item row="4" column="1">
+           <widget class="QPushButton" name="addonCreateGMA">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -103,7 +103,7 @@
             </property>
            </widget>
           </item>
-          <item row="7" column="0" colspan="2">
+          <item row="5" column="0" colspan="2">
            <widget class="Line" name="line">
             <property name="enabled">
              <bool>true</bool>
@@ -125,39 +125,29 @@
             </property>
            </widget>
           </item>
-          <item row="8" column="0">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_34">
+            <property name="text">
+             <string>Changelog</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0" colspan="2">
            <widget class="QLabel" name="label_6">
             <property name="text">
              <string>Edit/generate addon info:</string>
             </property>
            </widget>
           </item>
-          <item row="9" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string>Title</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="1">
-           <widget class="QLineEdit" name="title">
+          <item row="7" column="1">
+           <widget class="QLineEdit" name="addonTitle">
             <property name="enabled">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="10" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="toolTip">
-             <string>This is the workshop id of the addon. You can find the workshop id of an addon by going to its workshop page and looking at the url after &quot;id=&quot;</string>
-            </property>
-            <property name="text">
-             <string>Workshop ID</string>
-            </property>
-           </widget>
-          </item>
-          <item row="10" column="1">
-           <widget class="QDoubleSpinBox" name="workshopid">
+          <item row="8" column="1">
+           <widget class="QDoubleSpinBox" name="addonWorkshopid">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -178,49 +168,25 @@
             </property>
            </widget>
           </item>
-          <item row="11" column="0">
-           <widget class="QLabel" name="label_11">
+          <item row="9" column="1">
+           <widget class="QTextEdit" name="addonDefaultChangelog">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="toolTip">
              <string>The default changelog of this addon when none is given.</string>
             </property>
-            <property name="text">
-             <string>Default changelog</string>
+           </widget>
+          </item>
+          <item row="10" column="1">
+           <widget class="QTextEdit" name="addonIgnore">
+            <property name="enabled">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="11" column="1">
-           <widget class="QTextEdit" name="defaultChangelog">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="toolTip">
-             <string>The default changelog of this addon when none is given.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="12" column="0">
-           <widget class="QLabel" name="label_12">
-            <property name="text">
-             <string>Files to ignore</string>
-            </property>
-           </widget>
-          </item>
-          <item row="12" column="1">
-           <widget class="QTextEdit" name="ignorelist">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="14" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Type</string>
-            </property>
-           </widget>
-          </item>
-          <item row="14" column="1">
-           <widget class="QComboBox" name="addontype">
+           <widget class="QComboBox" name="addonType">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -271,15 +237,8 @@
             </item>
            </widget>
           </item>
-          <item row="15" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>Tags</string>
-            </property>
-           </widget>
-          </item>
-          <item row="15" column="1">
-           <widget class="QComboBox" name="tag1">
+          <item row="12" column="1">
+           <widget class="QComboBox" name="addonTag1">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -335,8 +294,8 @@
             </item>
            </widget>
           </item>
-          <item row="16" column="1">
-           <widget class="QComboBox" name="tag2">
+          <item row="13" column="1">
+           <widget class="QComboBox" name="addonTag2">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -392,20 +351,13 @@
             </item>
            </widget>
           </item>
-          <item row="17" column="0">
-           <widget class="QLabel" name="label_31">
-            <property name="text">
-             <string>(512x512) jpeg image</string>
-            </property>
-           </widget>
-          </item>
-          <item row="17" column="1">
+          <item row="14" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QLineEdit" name="lineEdit"/>
+             <widget class="QLineEdit" name="addonImage"/>
             </item>
             <item>
-             <widget class="QToolButton" name="toolButton">
+             <widget class="QToolButton" name="addonImageBrowse">
               <property name="text">
                <string>...</string>
               </property>
@@ -413,10 +365,65 @@
             </item>
            </layout>
           </item>
-          <item row="18" column="0" colspan="2">
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Title</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="toolTip">
+             <string>This is the workshop id of the addon. You can find the workshop id of an addon by going to its workshop page and looking at the url after &quot;id=&quot;</string>
+            </property>
+            <property name="text">
+             <string>Workshop ID</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="toolTip">
+             <string>The default changelog of this addon when none is given.</string>
+            </property>
+            <property name="text">
+             <string>Default changelog</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Files to ignore</string>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Type</string>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Tags</string>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="0">
+           <widget class="QLabel" name="label_31">
+            <property name="text">
+             <string>(512x512) jpeg image</string>
+            </property>
+           </widget>
+          </item>
+          <item row="15" column="0" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
-             <widget class="QPushButton" name="pushButton_2">
+             <widget class="QPushButton" name="addonReset">
               <property name="enabled">
                <bool>false</bool>
               </property>
@@ -426,14 +433,14 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_3">
+             <widget class="QPushButton" name="addonSaveAs">
               <property name="text">
                <string>Save As</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="addonSave">
               <property name="enabled">
                <bool>false</bool>
               </property>
@@ -443,13 +450,6 @@
              </widget>
             </item>
            </layout>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Publish your addon to the workshop</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </item>

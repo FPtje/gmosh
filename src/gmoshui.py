@@ -5,6 +5,7 @@ from view import mainwindow, progressdialog
 from PySide import QtCore, QtGui
 from functools import partial
 import workshoputils
+import addoninfo
 import gmafile
 import sys
 import shiboken
@@ -139,8 +140,11 @@ def addRecentFolderClicked(widget):
     item.path = fileName
     widget.recentAddons.model().insertRow(0, item)
 
+    widget.recentAddons.selectionModel().clearSelection()
     widget.recentAddons.selectionModel().select(widget.recentAddons.model().indexFromItem(item),
         QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+
+    recentFolderSelected(widget, widget.recentAddons.model().indexFromItem(item))
 
 def removeRecentFolderClicked(widget):
     selected = widget.recentAddons.selectedIndexes()
@@ -151,8 +155,38 @@ def removeRecentFolderClicked(widget):
     # Select first item
     if not widget.recentAddons.model().hasIndex(0, 0): return
 
-    widget.recentAddons.selectionModel().select(widget.recentAddons.model().index(0, 0),
+    firstItem = widget.recentAddons.model().index(0, 0)
+    widget.recentAddons.selectionModel().select(firstItem,
         QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+
+    recentFolderSelected(widget, firstItem)
+
+def recentFolderSelected(widget, index):
+    path = widget.recentAddons.model().itemFromIndex(index).path
+    addonInfo = addoninfo.get_addon_info(path)
+
+    widget.currentAddon = addonInfo
+
+    widget.addonChangelog.setText(addonInfo.getdefault_changelog())
+    widget.addonDefaultChangelog.setText(addonInfo.getdefault_changelog())
+    widget.addonTitle.setText(addonInfo.gettitle())
+    widget.addonIgnore.setText('\n'.join(addonInfo.getignored()))
+
+    tags = addonInfo.gettags()
+
+    widget.addonWorkshopid.setValue(addonInfo.getworkshopid())
+    widget.addonType.setCurrentIndex(widget.addonType.findText(addonInfo.gettype()))
+    widget.addonTag1.setCurrentIndex(widget.addonTag1.findText(len(tags) > 0 and tags[0] or 'None'))
+    widget.addonTag2.setCurrentIndex(widget.addonTag2.findText(len(tags) > 1 and tags[1] or 'None'))
+    widget.addonImage.setText(addonInfo.getlogo())
+
+    widget.addonPublish.setEnabled(True)
+    widget.addonVerify.setEnabled(True)
+    widget.createGMA.setEnabled(True)
+    widget.addonChangelog.setEnabled(True)
+    widget.addonSave.setEnabled(True)
+    widget.addonSaveAs.setEnabled(True)
+    widget.addonReset.setEnabled(True)
 
 
 #######
@@ -351,8 +385,11 @@ def initRecentAddonsList(widget):
         # Select first item
         if not widget.recentAddons.model().hasIndex(0, 0): return
 
-        widget.recentAddons.selectionModel().select(widget.recentAddons.model().index(0, 0),
+        firstItem = widget.recentAddons.model().index(0, 0)
+        widget.recentAddons.selectionModel().select(firstItem,
             QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+
+        recentFolderSelected(widget, firstItem)
 
 
 #######
@@ -379,6 +416,7 @@ def connectMainWindowSignals(widget):
     # Addon tools signals
     widget.addFolder.clicked.connect(partial(addRecentFolderClicked, widget))
     widget.removeFolder.clicked.connect(partial(removeRecentFolderClicked, widget))
+    widget.recentAddons.clicked.connect(partial(recentFolderSelected, widget))
 
     # GMA tools signals
     widget.gmaSelectFile.clicked.connect(partial(gmaSelectFile, widget))

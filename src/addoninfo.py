@@ -50,10 +50,26 @@ class GModAddon:
         """The "description" of this addon (includes description, type and tags)
         This description is used in the GMA file.
         """
-        a_description = 'description' in self.data and self.data['description'] or 'Description'
+        a_description = u'description' in self.data and self.data['description'] or u'Description'
         a_type = self.data['type']
         a_tags = self.data['tags']
         return json.dumps({'description': a_description, 'type': a_type, 'tags': a_tags})
+
+    def getdescription(self):
+        """Get the description of the addon"""
+        return u'description' in self.data and self.data[u'description'] or u'Description'
+
+    def gettype(self):
+        """Get the type of the addon"""
+        return u'type' in self.data and self.data[u'type'] or u'type'
+
+    def gettags(self):
+        """Get the tags of the addon"""
+        return u'tags' in self.data and self.data[u'tags'] or []
+
+    def getlogo(self):
+        """Get the logo of the addon"""
+        return u'logo' in self.data and self.data[u'logo'] or ''
 
     def getauthor(self):
         """The author of the addon"""
