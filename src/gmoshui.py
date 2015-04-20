@@ -170,6 +170,7 @@ def recentFolderSelected(widget, index):
     widget.addonChangelog.setText(addonInfo.getdefault_changelog())
     widget.addonDefaultChangelog.setText(addonInfo.getdefault_changelog())
     widget.addonTitle.setText(addonInfo.gettitle())
+    widget.addonDescription.setText(addonInfo.getdescription())
     widget.addonIgnore.setText('\n'.join(addonInfo.getignored()))
 
     tags = addonInfo.gettags()
@@ -182,12 +183,22 @@ def recentFolderSelected(widget, index):
 
     widget.addonPublish.setEnabled(True)
     widget.addonVerify.setEnabled(True)
-    widget.createGMA.setEnabled(True)
+    widget.addonCreateGMA.setEnabled(True)
     widget.addonChangelog.setEnabled(True)
     widget.addonSave.setEnabled(True)
     widget.addonSaveAs.setEnabled(True)
     widget.addonReset.setEnabled(True)
 
+def addonSaveClicked(widget):
+    widget.currentAddon.save_changes()
+
+def updateAddonInfo(widget, key, target, fnvalue):
+    value = fnvalue(target) if callable(fnvalue) else fnvalue
+
+    if not value:
+        widget.currentAddon.data.pop(key)
+    else:
+        widget.currentAddon.data[key] = value
 
 #######
 # GMA tools signals
@@ -417,6 +428,20 @@ def connectMainWindowSignals(widget):
     widget.addFolder.clicked.connect(partial(addRecentFolderClicked, widget))
     widget.removeFolder.clicked.connect(partial(removeRecentFolderClicked, widget))
     widget.recentAddons.clicked.connect(partial(recentFolderSelected, widget))
+    widget.addonSave.clicked.connect(partial(addonSaveClicked, widget))
+    # Update addon info:
+    widget.addonTitle.textEdited.connect(
+        partial(updateAddonInfo, widget, 'title', widget.addonTitle)
+    )
+    widget.addonDescription.textChanged.connect(
+        partial(updateAddonInfo, widget, 'description', widget.addonDescription, QtGui.QTextEdit.toPlainText)
+    )
+    widget.addonDefaultChangelog.textChanged.connect(
+        partial(updateAddonInfo, widget, 'default_changelog', widget.addonDefaultChangelog, QtGui.QTextEdit.toPlainText)
+    )
+    widget.addonImage.textEdited.connect(
+        partial(updateAddonInfo, widget, 'logo', widget.addonImage)
+    )
 
     # GMA tools signals
     widget.gmaSelectFile.clicked.connect(partial(gmaSelectFile, widget))
