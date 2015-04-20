@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>669</height>
+    <height>701</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -932,6 +932,55 @@
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>addonChangelog</tabstop>
+  <tabstop>addonPublish</tabstop>
+  <tabstop>addonVerify</tabstop>
+  <tabstop>addonCreateGMA</tabstop>
+  <tabstop>addonTitle</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>addonDescription</tabstop>
+  <tabstop>addonWorkshopid</tabstop>
+  <tabstop>addonDefaultChangelog</tabstop>
+  <tabstop>addonIgnore</tabstop>
+  <tabstop>addonType</tabstop>
+  <tabstop>addonTag1</tabstop>
+  <tabstop>addonTag2</tabstop>
+  <tabstop>addonImage</tabstop>
+  <tabstop>addonImageBrowse</tabstop>
+  <tabstop>addonReset</tabstop>
+  <tabstop>addonSaveAs</tabstop>
+  <tabstop>addonSave</tabstop>
+  <tabstop>recentAddons</tabstop>
+  <tabstop>addFolder</tabstop>
+  <tabstop>removeFolder</tabstop>
+  <tabstop>gmaSelect</tabstop>
+  <tabstop>gmaSelectFile</tabstop>
+  <tabstop>gmaName</tabstop>
+  <tabstop>gmaDescription</tabstop>
+  <tabstop>gmaAuthor</tabstop>
+  <tabstop>gmaType</tabstop>
+  <tabstop>gmaTags</tabstop>
+  <tabstop>gmaAuthorID</tabstop>
+  <tabstop>gmaTimestamp</tabstop>
+  <tabstop>gmaFiles</tabstop>
+  <tabstop>gmaExtract</tabstop>
+  <tabstop>wsID</tabstop>
+  <tabstop>wsExtract</tabstop>
+  <tabstop>wsGetInfo</tabstop>
+  <tabstop>wsDownload</tabstop>
+  <tabstop>wsName</tabstop>
+  <tabstop>wsDescription</tabstop>
+  <tabstop>wsAuthorSteam</tabstop>
+  <tabstop>wsBanned</tabstop>
+  <tabstop>wsBanReason</tabstop>
+  <tabstop>wsTags</tabstop>
+  <tabstop>wsTimeCreated</tabstop>
+  <tabstop>wsTimeUpdated</tabstop>
+  <tabstop>wsSubscriptions</tabstop>
+  <tabstop>wsViews</tabstop>
+  <tabstop>wsFavorites</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
