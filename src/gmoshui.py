@@ -218,7 +218,7 @@ def addRecentFolderClicked(widget):
 
     if not addRecentAddon(widget, fileName): return
 
-    item = QtGui.QStandardItem(fileName)
+    item = QtGui.QStandardItem(shortenPath(fileName))
     item.path = fileName
     widget.recentAddons.model().insertRow(0, item)
 
@@ -293,7 +293,7 @@ def addonSaveAsClicked(widget):
     if not addRecentAddon(widget, fileName): return
 
     # Add to recent addons list
-    item = QtGui.QStandardItem(fileName)
+    item = QtGui.QStandardItem(shortenPath(fileName))
     item.path = fileName
     widget.recentAddons.model().insertRow(0, item)
 
@@ -525,6 +525,22 @@ def wsDownloadClicked(widget):
 def wsIDEdit(widget, val):
     widget.settings.setValue("workshoptools/lastworkshopid", val)
 
+def shortenPath(path, maxI = 4):
+    """Simple function that shortens path names"""
+    res = []
+
+    l, r = os.path.split(path)
+    for i in range(0, maxI):
+        l, r = os.path.split(path)
+        res.append(r)
+        path = l
+
+    res.append('...')
+    l, r = os.path.splitdrive(path)
+    res.append(l)
+
+    return '/'.join(list(reversed(res)))
+
 def initRecentAddonsList(widget):
     model = QtGui.QStandardItemModel()
 
@@ -535,7 +551,7 @@ def initRecentAddonsList(widget):
     if not recentAddons: return
 
     for i in recentAddons:
-        item = QtGui.QStandardItem(i)
+        item = QtGui.QStandardItem(shortenPath(i))
         item.path = i
         model.appendRow(item)
 
