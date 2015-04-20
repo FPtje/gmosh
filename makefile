@@ -34,7 +34,7 @@ install_linux: uninstall_linux
 
 install_osx: uninstall_osx
 	if [ ! -d /opt/gmosh ]; then mkdir -p /opt/gmosh; fi
-	cp bin/* /opt/gmosh
+	cp -r bin/* /opt/gmosh
 	cp required/gmpublish_osx /opt/gmosh
 	cp required/libsteam_api.dylib /opt/gmosh
 
