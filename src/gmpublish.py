@@ -16,7 +16,11 @@ class GmPublish:
 		"""
 		outfile = 'temp.gma'
 		logo = self.addon.getlogo()
+
+		print("Compressing to temporary GMA file...")
 		self.addon.compress(outfile)
+
+		print("Publishing GMA file to workshop...\n")
 
 		# Call gmpublish to create the addon
 		try:
@@ -50,16 +54,19 @@ class GmPublish:
 		print("Compressing to temporary GMA file...")
 		self.addon.compress(outfile)
 
-		print("Publishing GMA file to workshop...")
+		print("Publishing GMA file to workshop...\n")
 
 		# Call GMPublish to update
-		output = subprocess.check_output([self._get_executable(), 'update',
-			'-addon', outfile,
-			'-id', str(self.addon.getworkshopid()),
-			'-changes', message
-		])
-
-		print(output.decode('utf-8'))
+		try:
+			output = subprocess.check_output([self._get_executable(), 'update',
+						'-addon', outfile,
+						'-id', str(self.addon.getworkshopid()),
+						'-changes', message
+					])
+			print(output.decode('utf-8'))
+		except subprocess.CalledProcessError as e:
+			print(e.output.decode('utf-8'))
+			print("Upload to workshop failed!")
 
 		os.remove(outfile)
 

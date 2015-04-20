@@ -1,12 +1,17 @@
 {
-    "title"     :   "My Test Addon",
-    "type"      :   "gamemode",
-    "tags"      :   [ "fun", "cartoon" ],
-    "ignore"    :
-    [
+    "description": "Description",
+    "ignore": [
         "*.psd",
         "*.vcproj",
         "*.svn*",
-        "test.jpg"
-    ]
+        "test.jpg",
+        "*.json"
+    ],
+    "logo": "/home/falco/Programs/gmosh/src/test/test.jpg",
+    "tags": [
+        "fun",
+        "cartoon"
+    ],
+    "title": "My Test Addon",
+    "type": "gamemode"
 }
