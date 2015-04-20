@@ -10,11 +10,12 @@ class GmPublish:
 	def __init__(self, addon):
 		self.addon = addon
 
-	def create(self, logo):
+	def create(self):
 		"""Upload to the workshop as a new addon. Returns (succeeded, strResult)
 		precondition: Assumes that the files of the addon have been verified.
 		"""
 		outfile = 'temp.gma'
+		logo = self.addon.getlogo()
 		self.addon.compress(outfile)
 
 		# Call gmpublish to create the addon
@@ -46,7 +47,10 @@ class GmPublish:
 		"""Push an update of the addon to the workshop"""
 		message = message or self.addon.getdefault_changelog()
 		outfile = 'temp.gma'
+		print("Compressing to temporary GMA file...")
 		self.addon.compress(outfile)
+
+		print("Publishing GMA file to workshop...")
 
 		# Call GMPublish to update
 		output = subprocess.check_output([self._get_executable(), 'update',

@@ -6,6 +6,7 @@ from PySide import QtCore, QtGui
 from functools import partial
 import workshoputils
 import addoninfo
+import gmpublish
 import gmafile
 import sys
 import shiboken
@@ -67,7 +68,7 @@ class WorkBackground(QtCore.QThread):
         sys.stdout = OutLog(self.signal, sys.stdout)
 
         self.target()
-        self.signal.emit("FINISHED")
+        self.signal.emit("<br /><h3>FINISHED</h3>")
 
         sys.stdout = oldstdout
         self.finished.emit()
@@ -87,7 +88,7 @@ def createProgressDialog(work):
             ui.progressText.moveCursor(QtGui.QTextCursor.StartOfLine, QtGui.QTextCursor.KeepAnchor)
             ui.progressText.moveCursor(QtGui.QTextCursor.PreviousCharacter, QtGui.QTextCursor.KeepAnchor)
 
-        ui.progressText.insertPlainText(text)
+        ui.progressText.insertHtml(text.replace('\n', '<br />'))
 
     def enableButtons():
         ui.buttonBox.setEnabled(True)
@@ -165,6 +166,45 @@ def addonCreateGMAClicked(widget):
     if not addonVerifyClicked(widget, False): return
 
     createProgressDialog(partial(widget.currentAddon.compress, fileName))
+
+def publishNew(widget, publisher):
+    succeeded, output = publisher.create()
+    if succeeded:
+        widget.currentAddon.save_changes()
+        print("<h1>Upload succeeded!</h1><br />")
+        print("<p>The addon has been uploaded. Do check it out at </p>")
+        print('<a href="http://steamcommunity.com/sharedfiles/filedetails/?id=%s">http://steamcommunity.com/sharedfiles/filedetails/?id=%s</a>' % (output, output))
+        print("<br /><p>Note that you will have to change the visibility of this addon in the above link to make it visible for everyone.</p>")
+        return
+
+    print("<h1>Upload failed!</h1> <br />")
+    print("<p>The upload has failed! The error message can be read below:</p><br />")
+    print("<br /><tt>")
+    print(output)
+    print("</tt>")
+
+def addonPublishClicked(widget):
+    if not widget.currentAddon.has_workshop_id() and not widget.currentAddon.getlogo():
+        errorMsg("Error: When uploading a new addon to the workshop, a 512x512 jpeg image must be given.\n"
+                 "Please either enter a workshop id or provide a 512x512 jpeg image.")
+        return
+
+    if not addonVerifyClicked(widget, False): return
+
+    changelog = widget.addonChangelog.toPlainText() or widget.currentAddon.getdefault_changelog() or ''
+
+    publisher = gmpublish.GmPublish(widget.currentAddon)
+
+    if widget.currentAddon.has_workshop_id():
+        createProgressDialog(partial(publisher.update, changelog))
+        return
+
+    ok = QtGui.QMessageBox.warning(None, "Upload new addon", "This will be uploaded as a new addon on the workshop. To update an existing addon, please fill in the workshop ID of that addon. Are you sure you want to upload this addon?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes
+
+    if not ok: return
+
+    createProgressDialog(partial(publishNew, widget, publisher))
+
 
 def addRecentFolderClicked(widget):
     fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
@@ -446,6 +486,10 @@ def wsGetInfoClicked(widget):
     if not info: return
 
     info = info[0]
+    if not 'title' in info:
+        errorMsg("Unable to retrieve addon info. Make sure the workshop ID is correct.")
+        return
+
     widget.wsName.setText(info['title'])
     widget.wsDescription.setText(info['description'])
     widget.wsAuthorSteam.setValue(float(info['creator']))
@@ -532,6 +576,7 @@ def connectMainWindowSignals(widget):
     # Addon tools signals
     widget.addonVerify.clicked.connect(partial(addonVerifyClicked, widget))
     widget.addonCreateGMA.clicked.connect(partial(addonCreateGMAClicked, widget))
+    widget.addonPublish.clicked.connect(partial(addonPublishClicked, widget))
     widget.addFolder.clicked.connect(partial(addRecentFolderClicked, widget))
     widget.removeFolder.clicked.connect(partial(removeRecentFolderClicked, widget))
     widget.recentAddons.clicked.connect(partial(recentFolderSelected, widget))

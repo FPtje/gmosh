@@ -257,6 +257,7 @@ def publish(addon, logo, message):
 		publisher.update(message)
 		return
 
+	logo = logo or addon.getlogo()
 	# New addons require a logo file
 	while True:
 		if not logo:
@@ -268,7 +269,8 @@ def publish(addon, logo, message):
 
 		logo = input("What is the path of the logo file?\n")
 
-	succeeded, result = publisher.create(logo)
+	addon.data['logo'] = logo
+	succeeded, result = publisher.create()
 	if succeeded:
 		print("Publishing to workshop succeeded!")
 		print("Workshop ID set to", result)
