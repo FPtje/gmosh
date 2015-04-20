@@ -137,7 +137,7 @@ def addonVerifyClicked(widget, show_ok = True):
     verified, badlist = widget.currentAddon.verify_files()
     if verified:
         if show_ok: errorMsg("No illegal files were found. You're good to go!")
-        return
+        return True
 
     dialog = QtGui.QDialog()
     ui = progressdialog.Ui_Dialog()
@@ -146,6 +146,25 @@ def addonVerifyClicked(widget, show_ok = True):
     ui.buttonBox.setEnabled(True)
     dialog.show()
     dialog.exec_()
+
+    return False
+
+def addonCreateGMAClicked(widget):
+    fileName, _ = QtGui.QFileDialog.getSaveFileName(None,
+        "Store GMA file", os.path.join(widget.settings.value("addontools/lastgmafolder", ''), 'out.gma'), "GMA files (*.gma)")
+
+    if not fileName: return
+    # Force .gma extension
+    fileName = os.path.splitext(fileName)[0] + '.gma'
+    folder, _ = os.path.split(fileName)
+
+    # Store last used folder location
+    widget.settings.setValue("addontools/lastgmafolder", folder)
+
+    # Verify the addon
+    if not addonVerifyClicked(widget, False): return
+
+    createProgressDialog(partial(widget.currentAddon.compress, fileName))
 
 def addRecentFolderClicked(widget):
     fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
@@ -512,6 +531,7 @@ def initialiseUI(widget):
 def connectMainWindowSignals(widget):
     # Addon tools signals
     widget.addonVerify.clicked.connect(partial(addonVerifyClicked, widget))
+    widget.addonCreateGMA.clicked.connect(partial(addonCreateGMAClicked, widget))
     widget.addFolder.clicked.connect(partial(addRecentFolderClicked, widget))
     widget.removeFolder.clicked.connect(partial(removeRecentFolderClicked, widget))
     widget.recentAddons.clicked.connect(partial(recentFolderSelected, widget))
