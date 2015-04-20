@@ -167,6 +167,8 @@ def recentFolderSelected(widget, index):
 
     widget.currentAddon = addonInfo
 
+    if not addonInfo: return
+
     widget.addonChangelog.setText(addonInfo.getdefault_changelog())
     widget.addonDefaultChangelog.setText(addonInfo.getdefault_changelog())
     widget.addonTitle.setText(addonInfo.gettitle())
@@ -191,6 +193,37 @@ def recentFolderSelected(widget, index):
 
 def addonSaveClicked(widget):
     widget.currentAddon.save_changes()
+
+def addonSaveAsClicked(widget):
+    fileName, _ = QtGui.QFileDialog.getSaveFileName(None,
+        "Store addon.json file", os.path.join(widget.settings.value("addontools/lastsaveasfolder", ''), 'addon.json'), "json files (*.json)")
+
+    if not fileName: return
+    # Force .json extension
+    fileName = os.path.splitext(fileName)[0] + '.json'
+    folder, _ = os.path.split(fileName)
+
+    # Store last used folder location
+    widget.settings.setValue("addontools/lastsaveasfolder", folder)
+
+    widget.currentAddon.setfile(fileName)
+    widget.currentAddon.save_changes()
+    if not addRecentAddon(widget, fileName): return
+
+    # Add to recent addons list
+    item = QtGui.QStandardItem(fileName)
+    item.path = fileName
+    widget.recentAddons.model().insertRow(0, item)
+
+    widget.recentAddons.selectionModel().clearSelection()
+    widget.recentAddons.selectionModel().select(widget.recentAddons.model().indexFromItem(item),
+        QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+
+def addonResetClicked(widget):
+    selected = widget.recentAddons.selectedIndexes()
+    for s in selected:
+        recentFolderSelected(widget, s)
+        break
 
 def updateAddonInfo(widget, key, target, fnvalue, *args):
     value = fnvalue(target) if callable(fnvalue) else fnvalue
@@ -459,6 +492,8 @@ def connectMainWindowSignals(widget):
     widget.removeFolder.clicked.connect(partial(removeRecentFolderClicked, widget))
     widget.recentAddons.clicked.connect(partial(recentFolderSelected, widget))
     widget.addonSave.clicked.connect(partial(addonSaveClicked, widget))
+    widget.addonSaveAs.clicked.connect(partial(addonSaveAsClicked, widget))
+    widget.addonReset.clicked.connect(partial(addonResetClicked, widget))
     # Update addon info:
     widget.addonTitle.textEdited.connect(
         partial(updateAddonInfo, widget, 'title', widget.addonTitle)

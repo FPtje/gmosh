@@ -113,6 +113,10 @@ class GModAddon:
         """The path of the addon folder"""
         return self.path
 
+    def setfile(self, file):
+        self.file = file
+        self.path = os.path.dirname(file)
+
     def _file_nomatch(self, ignore, f):
         """Whether a given file is not in the blacklist
         >>> addon_info_from_path("test")._file_nomatch(['*.psd'], 'a/b/c.psd')
