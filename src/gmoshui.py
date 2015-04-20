@@ -442,6 +442,9 @@ def connectMainWindowSignals(widget):
     widget.addonImage.textEdited.connect(
         partial(updateAddonInfo, widget, 'logo', widget.addonImage)
     )
+    widget.addonWorkshopid.valueChanged.connect(
+        partial(updateAddonInfo, widget, 'workshopid', widget.addonWorkshopid)
+    )
 
     # GMA tools signals
     widget.gmaSelectFile.clicked.connect(partial(gmaSelectFile, widget))
