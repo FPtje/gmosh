@@ -192,13 +192,37 @@ def recentFolderSelected(widget, index):
 def addonSaveClicked(widget):
     widget.currentAddon.save_changes()
 
-def updateAddonInfo(widget, key, target, fnvalue):
+def updateAddonInfo(widget, key, target, fnvalue, *args):
     value = fnvalue(target) if callable(fnvalue) else fnvalue
 
     if not value:
-        widget.currentAddon.data.pop(key)
+        if key in widget.currentAddon.data:
+            widget.currentAddon.data.pop(key)
     else:
         widget.currentAddon.data[key] = value
+
+def updateAddonTags(widget, val):
+    tag1 = widget.addonTag1.currentText()
+    tag2 = widget.addonTag2.currentText()
+
+    tags = []
+    if tag1 and tag1 != 'None': tags.append(tag1)
+    if tag2 and tag2 != 'None': tags.append(tag2)
+
+    widget.currentAddon.data['tags'] = tags
+
+def selectAddonImage(widget):
+    fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
+        "Open jpg file", widget.settings.value("addontools/lastlogofolder", None), "jpeg files (*.jpg *.jpeg)")
+
+    if not fileName: return
+
+    folder, _ = os.path.split(fileName)
+    # Store last used folder location
+    widget.settings.setValue("addontools/lastlogofolder", folder)
+
+    widget.addonImage.setText(fileName)
+    widget.currentAddon.data['logo'] = fileName
 
 #######
 # GMA tools signals
@@ -294,6 +318,12 @@ def gmaSelectEditingFinished(widget):
 def gmaSelectFile(widget):
     fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
         "Open GMA file", widget.settings.value("selectGMALastFolder", None), "GMA files (*.gma)")
+
+    if not fileName: return
+
+    folder, _ = os.path.split(fileName)
+    # Store last used folder location
+    widget.settings.setValue("selectGMALastFolder", folder)
 
     if not fileName: return
 
@@ -445,6 +475,18 @@ def connectMainWindowSignals(widget):
     widget.addonWorkshopid.valueChanged.connect(
         partial(updateAddonInfo, widget, 'workshopid', widget.addonWorkshopid)
     )
+    widget.addonIgnore.textChanged.connect(
+        partial(updateAddonInfo, widget, 'ignore', widget.addonIgnore,
+            # Filter out empty strings
+            lambda x: list(filter(bool, x.toPlainText().split('\n'))))
+    )
+    widget.addonType.currentIndexChanged.connect(
+        partial(updateAddonInfo, widget, 'type', widget.addonType,
+            lambda x: x.currentText())
+    )
+    widget.addonTag1.currentIndexChanged.connect(partial(updateAddonTags, widget))
+    widget.addonTag2.currentIndexChanged.connect(partial(updateAddonTags, widget))
+    widget.addonImageBrowse.clicked.connect(partial(selectAddonImage, widget))
 
     # GMA tools signals
     widget.gmaSelectFile.clicked.connect(partial(gmaSelectFile, widget))
