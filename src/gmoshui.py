@@ -101,6 +101,59 @@ def createProgressDialog(work):
     dialog.exec_()
     thread.exit()
 
+#######
+# Addon tools signals
+#######
+def addRecentAddon(widget, addon):
+    recentAddons = widget.settings.value("addontools/recentaddons", [])
+    if not recentAddons: recentAddons = []
+    if type(recentAddons) is str: recentAddons = [recentAddons]
+
+    if addon in recentAddons: return False
+
+    recentAddons.insert(0, addon)
+    widget.settings.setValue("addontools/recentaddons", recentAddons)
+
+    return True
+
+def removeRecentAddon(widget, addon):
+    recentAddons = widget.settings.value("addontools/recentaddons", [])
+    if type(recentAddons) is str: recentAddons = [recentAddons]
+
+    recentAddons.remove(addon)
+    widget.settings.setValue("addontools/recentaddons", recentAddons)
+
+def addRecentFolderClicked(widget):
+    fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
+        "Open addon.json file", widget.settings.value("selectAddonLastFolder", None), "addon.json files (*.json)")
+
+    if not fileName: return
+
+    folder, _ = os.path.split(fileName)
+    # Store last used folder location
+    widget.settings.setValue("selectAddonLastFolder", folder)
+
+    if not addRecentAddon(widget, fileName): return
+
+    item = QtGui.QStandardItem(fileName)
+    item.path = fileName
+    widget.recentAddons.model().insertRow(0, item)
+
+    widget.recentAddons.selectionModel().select(widget.recentAddons.model().indexFromItem(item),
+        QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+
+def removeRecentFolderClicked(widget):
+    selected = widget.recentAddons.selectedIndexes()
+    for s in selected:
+        removeRecentAddon(widget, widget.recentAddons.model().itemFromIndex(s).path)
+        widget.recentAddons.model().removeRow(s.row())
+
+    # Select first item
+    if not widget.recentAddons.model().hasIndex(0, 0): return
+
+    widget.recentAddons.selectionModel().select(widget.recentAddons.model().index(0, 0),
+        QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+
 
 #######
 # GMA tools signals
@@ -278,11 +331,38 @@ def wsDownloadClicked(widget):
 def wsIDEdit(widget, val):
     widget.settings.setValue("workshoptools/lastworkshopid", val)
 
+def initRecentAddonsList(widget):
+    model = QtGui.QStandardItemModel()
+
+    recentAddons = widget.settings.value("addontools/recentaddons", [])
+    if type(recentAddons) is str: recentAddons = [recentAddons]
+
+    widget.recentAddons.setModel(model)
+    if not recentAddons: return
+
+    for i in recentAddons:
+        item = QtGui.QStandardItem(i)
+        item.path = i
+        model.appendRow(item)
+
+    if recentAddons:
+        widget.removeFolder.setEnabled(True)
+
+        # Select first item
+        if not widget.recentAddons.model().hasIndex(0, 0): return
+
+        widget.recentAddons.selectionModel().select(widget.recentAddons.model().index(0, 0),
+            QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+
+
 #######
 # Perform startup tasks
 #######
 def initialiseUI(widget):
     connectMainWindowSignals(widget)
+
+    # Addon tools init
+    initRecentAddonsList(widget)
 
     # Gma tools init
     lastGMA = widget.settings.value("gmatools/lastgmafile", '')
@@ -296,6 +376,10 @@ def initialiseUI(widget):
 # Connect all signals
 #######
 def connectMainWindowSignals(widget):
+    # Addon tools signals
+    widget.addFolder.clicked.connect(partial(addRecentFolderClicked, widget))
+    widget.removeFolder.clicked.connect(partial(removeRecentFolderClicked, widget))
+
     # GMA tools signals
     widget.gmaSelectFile.clicked.connect(partial(gmaSelectFile, widget))
     widget.gmaExtract.clicked.connect(partial(gmaExtract, widget))
