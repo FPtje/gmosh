@@ -237,6 +237,7 @@ def removeRecentFolderClicked(widget):
     # Select first item
     if not widget.recentAddons.model().hasIndex(0, 0): return
 
+    widget.recentAddons.selectionModel().clearSelection()
     firstItem = widget.recentAddons.model().index(0, 0)
     widget.recentAddons.selectionModel().select(firstItem,
         QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)

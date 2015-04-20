@@ -7,6 +7,7 @@ gui:
 linux: gui
 	if [ ! -d bin ]; then mkdir bin; fi
 	cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
+	cxfreeze src/gmoshui.py --target-dir=bin --include-modules=$(MODULES)
 
 osx: gui
 	if [ ! -d bin ]; then mkdir bin; fi
