@@ -205,6 +205,11 @@ def addonPublishClicked(widget):
 
     createProgressDialog(partial(publishNew, widget, publisher))
 
+def addonMoveUpClicked(widget):
+    pass
+
+def addonMoveDownClicked(widget):
+    pass
 
 def addRecentFolderClicked(widget):
     fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
@@ -245,6 +250,7 @@ def removeRecentFolderClicked(widget):
     recentFolderSelected(widget, firstItem)
 
 def recentFolderSelected(widget, index):
+    enableRecentAddonsUpDownButtons(widget)
     path = widget.recentAddons.model().itemFromIndex(index).path
     addonInfo = addoninfo.get_addon_info(path)
 
@@ -542,6 +548,25 @@ def shortenPath(path, maxI = 4):
 
     return '/'.join(list(reversed(res)))
 
+def enableRecentAddonsUpDownButtons(widget):
+    recentAddons = widget.settings.value("addontools/recentaddons", [])
+    if type(recentAddons) is str: recentAddons = [recentAddons]
+
+    selected = widget.recentAddons.selectedIndexes()
+
+    widget.addonMoveUp.setEnabled(True)
+    widget.addonMoveDown.setEnabled(True)
+    if not recentAddons or len(selected) > 1:
+        widget.addonMoveUp.setEnabled(False)
+        widget.addonMoveDown.setEnabled(False)
+        return
+
+    for s in selected:
+        if s.row() == 0:
+            widget.addonMoveUp.setEnabled(False)
+        if s.row() == len(recentAddons) - 1:
+            widget.addonMoveDown.setEnabled(False)
+
 def initRecentAddonsList(widget):
     model = QtGui.QStandardItemModel()
 
@@ -594,6 +619,8 @@ def connectMainWindowSignals(widget):
     widget.addonVerify.clicked.connect(partial(addonVerifyClicked, widget))
     widget.addonCreateGMA.clicked.connect(partial(addonCreateGMAClicked, widget))
     widget.addonPublish.clicked.connect(partial(addonPublishClicked, widget))
+    widget.addonMoveUp.clicked.connect(partial(addonMoveUpClicked, widget))
+    widget.addonMoveDown.clicked.connect(partial(addonMoveDownClicked, widget))
     widget.addFolder.clicked.connect(partial(addRecentFolderClicked, widget))
     widget.removeFolder.clicked.connect(partial(removeRecentFolderClicked, widget))
     widget.recentAddons.clicked.connect(partial(recentFolderSelected, widget))
