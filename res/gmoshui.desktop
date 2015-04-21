@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=2.0.0
+Encoding=UTF-8
+Name=gmoshui
+GenericName=Data Visualization
+Comment=Garry's mod addon related tools
+Exec=/usr/local/bin/gmoshui
+Icon=/usr/share/pixmaps/gmosh_256.png
+Type=Application
+Categories=Development;
+MimeType=application/x-gma;
