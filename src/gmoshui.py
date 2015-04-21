@@ -125,6 +125,14 @@ def removeRecentAddon(widget, addon):
     recentAddons.remove(addon)
     widget.settings.setValue("addontools/recentaddons", recentAddons)
 
+def moveRecentAddon(widget, fr, to):
+    recentAddons = widget.settings.value("addontools/recentaddons", [])
+    if type(recentAddons) is str: recentAddons = [recentAddons]
+
+    recentAddons.insert(to, recentAddons.pop(fr))
+
+    widget.settings.setValue("addontools/recentaddons", recentAddons)
+
 illegalFilesFoundMessage = """\
 <h1>Illegal files found!</h1>
 <p>The addon contains some files that are not allowed to be in a GMA file.</p>
@@ -205,11 +213,32 @@ def addonPublishClicked(widget):
 
     createProgressDialog(partial(publishNew, widget, publisher))
 
+def moveSelectedRecentAddon(widget, direction):
+    selected = widget.recentAddons.selectedIndexes()
+    for s in selected:
+        rowText = s.data()
+        path = widget.recentAddons.model().itemFromIndex(s).path
+
+        item = QtGui.QStandardItem(rowText)
+        item.path = path
+
+        widget.recentAddons.model().removeRow(s.row())
+        widget.recentAddons.model().insertRow(s.row() + direction, item)
+
+        widget.recentAddons.selectionModel().clearSelection()
+        widget.recentAddons.selectionModel().select(widget.recentAddons.model().indexFromItem(item),
+            QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+
+        moveRecentAddon(widget, s.row(), s.row() + direction)
+        break
+
+    enableRecentAddonsUpDownButtons(widget)
+
 def addonMoveUpClicked(widget):
-    pass
+    moveSelectedRecentAddon(widget, -1)
 
 def addonMoveDownClicked(widget):
-    pass
+    moveSelectedRecentAddon(widget, 1)
 
 def addRecentFolderClicked(widget):
     fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
