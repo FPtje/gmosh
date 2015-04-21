@@ -58,11 +58,16 @@ class GmPublish:
 
 		# Call GMPublish to update
 		try:
-			output = subprocess.check_output([self._get_executable(), 'update',
+			params = [self._get_executable(), 'update',
 						'-addon', outfile,
 						'-id', str(self.addon.getworkshopid()),
 						'-changes', message
-					])
+					]
+			if self.addon.getlogo():
+				params.append('-icon')
+				params.append(self.addon.getlogo())
+
+			output = subprocess.check_output(params)
 			print(output.decode('utf-8'))
 		except subprocess.CalledProcessError as e:
 			print(e.output.decode('utf-8'))
