@@ -651,6 +651,13 @@ def initialiseUI(widget):
     # Workshop tools init
     widget.wsID.setValue(float(widget.settings.value("workshoptools/lastworkshopid", 0)))
 
+    if len(sys.argv) > 1:
+        gmaFile = os.path.abspath(sys.argv[1])
+        widget.gmaSelect.setText(gmaFile)
+        openGmaFile(widget, gmaFile, False)
+        widget.tabWidget.setCurrentIndex(1)
+
+
 #######
 # Connect all signals
 #######
