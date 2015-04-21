@@ -11,6 +11,12 @@ if [ ! -d /opt/gmosh ]; then mkdir -p /opt/gmosh >> install.log 2>> install.log;
 cp -r bin/* /opt/gmosh >> install.log 2>> install.log
 cp required/gmpublish_linux /opt/gmosh >> install.log 2>> install.log
 cp required/libsteam_api.so /opt/gmosh >> install.log 2>> install.log
+
+cp res/gmoshui.desktop /usr/share/applications/ >> install.log 2>> install.log
+cp res/icon.png /usr/share/pixmaps/gmosh_256.png >> install.log 2>> install.log
+xdg-mime install --mode system res/x-gma.xml >> install.log 2>> install.log
+xdg-mime default gmoshui.desktop application/x-gma >> install.log 2>> install.log
+
 ln -sf /opt/gmosh/libsteam_api.so /usr/lib/libsteam_api.so >> install.log 2>> install.log
 ln -sf /opt/gmosh/gmpublish_linux /usr/local/bin/gmpublish_linux >> install.log 2>> install.log
 

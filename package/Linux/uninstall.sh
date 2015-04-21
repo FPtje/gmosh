@@ -13,6 +13,10 @@ if [ -d /opt/gmosh ]; then rm -r /opt/gmosh >> uninstall.log 2>> uninstall.log; 
 if [ -L /usr/lib/libsteam_api.so ]; then rm /usr/lib/libsteam_api.so >> uninstall.log 2>> uninstall.log; fi
 if [ -L /usr/local/bin/gmpublish_linux ]; then rm /usr/local/bin/gmpublish_linux >> uninstall.log 2>> uninstall.log; fi
 
+if [ -L /usr/share/applications/gmoshui.desktop ]; then rm /usr/share/applications/gmoshui.desktop; fi
+if [ -L /usr/share/pixmaps/gmosh_256.png ]; then rm /usr/share/pixmaps/gmosh_256.png; fi
+
+
 echo "" >> uninstall.log
 echo "Uninstallation completed" >> uninstall.log
 

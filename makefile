@@ -19,6 +19,12 @@ install_linux: uninstall_linux
 	cp required/gmpublish_linux /opt/gmosh
 	cp required/libsteam_api.so /opt/gmosh
 
+	# Copy desktop and mime files
+	cp res/gmoshui.desktop /usr/share/applications/
+	cp res/icon.png /usr/share/pixmaps/gmosh_256.png
+	xdg-mime install --mode system res/x-gma.xml
+	xdg-mime default gmoshui.desktop application/x-gma
+
 	ln -sf /opt/gmosh/gmosh /usr/local/bin/gmosh
 	ln -sf /opt/gmosh/gmoshui /usr/local/bin/gmoshui
 	ln -sf /opt/gmosh/libsteam_api.so /usr/lib/libsteam_api.so
@@ -51,6 +57,10 @@ install_osx: uninstall_osx
 	@echo "Installation completed successfully"
 
 uninstall_linux:
+	# Desktop and mime files
+	if [ -L /usr/share/applications/gmoshui.desktop ]; then rm /usr/share/applications/gmoshui.desktop; fi
+	if [ -L /usr/share/pixmaps/gmosh_256.png ]; then rm /usr/share/pixmaps/gmosh_256.png; fi
+
 	if [ -L /usr/bin/gmosh ]; then rm /usr/bin/gmosh; fi
 	if [ -L /usr/local/bin/gmosh ]; then rm /usr/local/bin/gmosh; fi
 	if [ -d /opt/gmosh ]; then rm -r /opt/gmosh; fi
