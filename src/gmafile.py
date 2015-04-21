@@ -2,6 +2,8 @@
 """The structure of a GMA file, parsing and building"""
 
 import os
+import tempfile
+import webbrowser # Useful for opening files
 from datetime import datetime
 from construct import *
 from time import time
@@ -157,6 +159,28 @@ def extract(file_path, destination_path, fil = set()):
 
             with open(file_name, 'wb') as output:
                 output.write(gma.all_file_contents.value[i])
+
+def openFiles(gma_path, fil):
+    with open(gma_path, 'rb') as file:
+        gma = GMAVerifiedContents.parse_stream(file)
+
+        for i in range(0, len(gma.all_file_meta) - 1):
+            meta = gma.all_file_meta[i]
+            gma_file_name = meta.file_name.decode('utf-8')
+            for prefix in fil:
+                    if gma_file_name.startswith(prefix): break
+            else:
+                continue
+
+            _, filename = os.path.split(gma_file_name)
+
+            print('Extracting "%s"' % filename)
+
+            prefix, extension = os.path.splitext(filename)
+            # Don't delete, otherwise it'll be deleted before it gets opened
+            with tempfile.NamedTemporaryFile(prefix = prefix, suffix = extension, delete = False) as output:
+                output.write(gma.all_file_contents.value[i])
+                webbrowser.open(output.name)
 
 def getfiles(file_path):
     """Get the list of files that exist in the GMA file"""

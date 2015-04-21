@@ -458,6 +458,7 @@ def openGmaFile(widget, fileName, error = True):
 
     # Enable the extract button
     widget.gmaExtract.setEnabled(True)
+    widget.gmaOpen.setEnabled(True)
 
 
 def gmaSelectEdited(widget, fileName):
@@ -504,6 +505,16 @@ def gmaExtract(widget):
 
     createProgressDialog(
         partial(gmafile.extract, widget.gmaSelect.text(), destination, selectedPaths))
+
+def gmaOpen(widget):
+    selected = widget.gmaFiles.selectedIndexes()
+    selectedPaths = set()
+    for i in selected:
+        if not i.model().itemFromIndex(i).filePath: continue
+        selectedPaths.add(i.model().itemFromIndex(i).filePath)
+
+    createProgressDialog(
+        partial(gmafile.openFiles, widget.gmaSelect.text(), selectedPaths))
 
 #######
 # Workshop tools signals
@@ -688,6 +699,7 @@ def connectMainWindowSignals(widget):
     # GMA tools signals
     widget.gmaSelectFile.clicked.connect(partial(gmaSelectFile, widget))
     widget.gmaExtract.clicked.connect(partial(gmaExtract, widget))
+    widget.gmaOpen.clicked.connect(partial(gmaOpen, widget))
     widget.gmaSelect.textEdited.connect(partial(gmaSelectEdited, widget))
     widget.gmaSelect.returnPressed.connect(partial(gmaSelectEditingFinished, widget))
 
