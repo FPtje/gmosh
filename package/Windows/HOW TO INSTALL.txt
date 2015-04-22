@@ -1,7 +1,9 @@
-Right click install.bat and click "Run as administrator".
+Run setup.exe.
 
-Not running it as administrator might prevent the gmosh executable from being added to the PATH variable.
-That will give you a "Command not found" when you enter "gmosh" in the command prompt.
+Making a desktop shortcut and/or start menu is recommended. Otherwise you might not be able to find it.
 
-Uninstalling is done in much the same way:
-Right click uninstall.bat and click "Run as administrator".
+Also, note that there are TWO programs: gmosh and gmoshui.
+- gmosh is a command line interface program. Since you're using Windows, you're probably don't see the merit in programs that you run from the command prompt. That's why for you lot I have:
+- gmoshui. This can do everything gmosh can do *and more*. Gmoshui has a gui, which means you can *click* on things. It's a lot more user friendly, so you'll probably use that instead.
+
+I'm just saying, if you happen to use git with git bash, gmosh is pretty fucking superb, since publishing to the workshop requires *no* command line parameters if set up correctly. And by set up correctly I mean that you have a "workshopid: 12345" field in your addon.json.
