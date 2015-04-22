@@ -9,7 +9,7 @@ import addoninfo
 import gmpublish
 import gmafile
 import sys
-import shiboken
+from Shiboken import shiboken
 from datetime import datetime
 import os
 import re
@@ -638,6 +638,7 @@ def initRecentAddonsList(widget):
 # Perform startup tasks
 #######
 def initialiseUI(widget):
+    widget.currentAddon = addoninfo.GModAddon(dict(), '.')
     connectMainWindowSignals(widget)
 
     # Addon tools init
