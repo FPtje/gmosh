@@ -9,7 +9,7 @@ import addoninfo
 import gmpublish
 import gmafile
 import sys
-import shiboken
+import Shiboken
 from datetime import datetime
 import os
 import re
