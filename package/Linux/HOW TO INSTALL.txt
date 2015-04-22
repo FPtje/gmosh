@@ -3,6 +3,10 @@
 This is the "prebuilt" package for gmosh on Linux. That means that you don't have to compile anything yourself.
 All you have to do is install it.
 
+IMPORTANT:
+gmoshui will NOT work and throw a big nasty ImportError if you don't have python3-pyside installed!
+I currently have no way of circumventing this. Sorry for the inconvenience!
+
 Either double click install.sh or run it from the terminal.
 The program will ask for sudo access if it doesn't have it already.
 This installs the program to your system.

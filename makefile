@@ -7,7 +7,7 @@ gui:
 linux: gui
 	if [ ! -d bin ]; then mkdir bin; fi
 	cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
-	cxfreeze src/gmoshui.py --target-dir=bin --include-modules=$(MODULES)
+	cxfreeze src/gmoshui.py --target-dir=bin --include-modules=$(MODULES),atexit
 
 osx: gui
 	if [ ! -d bin ]; then mkdir bin; fi
@@ -37,6 +37,8 @@ install_linux: uninstall_linux
 	@echo "Checking existence of libsteam.so"
 	if [ ! -f ~/.steam/linux32/libsteam.so ]; then mkdir -p ~/.steam/linux32/ && cp required/libsteam.so ~/.steam/linux32/; fi
 	@echo "Installation completed successfully"
+
+	@echo "NOTE! IMPORTANT! gmoshui WILL NOT WORK if python3-pyside isn't installed."
 
 install_osx: uninstall_osx
 	if [ ! -d /opt/gmosh ]; then mkdir -p /opt/gmosh; fi
