@@ -83,6 +83,8 @@ package_linux: linux
 
 	cp -r bin/* package/Linux/bin/
 
+	cp -r res package/Linux/
+
 	if [ ! -d package/Linux/required ]; then mkdir package/Linux/required; fi
 	cp required/gmpublish_linux package/Linux/required/
 	cp required/steam_appid.txt package/Linux/required/
@@ -99,6 +101,7 @@ package_osx: osx
 	if [ ! -d package/OSX/bin ]; then mkdir package/OSX/bin; fi
 
 	cp -r bin/* package/OSX/bin/
+	cp -r res package/OSX/
 
 	if [ ! -d package/OSX/required ]; then mkdir package/OSX/required; fi
 	cp required/gmpublish_osx package/OSX/required/
