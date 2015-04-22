@@ -2,6 +2,10 @@
 When you just want to install it, please download the binaries from here:
 https://github.com/FPtje/gmosh/releases
 
+#IMPORTANT:
+On Linux, gmoshui will NOT work and throw a big nasty ImportError if you don't have python3-pyside installed!
+I currently have no way of circumventing this. Sorry for the inconvenience!
+
 When building from source, please see section Compiling.
 
 
