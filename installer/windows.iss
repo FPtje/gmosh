@@ -30,12 +30,13 @@ ArchitecturesInstallIn64BitMode=x64 ia64
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags:
+Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: ; OnlyBelowVersion: 0,6.1
 
 [Files]
 ;Source: "C:\Program Files\gmosh\bin\gmoshui.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 ;Source: "C:\Program Files\gmosh\bin\gmosh.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "..\package\Windows\uninstall.bat"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -47,3 +48,5 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\GMosh"; Filename: 
 Filename: "{src}\install.bat"
 Filename: "{app}\bin\gmoshui.exe"; Description: "{cm:LaunchProgram,GMosh}"; Flags: nowait postinstall skipifsilent
 
+[UninstallRun]
+Filename: "{app}\uninstall.bat"
