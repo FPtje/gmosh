@@ -12,4 +12,7 @@ xcopy README.txt package\Windows\ /y
 xcopy required\gmpublish.exe package\Windows\required\ /y
 xcopy required\steam_api.dll package\Windows\required\ /y
 xcopy required\steam_appid.txt package\Windows\required\ /y
+
+"C:\Program Files (x86)\Inno Setup 5\ISCC.exe" "installer\windows.iss"
+xcopy installer\setup.exe package\Windows\ /y
 PAUSE
