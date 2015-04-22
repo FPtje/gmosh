@@ -48,5 +48,11 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\GMosh"; Filename: 
 Filename: "{src}\install.bat"
 Filename: "{app}\bin\gmoshui.exe"; Description: "{cm:LaunchProgram,GMosh}"; Flags: nowait postinstall skipifsilent
 
+[Registry]
+Root: HKCR; Subkey: ".gma"; ValueType: string; ValueName: ""; ValueData: "gmoshui"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "gmoshui"; ValueType: string; ValueName: ""; ValueData: "gmoshui"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "gmoshui\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\gmoshui.exe,0"
+Root: HKCR; Subkey: "gmoshui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\gmoshui.exe"" ""%1"""
+
 [UninstallRun]
 Filename: "{app}\uninstall.bat"
