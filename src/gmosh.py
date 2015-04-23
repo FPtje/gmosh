@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-__version__ = '2.0.1 alph'
 
+from _version import __version__
 import argparse
 import sys
 import os
