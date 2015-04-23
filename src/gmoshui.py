@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Starts the user interface of gmoshui."""
 
+from _version import __version__
 from view import mainwindow, progressdialog
 from PySide import QtCore, QtGui
 from functools import partial
@@ -20,6 +21,7 @@ class ControlMainWindow(QtGui.QMainWindow):
         super(ControlMainWindow, self).__init__(parent)
         self.ui = mainwindow.Ui_MainWindow()
         self.ui.setupUi(self)
+        self.setWindowTitle("GMosh UI " + __version__)
 
         # Create settings
         QtCore.QCoreApplication.setOrganizationName("FPtje")

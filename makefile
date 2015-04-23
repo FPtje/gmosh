@@ -12,6 +12,7 @@ linux: gui
 osx: gui
 	if [ ! -d bin ]; then mkdir bin; fi
 	/Library/Frameworks/Python.framework/Versions/3.3/bin/cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
+	/Library/Frameworks/Python.framework/Versions/3.3/bin/cxfreeze src/gmoshui.py --target-dir=bin --include-modules=$(MODULES),atexit
 
 install_linux: uninstall_linux
 	if [ ! -d /opt/gmosh ]; then mkdir -p /opt/gmosh; fi
