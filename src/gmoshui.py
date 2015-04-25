@@ -10,10 +10,7 @@ import addoninfo
 import gmpublish
 import gmafile
 import sys
-if sys.platform == "windows":
-    from Shiboken import shiboken
-else:
-        import shiboken
+from Shiboken import shiboken
 import os
 import re
 from gmodfolder import GModFolder
@@ -699,8 +696,6 @@ def setupLuaCacheView(widget):
     widget.lcacheTree.setRootIndex(model.setRootPath(cachedir))
     widget.lcacheTree.setSortingEnabled(True)
 
-    # widget.lcacheTree.selectionModel().selectionChanged.connect(print)
-
 #######
 # Perform startup tasks
 #######
@@ -797,7 +792,7 @@ def connectMainWindowSignals(widget):
     widget.lcacheTree.clicked.connect(partial(lcacheFileSelected, widget))
     widget.lcacheExtract.clicked.connect(partial(lcacheExtractClicked, widget))
     widget.lcacheExtractAll.clicked.connect(partial(lcacheExtractAllClicked, widget))
-
+    #widget.lcacheTree.selectionModel().selectionChanged.connect(print)
 
 
 try:
