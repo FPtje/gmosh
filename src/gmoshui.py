@@ -10,14 +10,18 @@ import addoninfo
 import gmpublish
 import gmafile
 import sys
-from Shiboken import shiboken
-from datetime import datetime
+if sys.platform == "windows":
+    from Shiboken import shiboken
+else:
+        import shiboken
 import os
 import re
+from gmodfolder import GModFolder
+
 
 class ControlMainWindow(QtGui.QMainWindow):
     """Spawns the main window"""
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(ControlMainWindow, self).__init__(parent)
         self.ui = mainwindow.Ui_MainWindow()
         self.ui.setupUi(self)
@@ -30,19 +34,22 @@ class ControlMainWindow(QtGui.QMainWindow):
 
         self.ui.settings = QtCore.QSettings()
 
+
 def main():
     """Main method"""
     app = QtGui.QApplication(sys.argv)
-    mySW = ControlMainWindow()
-    initialiseUI(mySW.ui)
-    mySW.show()
+    mysw = ControlMainWindow()
+    initialiseUI(mysw.ui)
+    mysw.show()
     sys.exit(app.exec_())
+
 
 def errorMsg(s):
     """Show an error message box"""
     msgBox = QtGui.QMessageBox()
     msgBox.setText(s)
     msgBox.exec_()
+
 
 class OutLog:
     """Redirect stdout to ui of program"""
@@ -58,7 +65,8 @@ class OutLog:
         if self.out:
             self.out.write(m)
 
-    def flush(x): pass
+    def flush(x):
+        pass
 
 class WorkBackground(QtCore.QThread):
     """Run something in the background"""
@@ -574,6 +582,51 @@ def wsDownloadClicked(widget):
 def wsIDEdit(widget, val):
     widget.settings.setValue("workshoptools/lastworkshopid", val)
 
+
+def lcacheSetGmodDirClicked(widget):
+    dialog = QtGui.QFileDialog()
+    dialog.setFileMode(QtGui.QFileDialog.Directory)
+    dialog.setOption(QtGui.QFileDialog.ShowDirsOnly)
+    if not dialog.exec_(): return
+    selectedFiles = dialog.selectedFiles()
+
+    widget.gmodfolder.path = selectedFiles[0]
+    if not widget.gmodfolder.get_cache_folder():
+        errorMsg("This does not look like a correct gmod folder.")
+        lcacheSetGmodDirClicked(widget)
+        return
+
+    setupLuaCacheView(widget)
+
+def lcacheFileSelected(widget, ix):
+    path = widget.lcacheTree.model().filePath(ix)
+    widget.lcacheContents.setText(widget.gmodfolder.extract_cache_file(path).decode('utf-8'))
+
+def lcacheExtractClicked(widget):
+    selected = widget.lcacheTree.selectedIndexes()
+
+    dialog = QtGui.QFileDialog()
+    dialog.setFileMode(QtGui.QFileDialog.Directory)
+    dialog.setOption(QtGui.QFileDialog.ShowDirsOnly)
+    if not dialog.exec_(): return
+    selectedFiles = dialog.selectedFiles()
+
+    items = set()
+    for s in selected:
+        items.add(widget.lcacheTree.model().filePath(s))
+
+    widget.gmodfolder.extract_cache_files(selectedFiles[0], items)
+
+def lcacheExtractAllClicked(widget):
+    dialog = QtGui.QFileDialog()
+    dialog.setFileMode(QtGui.QFileDialog.Directory)
+    dialog.setOption(QtGui.QFileDialog.ShowDirsOnly)
+    if not dialog.exec_(): return
+    selectedFiles = dialog.selectedFiles()
+
+    createProgressDialog(
+        partial(widget.gmodfolder.extract_cache_files, selectedFiles[0]))
+
 def shortenPath(path, maxI = 4):
     """Simple function that shortens path names"""
     res = []
@@ -635,6 +688,18 @@ def initRecentAddonsList(widget):
 
         recentFolderSelected(widget, firstItem)
 
+def setupLuaCacheView(widget):
+    if not widget.gmodfolder.path:
+        return
+
+    model = QtGui.QFileSystemModel()
+    widget.lcacheTree.setModel(model)
+
+    cachedir = widget.gmodfolder.get_cache_folder()
+    widget.lcacheTree.setRootIndex(model.setRootPath(cachedir))
+    widget.lcacheTree.setSortingEnabled(True)
+
+    # widget.lcacheTree.selectionModel().selectionChanged.connect(print)
 
 #######
 # Perform startup tasks
@@ -659,6 +724,15 @@ def initialiseUI(widget):
         widget.gmaSelect.setText(gmaFile)
         openGmaFile(widget, gmaFile, False)
         widget.tabWidget.setCurrentIndex(1)
+
+    # Lua cache init
+    widget.gmodfolder = GModFolder(widget.settings.value("lcache/gmoddir", None))
+    if not widget.gmodfolder.find_gmod_folder():
+        return
+
+    widget.settings.setValue("lcache/gmoddir",
+        widget.settings.value("lcache/gmoddir", widget.gmodfolder.path))
+    setupLuaCacheView(widget)
 
 
 #######
@@ -717,6 +791,13 @@ def connectMainWindowSignals(widget):
     widget.wsGetInfo.clicked.connect(partial(wsGetInfoClicked, widget))
     widget.wsDownload.clicked.connect(partial(wsDownloadClicked, widget))
     widget.wsID.valueChanged.connect(partial(wsIDEdit, widget))
+
+    # Lua cache signals
+    widget.lcacheSetGmodDir.clicked.connect(partial(lcacheSetGmodDirClicked, widget))
+    widget.lcacheTree.clicked.connect(partial(lcacheFileSelected, widget))
+    widget.lcacheExtract.clicked.connect(partial(lcacheExtractClicked, widget))
+    widget.lcacheExtractAll.clicked.connect(partial(lcacheExtractAllClicked, widget))
+
 
 
 try:
