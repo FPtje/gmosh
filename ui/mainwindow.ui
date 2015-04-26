@@ -993,7 +993,7 @@ Jpeg image</string>
               </property>
               <property name="minimumSize">
                <size>
-                <width>230</width>
+                <width>210</width>
                 <height>0</height>
                </size>
               </property>
@@ -1003,7 +1003,7 @@ Jpeg image</string>
              </widget>
             </item>
             <item>
-             <widget class="QToolButton" name="lcacheSearchButton">
+             <widget class="QPushButton" name="lcacheSearchButton">
               <property name="text">
                <string>Search</string>
               </property>
@@ -1100,22 +1100,5 @@ Jpeg image</string>
   <tabstop>wsFavorites</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>lcacheSearchField</sender>
-   <signal>returnPressed()</signal>
-   <receiver>lcacheSearchButton</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>127</x>
-     <y>618</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>278</x>
-     <y>618</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
