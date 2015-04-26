@@ -612,7 +612,7 @@ def lcacheExtractClicked(widget):
 
     items = set()
     for s in selected:
-        items.add(widget.lcacheTree.model().filePath(s))
+        items.add(os.path.normpath(widget.lcacheTree.model().filePath(s)))
 
     widget.gmodfolder.extract_cache_files(selectedFiles[0], items)
 
@@ -624,7 +624,7 @@ def lcacheExtractAllClicked(widget):
     selectedFiles = dialog.selectedFiles()
 
     createProgressDialog(
-        partial(widget.gmodfolder.extract_cache_files, selectedFiles[0]))
+        partial(widget.gmodfolder.extract_cache_files, os.path.normpath(selectedFiles[0])))
 
 def lcacheSearch(widget):
     query = widget.lcacheSearchField.text()
