@@ -1100,5 +1100,22 @@ Jpeg image</string>
   <tabstop>wsFavorites</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>lcacheSearchField</sender>
+   <signal>returnPressed()</signal>
+   <receiver>lcacheSearchButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>117</x>
+     <y>618</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>269</x>
+     <y>618</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

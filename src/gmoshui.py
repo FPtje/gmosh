@@ -74,13 +74,13 @@ class WorkBackground(QtCore.QThread):
         oldstdout = sys.stdout
         sys.stdout = OutLog(self.signal, sys.stdout)
 
-        self.target()
+        self.result = self.target()
         self.signal.emit("<br /><h3>FINISHED</h3>")
 
         sys.stdout = oldstdout
         self.finished.emit()
 
-def createProgressDialog(work):
+def createProgressDialog(work, onresult=id):
     """Create progress dialog"""
     dialog = QtGui.QDialog()
     ui = progressdialog.Ui_Dialog()
@@ -99,6 +99,7 @@ def createProgressDialog(work):
 
     def enableButtons():
         ui.buttonBox.setEnabled(True)
+        onresult(thread.result)
 
     thread = WorkBackground()
     thread.target = work
@@ -627,8 +628,15 @@ def lcacheExtractAllClicked(widget):
 
 def lcacheSearch(widget):
     query = widget.lcacheSearchField.text()
-    matches = widget.gmodfolder.search_cache(query) or ['\0']
-    widget.lcacheTree.model().setNameFilters(matches)
+
+    def onFinished(matches):
+        matches = matches or ['\0']
+        widget.lcacheTree.model().setNameFilters(matches)
+
+    createProgressDialog(
+        partial(widget.gmodfolder.search_cache, query),
+        onFinished
+        )
 
 def shortenPath(path, maxI = 4):
     """Simple function that shortens path names"""
