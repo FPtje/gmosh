@@ -595,7 +595,8 @@ def lcacheSetGmodDirClicked(widget):
 
     setupLuaCacheView(widget)
 
-def lcacheFileSelected(widget, ix):
+def lcacheFileSelected(widget, selected, _):
+    ix = selected.indexes()[-1]
     path = widget.lcacheTree.model().filePath(ix)
     widget.lcacheContents.setText(widget.gmodfolder.extract_cache_file(path).decode('utf-8'))
 
@@ -789,11 +790,16 @@ def connectMainWindowSignals(widget):
 
     # Lua cache signals
     widget.lcacheSetGmodDir.clicked.connect(partial(lcacheSetGmodDirClicked, widget))
-    widget.lcacheTree.clicked.connect(partial(lcacheFileSelected, widget))
     widget.lcacheExtract.clicked.connect(partial(lcacheExtractClicked, widget))
     widget.lcacheExtractAll.clicked.connect(partial(lcacheExtractAllClicked, widget))
-    #widget.lcacheTree.selectionModel().selectionChanged.connect(print)
+    # widget.lcacheTree.clicked.connect(partial(lcacheFileSelected, widget))
+    # The signal getSelectionModel().selectionChanged throws a segfault
+    oldSChanged = widget.lcacheTree.selectionChanged
+    def sChanged(selected, deselected):
+        lcacheFileSelected(widget, selected, deselected)
+        return oldSChanged(selected, deselected)
 
+    widget.lcacheTree.selectionChanged = sChanged
 
 try:
     if __name__ == '__main__': main()
