@@ -3,6 +3,7 @@
 
 import os
 import lzma
+import re
 
 commonGModPaths = [
     "C:/Program Files/Steam/SteamApps/common/GarrysMod/garrysmod",
@@ -56,7 +57,7 @@ class GModFolder:
         cachedir = self.get_cache_folder()
 
         it = os.listdir(cachedir)
-        print("Unpacking %i files..." % len(it))
+        print("Unpacking %i files..." % (fil and len(fil) or len(it)))
         for f in it:
             ff = os.path.join(cachedir, f)
             if not f.endswith(".lua") or (fil and ff not in fil):
@@ -70,3 +71,23 @@ class GModFolder:
                 of.close()
 
             del data
+
+    def search_cache(self, regex):
+        if not self.path:
+            return []
+
+        pattern = re.compile(regex)
+        res = []
+        cachedir = self.get_cache_folder()
+        it = os.listdir(cachedir)
+
+        print("Searching %i files..." % len(it))
+        for f in it:
+            ff = os.path.join(cachedir, f)
+            if not f.endswith(".lua"):
+                continue
+
+            if re.search(pattern, self.extract_cache_file(ff).decode('utf-8', 'replace')):
+                res.append(f)
+
+        return res

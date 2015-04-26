@@ -598,7 +598,7 @@ def lcacheSetGmodDirClicked(widget):
 def lcacheFileSelected(widget, selected, _):
     ix = selected.indexes()[-1]
     path = widget.lcacheTree.model().filePath(ix)
-    widget.lcacheContents.setText(widget.gmodfolder.extract_cache_file(path).decode('utf-8'))
+    widget.lcacheContents.setText(widget.gmodfolder.extract_cache_file(path).decode('utf-8', 'replace'))
 
 def lcacheExtractClicked(widget):
     selected = widget.lcacheTree.selectedIndexes()
@@ -624,6 +624,11 @@ def lcacheExtractAllClicked(widget):
 
     createProgressDialog(
         partial(widget.gmodfolder.extract_cache_files, selectedFiles[0]))
+
+def lcacheSearch(widget):
+    query = widget.lcacheSearchField.text()
+    matches = widget.gmodfolder.search_cache(query) or ['\0']
+    widget.lcacheTree.model().setNameFilters(matches)
 
 def shortenPath(path, maxI = 4):
     """Simple function that shortens path names"""
@@ -693,9 +698,12 @@ def setupLuaCacheView(widget):
     model = QtGui.QFileSystemModel()
     widget.lcacheTree.setModel(model)
 
+    model.setNameFilterDisables(False)
+
     cachedir = widget.gmodfolder.get_cache_folder()
     widget.lcacheTree.setRootIndex(model.setRootPath(cachedir))
     widget.lcacheTree.setSortingEnabled(True)
+    widget.lcacheTree.header().hideSection(2) # hide file type column
 
 #######
 # Perform startup tasks
@@ -792,7 +800,7 @@ def connectMainWindowSignals(widget):
     widget.lcacheSetGmodDir.clicked.connect(partial(lcacheSetGmodDirClicked, widget))
     widget.lcacheExtract.clicked.connect(partial(lcacheExtractClicked, widget))
     widget.lcacheExtractAll.clicked.connect(partial(lcacheExtractAllClicked, widget))
-    # widget.lcacheTree.clicked.connect(partial(lcacheFileSelected, widget))
+    widget.lcacheSearchButton.clicked.connect(partial(lcacheSearch, widget))
     # The signal getSelectionModel().selectionChanged throws a segfault
     oldSChanged = widget.lcacheTree.selectionChanged
     def sChanged(selected, deselected):

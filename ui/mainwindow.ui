@@ -541,7 +541,11 @@ Jpeg image</string>
           <item row="0" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="QLineEdit" name="gmaSelect"/>
+             <widget class="QLineEdit" name="gmaSelect">
+              <property name="placeholderText">
+               <string>Enter GMA file path</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QToolButton" name="gmaSelectFile">
@@ -978,6 +982,36 @@ Jpeg image</string>
            </widget>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <item>
+             <widget class="QLineEdit" name="lcacheSearchField">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>230</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="placeholderText">
+               <string>Search in cache (regex)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="lcacheSearchButton">
+              <property name="text">
+               <string>Search</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <layout class="QHBoxLayout" name="horizontalLayout_14">
             <item>
              <widget class="QPushButton" name="lcacheExtract">
@@ -1066,5 +1100,22 @@ Jpeg image</string>
   <tabstop>wsFavorites</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>lcacheSearchField</sender>
+   <signal>returnPressed()</signal>
+   <receiver>lcacheSearchButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>127</x>
+     <y>618</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>278</x>
+     <y>618</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
