@@ -25,16 +25,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.175"
-     inkscape:cx="1725.2281"
-     inkscape:cy="741.59782"
+     inkscape:zoom="0.16"
+     inkscape:cx="1530.6338"
+     inkscape:cy="598.94698"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1364"
-     inkscape:window-height="747"
-     inkscape:window-x="0"
-     inkscape:window-y="19"
+     inkscape:window-width="1366"
+     inkscape:window-height="705"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -44,7 +44,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -64,27 +64,27 @@
        ry="0" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:160px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="530.40186"
-       y="50.665741"
+       style="font-style:normal;font-weight:normal;font-size:248.53378296px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-32.182716"
+       y="403.26273"
        id="text4169"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4171"
-         x="530.40186"
-         y="50.665741"
-         style="font-weight:normal;font-size:1250px;fill:#ffffff">g</tspan></text>
+         x="-32.182716"
+         y="403.26273"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:1941.67016602px;font-family:Coolvetica;-inkscape-font-specification:Coolvetica;fill:#ffffff">g</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:160px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="54.285767"
-       y="815.21936"
-       id="text4173"
+       style="font-style:normal;font-weight:normal;font-size:52.12459564px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="906.56934"
+       y="905.21118"
+       id="text3338"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan4175"
-         x="54.285767"
-         y="815.21936"
-         style="font-size:625px;fill:#ffffff">mosh</tspan></text>
+         id="tspan3340"
+         x="906.56934"
+         y="905.21118"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1140.22558594px;font-family:Coolvetica;-inkscape-font-specification:Coolvetica;fill:#ffffff">m</tspan></text>
   </g>
 </svg>
