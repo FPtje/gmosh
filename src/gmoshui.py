@@ -291,7 +291,7 @@ def recentFolderSelected(widget, index):
     path = widget.recentAddons.model().itemFromIndex(index).path
     addonInfo = addoninfo.get_addon_info(path)
 
-    widget.currentAddon = addonInfo
+    widget.currentAddon = addonInfo or addoninfo.GModAddon(dict(), '.')
 
     if not addonInfo: return
 
