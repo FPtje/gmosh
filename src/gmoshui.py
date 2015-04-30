@@ -110,6 +110,7 @@ def createProgressDialog(work, onresult=id):
     dialog.show()
     dialog.exec_()
     thread.exit()
+    del thread
 
 #######
 # Addon tools signals
