@@ -10,7 +10,6 @@ import addoninfo
 import gmpublish
 import gmafile
 import sys
-import re
 from Shiboken import shiboken
 import os
 import re
@@ -597,13 +596,16 @@ def lcacheSetGmodDirClicked(widget):
 
     setupLuaCacheView(widget)
 
-def lcacheFileSelected(widget, selected, _):
+def lcacheFileSelected(widget, selected):
     ix = selected.indexes()[-1]
     path = widget.lcacheTree.model().filePath(ix)
     text = widget.gmodfolder.extract_cache_file(path).decode('utf-8', 'replace')
     if widget.lcacheSearchField.text():
-        pattern = re.compile('(%s)' % widget.lcacheSearchField.text())
-        text = re.sub(pattern, r'<b><u>\1</u></b>', text)
+        try:
+            pattern = re.compile('(%s)' % widget.lcacheSearchField.text())
+            text = re.sub(pattern, r'<b><u>\1</u></b>', text)
+        except:
+            pass
 
     widget.lcacheContents.setHtml('<pre>%s</pre>' % text)
 
@@ -643,6 +645,9 @@ def lcacheSearch(widget):
         partial(widget.gmodfolder.search_cache, query),
         onFinished
         )
+
+def lcacheSearchFieldEdited(widget, txt):
+    lcacheFileSelected(widget, widget.lcacheTree.selectedThings)
 
 def shortenPath(path, maxI = 4):
     """Simple function that shortens path names"""
@@ -818,10 +823,12 @@ def connectMainWindowSignals(widget):
     # The signal getSelectionModel().selectionChanged throws a segfault
     oldSChanged = widget.lcacheTree.selectionChanged
     def sChanged(selected, deselected):
-        lcacheFileSelected(widget, selected, deselected)
+        lcacheFileSelected(widget, selected)
+        widget.lcacheTree.selectedThings = selected
         return oldSChanged(selected, deselected)
 
     widget.lcacheTree.selectionChanged = sChanged
+    widget.lcacheSearchField.textEdited.connect(partial(lcacheSearchFieldEdited, widget))
 
 try:
     if __name__ == '__main__': main()
