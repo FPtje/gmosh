@@ -60,6 +60,8 @@ class GModFolder:
         print("Unpacking %i files..." % (fil and len(fil) or len(it)))
         for f in it:
             ff = os.path.join(cachedir, f)
+
+            ff = os.path.normpath(ff)
             if not f.endswith(".lua") or (fil and ff not in fil):
                 continue
 
