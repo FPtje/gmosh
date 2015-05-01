@@ -10,6 +10,7 @@ import addoninfo
 import gmpublish
 import gmafile
 import sys
+import re
 from Shiboken import shiboken
 import os
 import re
@@ -599,7 +600,12 @@ def lcacheSetGmodDirClicked(widget):
 def lcacheFileSelected(widget, selected, _):
     ix = selected.indexes()[-1]
     path = widget.lcacheTree.model().filePath(ix)
-    widget.lcacheContents.setText(widget.gmodfolder.extract_cache_file(path).decode('utf-8', 'replace'))
+    text = widget.gmodfolder.extract_cache_file(path).decode('utf-8', 'replace')
+    if widget.lcacheSearchField.text():
+        pattern = re.compile('(%s)' % widget.lcacheSearchField.text())
+        text = re.sub(pattern, r'<b><u>\1</u></b>', text)
+
+    widget.lcacheContents.setHtml('<pre>%s</pre>' % text)
 
 def lcacheExtractClicked(widget):
     selected = widget.lcacheTree.selectedIndexes()
