@@ -2,8 +2,10 @@
 """The structure of a GMA file, parsing and building"""
 
 import os
+import sys
 import tempfile
 import webbrowser # Useful for opening files
+import subprocess
 from datetime import datetime
 from construct import *
 from time import time
@@ -180,7 +182,10 @@ def openFiles(gma_path, fil):
             # Don't delete, otherwise it'll be deleted before it gets opened
             with tempfile.NamedTemporaryFile(prefix = prefix, suffix = extension, delete = False) as output:
                 output.write(gma.all_file_contents.value[i])
-                webbrowser.open(output.name)
+                if sys.platform == "darwin":
+                    subprocess.call(['open', output.name])
+                else:
+                    webbrowser.open(output.name)
 
 def getfiles(file_path):
     """Get the list of files that exist in the GMA file"""
