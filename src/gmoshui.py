@@ -595,6 +595,8 @@ def lcacheSetGmodDirClicked(widget):
         lcacheSetGmodDirClicked(widget)
         return
 
+    widget.settings.setValue("lcache/gmoddir", widget.gmodfolder.path)
+
     setupLuaCacheView(widget)
 
 def lcacheFileSelected(widget, selected):
@@ -751,7 +753,8 @@ def initialiseUI(widget):
 
     # Lua cache init
     widget.gmodfolder = GModFolder(widget.settings.value("lcache/gmoddir", None))
-    if not widget.gmodfolder.find_gmod_folder():
+
+    if not widget.gmodfolder.get_cache_folder() and not widget.gmodfolder.find_gmod_folder():
         return
 
     widget.settings.setValue("lcache/gmoddir",
