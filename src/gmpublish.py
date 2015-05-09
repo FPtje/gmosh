@@ -14,7 +14,7 @@ class GmPublish:
 		"""Upload to the workshop as a new addon. Returns (succeeded, strResult)
 		precondition: Assumes that the files of the addon have been verified.
 		"""
-		outfile = 'temp.gma'
+		outfile = os.path.join(self.addon.getpath(), 'temp.gma')
 		logo = self.addon.getlogo()
 
 		print("Compressing to temporary GMA file...")
