@@ -51,7 +51,7 @@ class GModAddon:
         This description is used in the GMA file.
         """
         a_description = u'description' in self.data and self.data['description'] or u'Description'
-        a_type = self.data['type']
+        a_type = self.data['type'].lower()
         a_tags = self.data['tags']
         return json.dumps({'description': a_description, 'type': a_type, 'tags': a_tags})
 
