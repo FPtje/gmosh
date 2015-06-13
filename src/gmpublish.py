@@ -50,7 +50,7 @@ class GmPublish:
 	def update(self, message=None):
 		"""Push an update of the addon to the workshop"""
 		message = message or self.addon.getdefault_changelog()
-		outfile = 'temp.gma'
+		outfile = os.path.join(self.addon.getpath(), 'temp.gma')
 		print("Compressing to temporary GMA file...")
 		self.addon.compress(outfile)
 

@@ -17,9 +17,9 @@ DefaultDirName={pf}\gmosh
 DisableDirPage=yes
 DefaultGroupName=gmoshui
 AllowNoIcons=yes
-OutputDir=C:\Users\falco\Documents\Programs\gmosh\installer
+OutputDir=C:\Users\falco\Programs\gmosh\installer
 OutputBaseFilename=setup
-SetupIconFile=C:\Users\falco\Documents\Programs\gmosh\res\icon.ico
+SetupIconFile=C:\Users\falco\Programs\gmosh\res\icon.ico
 Compression=lzma
 SolidCompression=yes
 
