@@ -259,6 +259,12 @@ def addRecentFolderClicked(widget):
     # Store last used folder location
     widget.settings.setValue("selectAddonLastFolder", folder)
 
+    try:
+        addoninfo.get_addon_info(fileName)
+    except Exception:
+        errorMsg("%s does not contain valid json!" % fileName)
+        return
+
     if not addRecentAddon(widget, fileName): return
 
     item = QtGui.QStandardItem(shortenPath(fileName))
@@ -290,7 +296,11 @@ def removeRecentFolderClicked(widget):
 def recentFolderSelected(widget, index):
     enableRecentAddonsUpDownButtons(widget)
     path = widget.recentAddons.model().itemFromIndex(index).path
-    addonInfo = addoninfo.get_addon_info(path)
+
+    try:
+        addonInfo = addoninfo.get_addon_info(path)
+    except Exception:
+        return
 
     widget.currentAddon = addonInfo or addoninfo.GModAddon(dict(), '.')
 
