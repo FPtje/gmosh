@@ -48,7 +48,7 @@ def download(addons, path, extr):
         outfile = os.path.join(path, "%s.gma" % res['publishedfileid'])
 
         urllib.request.urlretrieve(download, lzmafile,
-            lambda x, y, z: sys.stdout.write("\r{0:.2f}%".format(x * y / z)))
+            lambda x, y, z: sys.stdout.write("\r{0:.2f}%".format(x * y / z * 100)))
         sys.stdout.write("\r100.00%\n")
 
         print("Downloaded '%s' from the workshop. Decompressing..." % name)
