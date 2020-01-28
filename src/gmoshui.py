@@ -2,48 +2,58 @@
 """Starts the user interface of gmoshui."""
 
 from _version import __version__
-from view import mainwindow, progressdialog
-from PySide import QtCore, QtGui
+from PySide2 import QtCore, QtGui
+from PySide2.QtUiTools import QUiLoader
+from PySide2.QtWidgets import *
+from PySide2.QtGui import *
+from PySide2.QtCore import QFile
 from functools import partial
 import workshoputils
 import addoninfo
 import gmpublish
 import gmafile
 import sys
-from Shiboken import shiboken
+import shiboken2 as shiboken
 import os
 import re
 from gmodfolder import GModFolder
 
-
-class ControlMainWindow(QtGui.QMainWindow):
-    """Spawns the main window"""
-    def __init__(self, parent=None):
-        super(ControlMainWindow, self).__init__(parent)
-        self.ui = mainwindow.Ui_MainWindow()
-        self.ui.setupUi(self)
-        self.setWindowTitle("GMosh UI " + __version__)
-
-        # Create settings
-        QtCore.QCoreApplication.setOrganizationName("FPtje")
-        QtCore.QCoreApplication.setOrganizationDomain("github.com/FPtje/gmosh")
-        QtCore.QCoreApplication.setApplicationName("gmoshui")
-
-        self.ui.settings = QtCore.QSettings()
-
-
 def main():
     """Main method"""
-    app = QtGui.QApplication(sys.argv)
-    mysw = ControlMainWindow()
-    initialiseUI(mysw.ui)
-    mysw.show()
+    app = QApplication(sys.argv)
+    
+    loader = QUiLoader()
+    
+    mainwindow_ui_file = QFile(os.path.abspath("ui/mainwindow.ui"))
+    mainwindow_ui_file.open(QFile.ReadOnly)
+    
+    mainwindow = loader.load(mainwindow_ui_file)
+    mainwindow_ui_file.close()
+    
+    progressdialog_ui_file = QFile(os.path.abspath("ui/progressdialog.ui"))
+    progressdialog_ui_file.open(QFile.ReadOnly)
+
+    global progressdialog
+    progressdialog = loader.load(progressdialog_ui_file)
+    progressdialog_ui_file.close()
+    
+    mainwindow.setWindowTitle("GMosh UI " + __version__)
+
+    # Create settings
+    QtCore.QCoreApplication.setOrganizationName("FPtje")
+    QtCore.QCoreApplication.setOrganizationDomain("github.com/FPtje/gmosh")
+    QtCore.QCoreApplication.setApplicationName("gmoshui")
+
+    mainwindow.settings = QtCore.QSettings()
+
+    initialiseUI(mainwindow)
+    mainwindow.show()
     sys.exit(app.exec_())
 
 
 def errorMsg(s):
     """Show an error message box"""
-    msgBox = QtGui.QMessageBox()
+    msgBox = QMessageBox()
     msgBox.setText(s)
     msgBox.exec_()
 
@@ -82,18 +92,17 @@ class WorkBackground(QtCore.QThread):
 
 def createProgressDialog(work, onresult=id):
     """Create progress dialog"""
-    dialog = QtGui.QDialog()
-    ui = progressdialog.Ui_Dialog()
-    ui.setupUi(dialog)
+    dialog = QDialog()
+    ui = progressdialog
 
     def onThreadOutput(text):
         if not shiboken.isValid(ui) or not shiboken.isValid(ui.progressText): return
 
-        ui.progressText.moveCursor(QtGui.QTextCursor.End)
+        ui.progressText.moveCursor(QTextCursor.End)
         if text[0] == "\r":
-            #cursor = QtGui.QTextCursor(ui.progressText.textCursor())
-            ui.progressText.moveCursor(QtGui.QTextCursor.StartOfLine, QtGui.QTextCursor.KeepAnchor)
-            ui.progressText.moveCursor(QtGui.QTextCursor.PreviousCharacter, QtGui.QTextCursor.KeepAnchor)
+            #cursor = QTextCursor(ui.progressText.textCursor())
+            ui.progressText.moveCursor(QTextCursor.StartOfLine, QTextCursor.KeepAnchor)
+            ui.progressText.moveCursor(QTextCursor.PreviousCharacter, QTextCursor.KeepAnchor)
 
         ui.progressText.insertHtml(text.replace('\n', '<br />'))
 
@@ -157,7 +166,7 @@ def addonVerifyClicked(widget, show_ok = True):
         if show_ok: errorMsg("No illegal files were found. You're good to go!")
         return True
 
-    dialog = QtGui.QDialog()
+    dialog = QDialog()
     ui = progressdialog.Ui_Dialog()
     ui.setupUi(dialog)
     ui.progressText.setText(illegalFilesFoundMessage % '<br />'.join(badlist))
@@ -168,7 +177,7 @@ def addonVerifyClicked(widget, show_ok = True):
     return False
 
 def addonCreateGMAClicked(widget):
-    fileName, _ = QtGui.QFileDialog.getSaveFileName(None,
+    fileName, _ = QFileDialog.getSaveFileName(None,
         "Store GMA file", os.path.join(widget.settings.value("addontools/lastgmafolder", ''), 'out.gma'), "GMA files (*.gma)")
 
     if not fileName: return
@@ -216,7 +225,7 @@ def addonPublishClicked(widget):
         createProgressDialog(partial(publisher.update, changelog))
         return
 
-    ok = QtGui.QMessageBox.warning(None, "Upload new addon", "This will be uploaded as a new addon on the workshop. To update an existing addon, please fill in the workshop ID of that addon. Are you sure you want to upload this addon?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes
+    ok = QMessageBox.warning(None, "Upload new addon", "This will be uploaded as a new addon on the workshop. To update an existing addon, please fill in the workshop ID of that addon. Are you sure you want to upload this addon?", QMessageBox.Yes, QMessageBox.No) == QMessageBox.Yes
 
     if not ok: return
 
@@ -228,7 +237,7 @@ def moveSelectedRecentAddon(widget, direction):
         rowText = s.data()
         path = widget.recentAddons.model().itemFromIndex(s).path
 
-        item = QtGui.QStandardItem(rowText)
+        item = QStandardItem(rowText)
         item.path = path
 
         widget.recentAddons.model().removeRow(s.row())
@@ -236,7 +245,7 @@ def moveSelectedRecentAddon(widget, direction):
 
         widget.recentAddons.selectionModel().clearSelection()
         widget.recentAddons.selectionModel().select(widget.recentAddons.model().indexFromItem(item),
-            QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+            QItemSelectionModel.Select | QItemSelectionModel.Rows)
 
         moveRecentAddon(widget, s.row(), s.row() + direction)
         break
@@ -250,7 +259,7 @@ def addonMoveDownClicked(widget):
     moveSelectedRecentAddon(widget, 1)
 
 def addRecentFolderClicked(widget):
-    fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
+    fileName, _ = QFileDialog.getOpenFileName(None,
         "Open addon.json file", widget.settings.value("selectAddonLastFolder", None), "addon.json files (*.json)")
 
     if not fileName: return
@@ -267,13 +276,13 @@ def addRecentFolderClicked(widget):
 
     if not addRecentAddon(widget, fileName): return
 
-    item = QtGui.QStandardItem(shortenPath(fileName))
+    item = QStandardItem(shortenPath(fileName))
     item.path = fileName
     widget.recentAddons.model().insertRow(0, item)
 
     widget.recentAddons.selectionModel().clearSelection()
     widget.recentAddons.selectionModel().select(widget.recentAddons.model().indexFromItem(item),
-        QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+        QItemSelectionModel.Select | QItemSelectionModel.Rows)
 
     recentFolderSelected(widget, widget.recentAddons.model().indexFromItem(item))
 
@@ -289,7 +298,7 @@ def removeRecentFolderClicked(widget):
     widget.recentAddons.selectionModel().clearSelection()
     firstItem = widget.recentAddons.model().index(0, 0)
     widget.recentAddons.selectionModel().select(firstItem,
-        QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+        QItemSelectionModel.Select | QItemSelectionModel.Rows)
 
     recentFolderSelected(widget, firstItem)
 
@@ -332,7 +341,7 @@ def addonSaveClicked(widget):
     widget.currentAddon.save_changes()
 
 def addonSaveAsClicked(widget):
-    fileName, _ = QtGui.QFileDialog.getSaveFileName(None,
+    fileName, _ = QFileDialog.getSaveFileName(None,
         "Store addon.json file", os.path.join(widget.settings.value("addontools/lastsaveasfolder", ''), 'addon.json'), "json files (*.json)")
 
     if not fileName: return
@@ -348,13 +357,13 @@ def addonSaveAsClicked(widget):
     if not addRecentAddon(widget, fileName): return
 
     # Add to recent addons list
-    item = QtGui.QStandardItem(shortenPath(fileName))
+    item = QStandardItem(shortenPath(fileName))
     item.path = fileName
     widget.recentAddons.model().insertRow(0, item)
 
     widget.recentAddons.selectionModel().clearSelection()
     widget.recentAddons.selectionModel().select(widget.recentAddons.model().indexFromItem(item),
-        QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+        QItemSelectionModel.Select | QItemSelectionModel.Rows)
 
 def addonResetClicked(widget):
     selected = widget.recentAddons.selectedIndexes()
@@ -382,7 +391,7 @@ def updateAddonTags(widget, val):
     widget.currentAddon.data['tags'] = tags
 
 def selectAddonImage(widget):
-    fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
+    fileName, _ = QFileDialog.getOpenFileName(None,
         "Open jpg file", widget.settings.value("addontools/lastlogofolder", None), "jpeg files (*.jpg *.jpeg)")
 
     if not fileName: return
@@ -432,8 +441,8 @@ def folder_hierarchy(files):
 
 def populate(model, hierarchy, root = None):
     """Populates the GMA file tree from a hierarchy created with folder_hierarchy"""
-    node = QtGui.QStandardItem(hierarchy['name'])
-    size = QtGui.QStandardItem(gmafile.sizeof_simple(hierarchy['size']))
+    node = QStandardItem(hierarchy['name'])
+    size = QStandardItem(gmafile.sizeof_simple(hierarchy['size']))
     node.filePath = size.filePath = hierarchy['path']
     root.appendRow([node, size]) if root else model.appendRow([node, size])
 
@@ -460,7 +469,7 @@ def openGmaFile(widget, fileName, error = True):
     widget.gmaType.setText('type' in info and info['type'] or '')
 
     # Tree view
-    model = QtGui.QStandardItemModel()
+    model = QStandardItemModel()
     model.setHorizontalHeaderLabels(['File', 'Size'])
     widget.gmaFiles.setModel(model)
 
@@ -473,7 +482,7 @@ def openGmaFile(widget, fileName, error = True):
     # Expand the root node
     widget.gmaFiles.expand(rootIndex)
     # Select root node
-    widget.gmaFiles.selectionModel().select(rootIndex, QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+    widget.gmaFiles.selectionModel().select(rootIndex, QItemSelectionModel.Select | QItemSelectionModel.Rows)
 
     # Enable the extract button
     widget.gmaExtract.setEnabled(True)
@@ -487,7 +496,7 @@ def gmaSelectEditingFinished(widget):
     openGmaFile(widget, widget.gmaSelect.text(), True)
 
 def gmaSelectFile(widget):
-    fileName, _ = QtGui.QFileDialog.getOpenFileName(None,
+    fileName, _ = QFileDialog.getOpenFileName(None,
         "Open GMA file", widget.settings.value("selectGMALastFolder", None), "GMA files (*.gma)")
 
     if not fileName: return
@@ -512,9 +521,9 @@ def gmaExtract(widget):
         if not i.model().itemFromIndex(i).filePath: continue
         selectedPaths.add(i.model().itemFromIndex(i).filePath)
 
-    dialog = QtGui.QFileDialog()
-    dialog.setFileMode(QtGui.QFileDialog.Directory)
-    dialog.setOption(QtGui.QFileDialog.ShowDirsOnly)
+    dialog = QFileDialog()
+    dialog.setFileMode(QFileDialog.Directory)
+    dialog.setOption(QFileDialog.ShowDirsOnly)
     if not dialog.exec_(): return
     selectedFiles = dialog.selectedFiles()
 
@@ -575,9 +584,9 @@ def wsGetInfoClicked(widget):
     widget.wsFavorites.setValue(info['favorited'])
 
 def wsDownloadClicked(widget):
-    dialog = QtGui.QFileDialog()
-    dialog.setFileMode(QtGui.QFileDialog.Directory)
-    dialog.setOption(QtGui.QFileDialog.ShowDirsOnly)
+    dialog = QFileDialog()
+    dialog.setFileMode(QFileDialog.Directory)
+    dialog.setOption(QFileDialog.ShowDirsOnly)
     if not dialog.exec_(): return
     selectedFiles = dialog.selectedFiles()
 
@@ -593,9 +602,9 @@ def wsIDEdit(widget, val):
 
 
 def lcacheSetGmodDirClicked(widget):
-    dialog = QtGui.QFileDialog()
-    dialog.setFileMode(QtGui.QFileDialog.Directory)
-    dialog.setOption(QtGui.QFileDialog.ShowDirsOnly)
+    dialog = QFileDialog()
+    dialog.setFileMode(QFileDialog.Directory)
+    dialog.setOption(QFileDialog.ShowDirsOnly)
     if not dialog.exec_(): return
     selectedFiles = dialog.selectedFiles()
 
@@ -625,9 +634,9 @@ def lcacheFileSelected(widget, selected):
 def lcacheExtractClicked(widget):
     selected = widget.lcacheTree.selectedIndexes()
 
-    dialog = QtGui.QFileDialog()
-    dialog.setFileMode(QtGui.QFileDialog.Directory)
-    dialog.setOption(QtGui.QFileDialog.ShowDirsOnly)
+    dialog = QFileDialog()
+    dialog.setFileMode(QFileDialog.Directory)
+    dialog.setOption(QFileDialog.ShowDirsOnly)
     if not dialog.exec_(): return
     selectedFiles = dialog.selectedFiles()
 
@@ -638,9 +647,9 @@ def lcacheExtractClicked(widget):
     widget.gmodfolder.extract_cache_files(selectedFiles[0], items)
 
 def lcacheExtractAllClicked(widget):
-    dialog = QtGui.QFileDialog()
-    dialog.setFileMode(QtGui.QFileDialog.Directory)
-    dialog.setOption(QtGui.QFileDialog.ShowDirsOnly)
+    dialog = QFileDialog()
+    dialog.setFileMode(QFileDialog.Directory)
+    dialog.setOption(QFileDialog.ShowDirsOnly)
     if not dialog.exec_(): return
     selectedFiles = dialog.selectedFiles()
 
@@ -698,7 +707,7 @@ def enableRecentAddonsUpDownButtons(widget):
             widget.addonMoveDown.setEnabled(False)
 
 def initRecentAddonsList(widget):
-    model = QtGui.QStandardItemModel()
+    model = QStandardItemModel()
 
     recentAddons = widget.settings.value("addontools/recentaddons", [])
     if type(recentAddons) is str: recentAddons = [recentAddons]
@@ -707,7 +716,7 @@ def initRecentAddonsList(widget):
     if not recentAddons: return
 
     for i in recentAddons:
-        item = QtGui.QStandardItem(shortenPath(i))
+        item = QStandardItem(shortenPath(i))
         item.path = i
         model.appendRow(item)
 
@@ -719,7 +728,7 @@ def initRecentAddonsList(widget):
 
         firstItem = widget.recentAddons.model().index(0, 0)
         widget.recentAddons.selectionModel().select(firstItem,
-            QtGui.QItemSelectionModel.Select | QtGui.QItemSelectionModel.Rows)
+            QItemSelectionModel.Select | QItemSelectionModel.Rows)
 
         recentFolderSelected(widget, firstItem)
 
@@ -727,7 +736,7 @@ def setupLuaCacheView(widget):
     if not widget.gmodfolder.path:
         return
 
-    model = QtGui.QFileSystemModel()
+    model = QFileSystemModel()
     widget.lcacheTree.setModel(model)
 
     model.setNameFilterDisables(False)
@@ -742,8 +751,7 @@ def setupLuaCacheView(widget):
 #######
 def initialiseUI(widget):
     widget.currentAddon = addoninfo.GModAddon(dict(), '.')
-    connectMainWindowSignals(widget)
-
+    
     # Addon tools init
     initRecentAddonsList(widget)
 
@@ -770,6 +778,8 @@ def initialiseUI(widget):
     widget.settings.setValue("lcache/gmoddir",
         widget.settings.value("lcache/gmoddir", widget.gmodfolder.path))
     setupLuaCacheView(widget)
+    
+    connectMainWindowSignals(widget)
 
 
 #######
@@ -793,10 +803,10 @@ def connectMainWindowSignals(widget):
         partial(updateAddonInfo, widget, 'title', widget.addonTitle)
     )
     widget.addonDescription.textChanged.connect(
-        partial(updateAddonInfo, widget, 'description', widget.addonDescription, QtGui.QTextEdit.toPlainText)
+        partial(updateAddonInfo, widget, 'description', widget.addonDescription, QTextEdit.toPlainText)
     )
     widget.addonDefaultChangelog.textChanged.connect(
-        partial(updateAddonInfo, widget, 'default_changelog', widget.addonDefaultChangelog, QtGui.QTextEdit.toPlainText)
+        partial(updateAddonInfo, widget, 'default_changelog', widget.addonDefaultChangelog, QTextEdit.toPlainText)
     )
     widget.addonImage.textEdited.connect(
         partial(updateAddonInfo, widget, 'logo', widget.addonImage)
@@ -834,14 +844,12 @@ def connectMainWindowSignals(widget):
     widget.lcacheExtract.clicked.connect(partial(lcacheExtractClicked, widget))
     widget.lcacheExtractAll.clicked.connect(partial(lcacheExtractAllClicked, widget))
     widget.lcacheSearchButton.clicked.connect(partial(lcacheSearch, widget))
-    # The signal getSelectionModel().selectionChanged throws a segfault
-    oldSChanged = widget.lcacheTree.selectionChanged
+
     def sChanged(selected, deselected):
         lcacheFileSelected(widget, selected)
         widget.lcacheTree.selectedThings = selected
-        return oldSChanged(selected, deselected)
 
-    widget.lcacheTree.selectionChanged = sChanged
+    widget.lcacheTree.selectionModel().selectionChanged.connect(sChanged)
     widget.lcacheSearchField.textEdited.connect(partial(lcacheSearchFieldEdited, widget))
 
 try:
