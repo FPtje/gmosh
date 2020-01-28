@@ -15,15 +15,13 @@ import json
 
 GMA_VERSION = b"\x03"
 
-GMAFile = Struct('all_file_meta',
-    ULInt32('file_number'),
+GMAFile = 'all_file_meta' / Struct(
+    'file_number'/Int32ul,
     If(lambda ctx: ctx['file_number'] != 0,
-        Embed(
-            Struct('GMAFileMeta',
-                CString('file_name'),
-                SLInt64('file_size'),
-                ULInt32('file_crc')
-            )
+        'GMAFileMeta' /Struct(
+            'file_name'/CString("utf8"),
+            'file_size'/Int64sl,
+            'file_crc'/Int32ul
         )
     )
 )
@@ -54,25 +52,25 @@ def file_content_size(context):
 
         total += filemeta.file_size
 
-GMAContents = Struct('GMAContents',
-    Magic(b'GMAD'),
-    String('format_version', 1),
-    SLInt64('steamid'),
-    SLInt64('timestamp'),
-    CString('required_content'),
-    CString('addon_name'),
-    CString('addon_description'),
-    CString('addon_author'),
-    SLInt32('addon_version'),
+GMAContents = 'GMAContents'/Struct(
+    Const(b'GMAD'),
+    'format_version'/PaddedString(1, "utf8"),
+    'steamid'/Int64sl,
+    'timestamp'/Int64sl,
+    'required_content'/CString("utf8"),
+    'addon_name'/CString("utf8"),
+    'addon_description'/CString("utf8"),
+    'addon_author'/CString("utf8"),
+    'addon_version'/Int32sl,
     # For each file get the metadata
     RepeatUntil(lambda obj, ctx: obj['file_number'] == 0, GMAFile),
-    OnDemand(FileContents(Field('all_file_contents', file_content_size))),
+    Lazy(FileContents('all_file_contents'/Bytes(file_content_size))),
 )
 
-GMAVerifiedContents = Struct('GMAVerifiedContents',
-    Embed(GMAContents),
-    Optional(ULInt32('addon_crc')),
-    Optional(ULInt8("MagicValue"))
+GMAVerifiedContents = 'GMAVerifiedContents'/Struct(
+    Embedded(GMAContents),
+    Optional('addon_crc'/Int32ul),
+    Optional("MagicValue"/Int8ul)
     # Don't enforce terminator. Some GMA files appear to have 0-padding after the magic value
     # Terminator
 )
