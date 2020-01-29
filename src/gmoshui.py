@@ -6,7 +6,7 @@ from PySide2 import QtCore, QtGui
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
-from PySide2.QtCore import QFile
+from PySide2.QtCore import *
 from functools import partial
 import workshoputils
 import addoninfo
