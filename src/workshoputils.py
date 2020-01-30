@@ -38,6 +38,10 @@ def download(addons, path, extr):
         if not "title" in res:
             print("Addon does not exist!")
             return
+        
+        if not "file_url" in res or res['file_url'] == '':
+            print("Steam did not provide a direct download URL!")
+            return
 
         name = res['title']
         download = res['file_url']

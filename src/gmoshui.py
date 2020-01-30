@@ -485,7 +485,7 @@ def openGmaFile(widget, fileName, error = True):
     # Expand the root node
     widget.gmaFiles.expand(rootIndex)
     # Select root node
-    widget.gmaFiles.selectionModel().select(rootIndex, QItemSelectionModel.Select | QItemSelectionModel.Rows)
+    widget.gmaFiles.selectionModel().select(rootIndex, QItemSelectionModel.Select)
 
     # Enable the extract button
     widget.gmaExtract.setEnabled(True)
