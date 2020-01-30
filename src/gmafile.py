@@ -13,7 +13,7 @@ from binascii import crc32
 from struct import pack
 import json
 
-GMA_VERSION = u"\x03"
+GMA_VERSION = b"\x03".decode("utf-8")
 
 GMAFile = 'all_file_meta'/Struct(
     'file_number'/Int32ul,
@@ -34,7 +34,7 @@ class FileContents(Adapter):
     def _decode(self, obj, context, path):
         contents = []
         begin = 0
-        for filemeta in context.data.all_file_meta:
+        for filemeta in context.all_file_meta:
             # ignore the dummy file with file number 0
             if filemeta.file_number == 0:
                 break
@@ -70,8 +70,8 @@ GMAContents = 'content'/Struct(
 
 GMAVerifiedContents = 'GMAVerifiedContents'/Struct(
     GMAContents,
-    Optional('addon_crc'/Int32ul),
-    Optional("MagicValue"/Int8ul)
+    'addon_crc'/Optional(Int32ul),
+    'MagicValue'/Optional(Int8ul)
     # Don't enforce terminator. Some GMA files appear to have 0-padding after the magic value
     # Terminator
 )
@@ -103,7 +103,7 @@ def build_gma(addon, file_list, addon_path='.'):
     container.format_version = GMA_VERSION
     container.steamid = addon.getsteamid()
     container.timestamp = int(time())
-    container.required_content = u''
+    container.required_content = b''.decode("utf-8")
     container.addon_name = addon.gettitle()
     container.addon_description = addon.get_description_json()
     container.addon_author = addon.getauthor()
@@ -117,7 +117,8 @@ def write(addon, destination_path='.'):
     file_list = addon.getfiles()
     addon_path = addon.getpath()
     gma = build_gma(addon, file_list, addon_path)
-    crc = crc32(gma)
+
+    crc = crc32(gma) & 0xffffffff
 
     file_name, extension = os.path.splitext(destination_path)
     destination = extension and destination_path or os.path.join(destination_path, 'out.gma')
@@ -127,14 +128,14 @@ def write(addon, destination_path='.'):
 
     with open(destination, 'wb') as file:
         file.write(gma)
-        file.write(pack('I', crc))
+        file.write(pack('<I', crc))
 
 def extract(file_path, destination_path, fil = set()):
     with open(file_path, 'rb') as file:
         gma = GMAVerifiedContents.parse_stream(file)
 
-        for i in range(0, len(gma.all_file_meta) - 1):
-            meta = gma.all_file_meta[i]
+        for i in range(0, len(gma.content.all_file_meta) - 1):
+            meta = gma.content.all_file_meta[i]
             gma_file_name = meta.data.file_name
 
             # Discontinue extracting this file if it's not in the filter
@@ -209,7 +210,8 @@ addon description     = "{addon_description}"
 addon author          = "{addon_author}"
 addon version         = {addon_version}
 
-Files: {files}
+Files:
+{files}
 """
 
 filemetaStr = "{name} ({size}, crc: {crc})"
@@ -284,7 +286,7 @@ def gmaInfo(file_path):
             res['type'] = data['type']
         except Exception: pass
 
-        for filemeta in gma.all_file_meta:
+        for filemeta in gma.content.all_file_meta:
             if filemeta.file_number == 0: break
 
             res['files'].append({
