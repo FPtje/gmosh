@@ -1,18 +1,14 @@
 MODULES=addoninfo,gmafile,gmpublish,workshoputils
 
-gui:
-	pyside-uic ui/mainwindow.ui -o src/view/mainwindow.py
-	pyside-uic ui/progressdialog.ui -o src/view/progressdialog.py
-
-linux: gui
+linux:
 	if [ ! -d bin ]; then mkdir bin; fi
 	cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
 	cxfreeze src/gmoshui.py --target-dir=bin --include-modules=$(MODULES),atexit
 
-osx: gui
+osx:
 	if [ ! -d bin ]; then mkdir bin; fi
-	/Library/Frameworks/Python.framework/Versions/3.3/bin/cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
-	/Library/Frameworks/Python.framework/Versions/3.3/bin/cxfreeze src/gmoshui.py --target-dir=bin --include-modules=$(MODULES),atexit
+	/Library/Frameworks/Python.framework/Versions/3.8/bin/cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
+	/Library/Frameworks/Python.framework/Versions/3.8/bin/cxfreeze src/gmoshui.py --target-dir=bin --include-modules=$(MODULES),atexit
 
 install_linux: uninstall_linux
 	if [ ! -d /opt/gmosh ]; then mkdir -p /opt/gmosh; fi

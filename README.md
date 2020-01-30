@@ -1,16 +1,9 @@
-#Installation:
+# Installation:
 When you just want to install it, please download the binaries from here:
 https://github.com/FPtje/gmosh/releases
 
-#IMPORTANT:
-On Linux, gmoshui will NOT work and throw a big nasty ImportError if you don't have python3-pyside installed!
-I currently have no way of circumventing this. Sorry for the inconvenience!
-
-When building from source, please see section Compiling.
-
-
-#How to use gmosh:
-gmosh is a command line interface (cli) program. This means that the program has no visual interface.
+# How to use gmosh:
+Gmosh is a command line interface (cli) program. This means that the program has no visual interface.
 Rather, it is run from the command prompt/terminal. This might sound frightening, but it makes sense:
 Typing is faster than pointing and clicking, this program was made so updates can be pushed to the workshop /super fast/.
 Gmosh was loosely inspired by the git cli. Pushing an update to a git repository is as easy as entering "git push" in the terminal.
@@ -110,14 +103,10 @@ They might cause problems when you fill them in.
 
 # Compiling
 ### Compiling prerequisites (all platforms):
-Make sure python 3.3 or 3.4 is installed.
+Make sure python 3.8 or 3.7 is installed.
 
-Make sure the module six is installed. The construct module depends on it. https://pypi.python.org/pypi/six
-
-Make sure the module construct is installed. https://pypi.python.org/pypi/construct
-
-cx_freeze for Python 3.3. cx_freeze for Python 3.4 appears not to work on Windows.
-Note: the cx_freeze package on the Ubuntu repositories is for Python 2.7. Compile the right version from source.
+Make sure the module construct is installed. https://pypi.org/project/construct/
+If you want to compile binaries, then make sure to install cx_freeze: https://pypi.org/project/cx-Freeze/
 
 ### Compiling on Linux:
 cd to the root of the repository
@@ -128,7 +117,7 @@ enter "sudo make install_linux" in the terminal to install it on your system
 cd to the root of the repository
 enter "make osx" in the terminal
 enter "sudo make install_osx" in the terminal to install it on your system
-Note: You may have to change the path of cxfreeze in the makefile. Currently it's /Library/Frameworks/Python.framework/Versions/3.3/bin/cxfreeze
+Note: You may have to change the path of cxfreeze in the makefile. Currently it's /Library/Frameworks/Python.framework/Versions/3.8/bin/cxfreeze
 
 ### Compiling on Windows:
 Open the command prompt in the root of the repository
