@@ -161,7 +161,7 @@ def extract(file_path, destination_path, fil = set()):
             print(file_name)
 
             with open(file_name, 'wb') as output:
-                output.write(gma.all_file_contents.value[i])
+                output.write(gma.content.all_file_contents()[i])
 
 def openFiles(gma_path, fil):
     with open(gma_path, 'rb') as file:
@@ -182,7 +182,7 @@ def openFiles(gma_path, fil):
             prefix, extension = os.path.splitext(filename)
             # Don't delete, otherwise it'll be deleted before it gets opened
             with tempfile.NamedTemporaryFile(prefix = prefix, suffix = extension, delete = False) as output:
-                output.write(gma.content.all_file_contents.value[i])
+                output.write(gma.content.all_file_contents()[i])
                 if sys.platform == "darwin":
                     subprocess.call(['open', output.name])
                 else:
