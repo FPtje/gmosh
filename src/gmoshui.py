@@ -117,6 +117,7 @@ def createProgressDialog(work, onresult=id):
     thread.start()
 
     dialog.show()
+    ui.show()
     dialog.exec_()
     thread.exit()
     del thread
@@ -452,6 +453,8 @@ def populate(model, hierarchy, root = None):
     return node
 
 def openGmaFile(widget, fileName, error = True):
+    if fileName == '': return
+    
     try:
         info = gmafile.gmaInfo(fileName)
     except Exception:
@@ -728,7 +731,7 @@ def initRecentAddonsList(widget):
 
         firstItem = widget.recentAddons.model().index(0, 0)
         widget.recentAddons.selectionModel().select(firstItem,
-            QItemSelectionModel.Select | QItemSelectionModel.Rows)
+            QItemSelectionModel.Select)
 
         recentFolderSelected(widget, firstItem)
 
