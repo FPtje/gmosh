@@ -34,7 +34,7 @@ class FileContents(Adapter):
     def _decode(self, obj, context, path):
         contents = []
         begin = 0
-        for filemeta in context.all_file_meta:
+        for filemeta in context._.all_file_meta:
             # ignore the dummy file with file number 0
             if filemeta.file_number == 0:
                 break
@@ -65,7 +65,8 @@ GMAContents = 'content'/Struct(
     'addon_version'/Int32sl,
     # For each file get the metadata
     'all_file_meta'/RepeatUntil(lambda x,lst,ctx: x['file_number'] == 0, GMAFile),
-    'all_file_contents'/Lazy(FileContents(Bytes(file_content_size)))
+    'total_file_size'/Computed(lambda ctx: file_content_size(ctx)),
+    'embedded_files'/LazyStruct('contents'/FileContents(Bytes(this._.total_file_size)))
 )
 
 GMAVerifiedContents = 'GMAVerifiedContents'/Struct(
@@ -109,7 +110,7 @@ def build_gma(addon, file_list, addon_path='.'):
     container.addon_author = addon.getauthor()
     container.addon_version = addon.getversion()
     container.all_file_meta = file_meta
-    container.all_file_contents = file_contents
+    container.embedded_files = {'contents': file_contents}
 
     return GMAContents.build(container)
 
@@ -161,7 +162,7 @@ def extract(file_path, destination_path, fil = set()):
             print(file_name)
 
             with open(file_name, 'wb') as output:
-                output.write(gma.content.all_file_contents()[i])
+                output.write(gma.content.embedded_files.contents[i])
 
 def openFiles(gma_path, fil):
     with open(gma_path, 'rb') as file:
@@ -182,7 +183,7 @@ def openFiles(gma_path, fil):
             prefix, extension = os.path.splitext(filename)
             # Don't delete, otherwise it'll be deleted before it gets opened
             with tempfile.NamedTemporaryFile(prefix = prefix, suffix = extension, delete = False) as output:
-                output.write(gma.content.all_file_contents()[i])
+                output.write(gma.content.embedded_files.contents[i])
                 if sys.platform == "darwin":
                     subprocess.call(['open', output.name])
                 else:
