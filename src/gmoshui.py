@@ -92,8 +92,9 @@ class WorkBackground(QtCore.QThread):
 
 def createProgressDialog(work, onresult=id):
     """Create progress dialog"""
-    dialog = QDialog()
     ui = progressdialog
+    ui.progressText.clear()
+    ui.buttonBox.setEnabled(False)
 
     def onThreadOutput(text):
         if not shiboken.isValid(ui) or not shiboken.isValid(ui.progressText): return
@@ -115,12 +116,11 @@ def createProgressDialog(work, onresult=id):
     thread.signal.connect(onThreadOutput)
     thread.finished.connect(enableButtons)
     thread.start()
-
-    dialog.show()
-    ui.show()
-    dialog.exec_()
+    ui.open()
+    ui.exec_()
     thread.exit()
     del thread
+
 
 #######
 # Addon tools signals
@@ -167,13 +167,11 @@ def addonVerifyClicked(widget, show_ok = True):
         if show_ok: errorMsg("No illegal files were found. You're good to go!")
         return True
 
-    dialog = QDialog()
-    ui = progressdialog.Ui_Dialog()
-    ui.setupUi(dialog)
+    ui = progressdialog
     ui.progressText.setText(illegalFilesFoundMessage % '<br />'.join(badlist))
     ui.buttonBox.setEnabled(True)
-    dialog.show()
-    dialog.exec_()
+    ui.show()
+    ui.exec_()
 
     return False
 
@@ -622,6 +620,8 @@ def lcacheSetGmodDirClicked(widget):
     setupLuaCacheView(widget)
 
 def lcacheFileSelected(widget, selected):
+    if len(selected.indexes()) == 0:
+        return
     ix = selected.indexes()[-1]
     path = widget.lcacheTree.model().filePath(ix)
     text = widget.gmodfolder.extract_cache_file(path).decode('utf-8', 'replace')
@@ -672,6 +672,8 @@ def lcacheSearch(widget):
         )
 
 def lcacheSearchFieldEdited(widget, txt):
+    if not hasattr(widget.lcacheTree, 'selectedThings'): 
+        return
     lcacheFileSelected(widget, widget.lcacheTree.selectedThings)
 
 def shortenPath(path, maxI = 4):

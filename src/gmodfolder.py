@@ -91,5 +91,6 @@ class GModFolder:
 
             if re.search(pattern, self.extract_cache_file(ff).decode('utf-8', 'replace')):
                 res.append(f)
-
+        
+        print("Found %i matching files." % len(res))
         return res
