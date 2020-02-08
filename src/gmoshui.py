@@ -18,10 +18,11 @@ import os
 import re
 from gmodfolder import GModFolder
 
+
 class ControlMainWindow(QMainWindow):
     """Spawns the main window"""
-    def __init__(self):
-        super(ControlMainWindow, self).__init__()
+    def __init__(self, parent=None):
+        super(ControlMainWindow, self).__init__(parent)
         self.ui = mainwindow.Ui_MainWindow()
         self.ui.setupUi(self)
         self.setWindowTitle("GMosh UI " + __version__)
@@ -167,8 +168,8 @@ def addonVerifyClicked(widget, show_ok = True):
     ui.setupUi(dialog)
     ui.progressText.setText(illegalFilesFoundMessage % '<br />'.join(badlist))
     ui.buttonBox.setEnabled(True)
-    ui.show()
-    ui.exec_()
+    dialog.show()
+    dialog.exec_()
 
     return False
 
