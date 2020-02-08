@@ -2,8 +2,8 @@
 """Starts the user interface of gmoshui."""
 
 from _version import __version__
+from view import mainwindow, progressdialog
 from PySide2 import QtCore, QtGui
-from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
@@ -17,37 +17,30 @@ import shiboken2 as shiboken
 import os
 import re
 from gmodfolder import GModFolder
+import encodings
+
+class MainWindow(QMainWindow):
+    """Spawns the main window"""
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.ui = mainwindow.Ui_MainWindow()
+        self.ui.setupUi(self)
+        self.setWindowTitle("GMosh UI " + __version__)
+
+        # Create settings
+        QtCore.QCoreApplication.setOrganizationName("FPtje")
+        QtCore.QCoreApplication.setOrganizationDomain("github.com/FPtje/gmosh")
+        QtCore.QCoreApplication.setApplicationName("gmoshui")
+
+        self.ui.settings = QtCore.QSettings()
+        initialiseUI(self.ui)
+
 
 def main():
     """Main method"""
     app = QApplication(sys.argv)
-    
-    loader = QUiLoader()
-    
-    mainwindow_ui_file = QFile(os.path.abspath("ui/mainwindow.ui"))
-    mainwindow_ui_file.open(QFile.ReadOnly)
-    
-    mainwindow = loader.load(mainwindow_ui_file)
-    mainwindow_ui_file.close()
-    
-    progressdialog_ui_file = QFile(os.path.abspath("ui/progressdialog.ui"))
-    progressdialog_ui_file.open(QFile.ReadOnly)
-
-    global progressdialog
-    progressdialog = loader.load(progressdialog_ui_file)
-    progressdialog_ui_file.close()
-    
-    mainwindow.setWindowTitle("GMosh UI " + __version__)
-
-    # Create settings
-    QtCore.QCoreApplication.setOrganizationName("FPtje")
-    QtCore.QCoreApplication.setOrganizationDomain("github.com/FPtje/gmosh")
-    QtCore.QCoreApplication.setApplicationName("gmoshui")
-
-    mainwindow.settings = QtCore.QSettings()
-
-    initialiseUI(mainwindow)
-    mainwindow.show()
+    mysw = MainWindow()
+    mysw.show()
     sys.exit(app.exec_())
 
 
@@ -92,7 +85,10 @@ class WorkBackground(QtCore.QThread):
 
 def createProgressDialog(work, onresult=id):
     """Create progress dialog"""
-    ui = progressdialog
+
+    dialog = QDialog()
+    ui = progressdialog.Ui_Dialog()
+    ui.setupUi(dialog)
     ui.progressText.clear()
     ui.buttonBox.setEnabled(False)
 
@@ -116,8 +112,8 @@ def createProgressDialog(work, onresult=id):
     thread.signal.connect(onThreadOutput)
     thread.finished.connect(enableButtons)
     thread.start()
-    ui.open()
-    ui.exec_()
+    dialog.show()
+    dialog.exec_()
     thread.exit()
     del thread
 
@@ -167,7 +163,9 @@ def addonVerifyClicked(widget, show_ok = True):
         if show_ok: errorMsg("No illegal files were found. You're good to go!")
         return True
 
-    ui = progressdialog
+    dialog = QDialog()
+    ui = progressdialog.Ui_Dialog()
+    ui.setupUi(dialog)
     ui.progressText.setText(illegalFilesFoundMessage % '<br />'.join(badlist))
     ui.buttonBox.setEnabled(True)
     ui.show()
@@ -733,7 +731,7 @@ def initRecentAddonsList(widget):
 
         firstItem = widget.recentAddons.model().index(0, 0)
         widget.recentAddons.selectionModel().select(firstItem,
-            QItemSelectionModel.Select)
+            QItemSelectionModel.Select | QItemSelectionModel.Rows)
 
         recentFolderSelected(widget, firstItem)
 
@@ -743,6 +741,14 @@ def setupLuaCacheView(widget):
 
     model = QFileSystemModel()
     widget.lcacheTree.setModel(model)
+
+    # Connect to signals
+    def sChanged(selected, deselected):
+        lcacheFileSelected(widget, selected)
+        widget.lcacheTree.selectedThings = selected
+
+    widget.lcacheTree.selectionModel().selectionChanged.connect(sChanged)
+    widget.lcacheSearchField.textEdited.connect(partial(lcacheSearchFieldEdited, widget))
 
     model.setNameFilterDisables(False)
 
@@ -756,6 +762,7 @@ def setupLuaCacheView(widget):
 #######
 def initialiseUI(widget):
     widget.currentAddon = addoninfo.GModAddon(dict(), '.')
+    connectMainWindowSignals(widget)
     
     # Addon tools init
     initRecentAddonsList(widget)
@@ -783,8 +790,6 @@ def initialiseUI(widget):
     widget.settings.setValue("lcache/gmoddir",
         widget.settings.value("lcache/gmoddir", widget.gmodfolder.path))
     setupLuaCacheView(widget)
-    
-    connectMainWindowSignals(widget)
 
 
 #######
@@ -849,13 +854,6 @@ def connectMainWindowSignals(widget):
     widget.lcacheExtract.clicked.connect(partial(lcacheExtractClicked, widget))
     widget.lcacheExtractAll.clicked.connect(partial(lcacheExtractAllClicked, widget))
     widget.lcacheSearchButton.clicked.connect(partial(lcacheSearch, widget))
-
-    def sChanged(selected, deselected):
-        lcacheFileSelected(widget, selected)
-        widget.lcacheTree.selectedThings = selected
-
-    widget.lcacheTree.selectionModel().selectionChanged.connect(sChanged)
-    widget.lcacheSearchField.textEdited.connect(partial(lcacheSearchFieldEdited, widget))
 
 try:
     if __name__ == '__main__': main()
