@@ -17,12 +17,11 @@ import shiboken2 as shiboken
 import os
 import re
 from gmodfolder import GModFolder
-import encodings
 
-class MainWindow(QMainWindow):
+class ControlMainWindow(QMainWindow):
     """Spawns the main window"""
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super(ControlMainWindow, self).__init__()
         self.ui = mainwindow.Ui_MainWindow()
         self.ui.setupUi(self)
         self.setWindowTitle("GMosh UI " + __version__)
@@ -32,14 +31,14 @@ class MainWindow(QMainWindow):
         QtCore.QCoreApplication.setOrganizationDomain("github.com/FPtje/gmosh")
         QtCore.QCoreApplication.setApplicationName("gmoshui")
 
-        self.ui.settings = QtCore.QSettings()
-        initialiseUI(self.ui)
+        self.ui.settings = QSettings()
 
 
 def main():
     """Main method"""
     app = QApplication(sys.argv)
-    mysw = MainWindow()
+    mysw = ControlMainWindow()
+    initialiseUI(mysw.ui)
     mysw.show()
     sys.exit(app.exec_())
 
