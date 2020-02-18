@@ -45,8 +45,8 @@ class GModFolder:
     def extract_cache_file(self, f):
         with open(f, 'rb') as ff:
             contents = ff.read()
-            # First four bytes are garbage
-            decompressed = lzma.decompress(contents[4:])
+            # First 32 bytes as base
+            decompressed = lzma.decompress(contents[32:])
             # Last byte is \0
             return decompressed[:-1]
 
@@ -91,5 +91,6 @@ class GModFolder:
 
             if re.search(pattern, self.extract_cache_file(ff).decode('utf-8', 'replace')):
                 res.append(f)
-
+        
+        print("Found %i matching files." % len(res))
         return res

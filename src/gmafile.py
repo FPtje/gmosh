@@ -13,34 +13,33 @@ from binascii import crc32
 from struct import pack
 import json
 
-GMA_VERSION = b"\x03"
+GMA_VERSION = b"\x03".decode("utf-8")
 
-GMAFile = Struct('all_file_meta',
-    ULInt32('file_number'),
-    If(lambda ctx: ctx['file_number'] != 0,
-        Embed(
-            Struct('GMAFileMeta',
-                CString('file_name'),
-                SLInt64('file_size'),
-                ULInt32('file_crc')
-            )
-        )
+GMAFile = 'all_file_meta'/Struct(
+    'file_number'/Int32ul,
+    'data'/IfThenElse(this.file_number != 0,
+        'data'/Struct(
+            'file_name'/CString("utf8"),
+            'file_size'/Int64sl,
+            'file_crc'/Int32ul
+        ),
+        Pass
     )
 )
 
 class FileContents(Adapter):
-    def _encode(self, obj, context):
+    def _encode(self, obj, context, path):
         return b''.join(obj)
 
-    def _decode(self, obj, context):
+    def _decode(self, obj, context, path):
         contents = []
         begin = 0
-        for filemeta in context.all_file_meta:
+        for filemeta in context._.all_file_meta:
             # ignore the dummy file with file number 0
             if filemeta.file_number == 0:
                 break
 
-            size = filemeta.file_size
+            size = filemeta.data.file_size
             contents.append(obj[begin:begin + size])
             begin += size
 
@@ -52,27 +51,28 @@ def file_content_size(context):
         if filemeta.file_number == 0:
             return total
 
-        total += filemeta.file_size
+        total += filemeta.data.file_size
 
-GMAContents = Struct('GMAContents',
-    Magic(b'GMAD'),
-    String('format_version', 1),
-    SLInt64('steamid'),
-    SLInt64('timestamp'),
-    CString('required_content'),
-    CString('addon_name'),
-    CString('addon_description'),
-    CString('addon_author'),
-    SLInt32('addon_version'),
+GMAContents = 'content'/Struct(
+    'signature'/Const(b'GMAD'),
+    'format_version'/PaddedString(1, "utf8"),
+    'steamid'/Int64sl,
+    'timestamp'/Int64sl,
+    'required_content'/CString("utf8"),
+    'addon_name'/CString("utf8"),
+    'addon_description'/CString("utf8"),
+    'addon_author'/CString("utf8"),
+    'addon_version'/Int32sl,
     # For each file get the metadata
-    RepeatUntil(lambda obj, ctx: obj['file_number'] == 0, GMAFile),
-    OnDemand(FileContents(Field('all_file_contents', file_content_size))),
+    'all_file_meta'/RepeatUntil(lambda x,lst,ctx: x['file_number'] == 0, GMAFile),
+    'total_file_size'/Computed(lambda ctx: file_content_size(ctx)),
+    'embedded_files'/LazyStruct('contents'/FileContents(Bytes(this._.total_file_size)))
 )
 
-GMAVerifiedContents = Struct('GMAVerifiedContents',
-    Embed(GMAContents),
-    Optional(ULInt32('addon_crc')),
-    Optional(ULInt8("MagicValue"))
+GMAVerifiedContents = 'GMAVerifiedContents'/Struct(
+    GMAContents,
+    'addon_crc'/Optional(Int32ul),
+    'MagicValue'/Optional(Int8ul)
     # Don't enforce terminator. Some GMA files appear to have 0-padding after the magic value
     # Terminator
 )
@@ -86,30 +86,31 @@ def build_gma(addon, file_list, addon_path='.'):
 
         with open(file_path, 'rb') as f:
             contents = f.read()
-
-            file_meta.append(Container(
-                file_name = bytes(file_list[i], 'utf-8'),
+            containeredData = Container(
                 file_number = i + 1,
-                file_crc = crc32(contents) & 0xffffffff,
-                file_size = len(contents)
-            ))
-
+                data = Container(
+                    file_name = file_list[i],
+                    file_crc = crc32(contents) & 0xffffffff,
+                    file_size = len(contents)
+                )
+            )
+            file_meta.append(containeredData)
             file_contents.append(contents)
 
     # Dummy end file
-    file_meta.append(Container(file_number = 0))
+    file_meta.append(Container(file_number = 0, data=Container()))
 
     container = Container()
     container.format_version = GMA_VERSION
     container.steamid = addon.getsteamid()
     container.timestamp = int(time())
-    container.required_content = b''
-    container.addon_name = bytes(addon.gettitle(), 'utf-8')
-    container.addon_description = bytes(addon.get_description_json(), 'utf-8')
-    container.addon_author = bytes(addon.getauthor(), 'utf-8')
+    container.required_content = b''.decode("utf-8")
+    container.addon_name = addon.gettitle()
+    container.addon_description = addon.get_description_json()
+    container.addon_author = addon.getauthor()
     container.addon_version = addon.getversion()
     container.all_file_meta = file_meta
-    container.all_file_contents = file_contents
+    container.embedded_files = {'contents': file_contents}
 
     return GMAContents.build(container)
 
@@ -117,7 +118,8 @@ def write(addon, destination_path='.'):
     file_list = addon.getfiles()
     addon_path = addon.getpath()
     gma = build_gma(addon, file_list, addon_path)
-    crc = crc32(gma)
+
+    crc = crc32(gma) & 0xffffffff
 
     file_name, extension = os.path.splitext(destination_path)
     destination = extension and destination_path or os.path.join(destination_path, 'out.gma')
@@ -127,15 +129,15 @@ def write(addon, destination_path='.'):
 
     with open(destination, 'wb') as file:
         file.write(gma)
-        file.write(pack('I', crc))
+        file.write(pack('<I', crc))
 
 def extract(file_path, destination_path, fil = set()):
     with open(file_path, 'rb') as file:
         gma = GMAVerifiedContents.parse_stream(file)
 
-        for i in range(0, len(gma.all_file_meta) - 1):
-            meta = gma.all_file_meta[i]
-            gma_file_name = meta.file_name.decode('utf-8')
+        for i in range(0, len(gma.content.all_file_meta) - 1):
+            meta = gma.content.all_file_meta[i]
+            gma_file_name = meta.data.file_name
 
             # Discontinue extracting this file if it's not in the filter
             if fil:
@@ -160,15 +162,15 @@ def extract(file_path, destination_path, fil = set()):
             print(file_name)
 
             with open(file_name, 'wb') as output:
-                output.write(gma.all_file_contents.value[i])
+                output.write(gma.content.embedded_files.contents[i])
 
 def openFiles(gma_path, fil):
     with open(gma_path, 'rb') as file:
         gma = GMAVerifiedContents.parse_stream(file)
 
-        for i in range(0, len(gma.all_file_meta) - 1):
-            meta = gma.all_file_meta[i]
-            gma_file_name = meta.file_name.decode('utf-8')
+        for i in range(0, len(gma.content.all_file_meta) - 1):
+            meta = gma.content.all_file_meta[i]
+            gma_file_name = meta.data.file_name
             for prefix in fil:
                     if gma_file_name.startswith(prefix): break
             else:
@@ -181,7 +183,7 @@ def openFiles(gma_path, fil):
             prefix, extension = os.path.splitext(filename)
             # Don't delete, otherwise it'll be deleted before it gets opened
             with tempfile.NamedTemporaryFile(prefix = prefix, suffix = extension, delete = False) as output:
-                output.write(gma.all_file_contents.value[i])
+                output.write(gma.content.embedded_files.contents[i])
                 if sys.platform == "darwin":
                     subprocess.call(['open', output.name])
                 else:
@@ -193,8 +195,8 @@ def getfiles(file_path):
         gma = GMAVerifiedContents.parse_stream(file)
 
     res = []
-    for i in range(0, len(gma.all_file_meta) - 1):
-        res.append(gma.all_file_meta[i].file_name.decode('utf-8'))
+    for i in range(0, len(gma.content.all_file_meta) - 1):
+        res.append(gma.content.all_file_meta[i].data.file_name)
 
     return res
 
@@ -209,7 +211,8 @@ addon description     = "{addon_description}"
 addon author          = "{addon_author}"
 addon version         = {addon_version}
 
-Files: {files}
+Files:
+{files}
 """
 
 filemetaStr = "{name} ({size}, crc: {crc})"
@@ -237,26 +240,26 @@ def dump(file_path):
 
         files = []
 
-        for filemeta in gma.all_file_meta:
+        for filemeta in gma.content.all_file_meta:
             if filemeta.file_number == 0: break
 
             files.append(filemetaStr.format(
-                name = filemeta.file_name.decode('utf-8'),
-                size = sizeof_fmt(filemeta.file_size),
-                crc  = filemeta.file_crc
+                name = filemeta.data.file_name,
+                size = sizeof_fmt(filemeta.data.file_size),
+                crc  = filemeta.data.file_crc
             ))
 
         return gmaStr.format(
             crc                 = gma.addon_crc,
             magic               = gma.MagicValue,
-            format_version      = gma.format_version.decode('utf-8'),
-            steamid             = gma.steamid,
-            timestamp           = datetime.fromtimestamp(int(gma.timestamp)).strftime('%Y-%m-%d %H:%M:%S'),
-            required_content    = gma.required_content.decode('utf-8'),
-            addon_name          = gma.addon_name.decode('utf-8'),
-            addon_description   = gma.addon_description.decode('utf-8'),
-            addon_author        = gma.addon_author.decode('utf-8'),
-            addon_version       = gma.addon_version,
+            format_version      = gma.content.format_version,
+            steamid             = gma.content.steamid,
+            timestamp           = datetime.fromtimestamp(int(gma.content.timestamp)).strftime('%Y-%m-%d %H:%M:%S'),
+            required_content    = gma.content.required_content,
+            addon_name          = gma.content.addon_name,
+            addon_description   = gma.content.addon_description,
+            addon_author        = gma.content.addon_author,
+            addon_version       = gma.content.addon_version,
             files               = "\n".join(files)
             )
 
@@ -268,14 +271,14 @@ def gmaInfo(file_path):
         res['files']               = []
         res['crc']                 = gma.addon_crc
         res['magic']               = gma.MagicValue
-        res['format_version']      = gma.format_version.decode('utf-8')
-        res['steamid']             = gma.steamid
-        res['timestamp']           = int(gma.timestamp)
-        res['required_content']    = gma.required_content.decode('utf-8')
-        res['addon_name']          = gma.addon_name.decode('utf-8')
-        res['addon_description']   = gma.addon_description.decode('utf-8')
-        res['addon_author']        = gma.addon_author.decode('utf-8')
-        res['addon_version']       = gma.addon_version
+        res['format_version']      = gma.content.format_version
+        res['steamid']             = gma.content.steamid
+        res['timestamp']           = int(gma.content.timestamp)
+        res['required_content']    = gma.content.required_content
+        res['addon_name']          = gma.content.addon_name
+        res['addon_description']   = gma.content.addon_description
+        res['addon_author']        = gma.content.addon_author
+        res['addon_version']       = gma.content.addon_version
 
         try:
             data = json.loads(res['addon_description'])
@@ -284,14 +287,14 @@ def gmaInfo(file_path):
             res['type'] = data['type']
         except Exception: pass
 
-        for filemeta in gma.all_file_meta:
+        for filemeta in gma.content.all_file_meta:
             if filemeta.file_number == 0: break
 
             res['files'].append({
-                'name': filemeta.file_name.decode('utf-8'),
-                'size': sizeof_fmt(filemeta.file_size),
-                'puresize': filemeta.file_size,
-                'crc':  filemeta.file_crc
+                'name': filemeta.data.file_name,
+                'size': sizeof_fmt(filemeta.data.file_size),
+                'puresize': filemeta.data.file_size,
+                'crc':  filemeta.data.file_crc
             })
 
         return res
