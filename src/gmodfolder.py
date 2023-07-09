@@ -43,7 +43,7 @@ class GModFolder:
         return cachepath
 
     def extract_cache_file(self, f):
-        with open(f, 'rb') as ff:
+        with open(f, "rb") as ff:
             contents = ff.read()
             # First 32 bytes as base
             decompressed = lzma.decompress(contents[32:])
@@ -68,7 +68,7 @@ class GModFolder:
             data = self.extract_cache_file(ff)
             outfile = os.path.join(out, f)
 
-            with open(outfile, 'wb') as of:
+            with open(outfile, "wb") as of:
                 of.write(data)
                 of.close()
 
@@ -89,8 +89,10 @@ class GModFolder:
             if not f.endswith(".lua"):
                 continue
 
-            if re.search(pattern, self.extract_cache_file(ff).decode('utf-8', 'replace')):
+            if re.search(
+                pattern, self.extract_cache_file(ff).decode("utf-8", "replace")
+            ):
                 res.append(f)
-        
+
         print("Found %i matching files." % len(res))
         return res

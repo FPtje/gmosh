@@ -21,6 +21,7 @@ from gmodfolder import GModFolder
 
 class ControlMainWindow(QMainWindow):
     """Spawns the main window"""
+
     def __init__(self, parent=None):
         super(ControlMainWindow, self).__init__(parent)
         self.ui = mainwindow.Ui_MainWindow()
@@ -53,9 +54,9 @@ def errorMsg(s):
 
 class OutLog:
     """Redirect stdout to ui of program"""
+
     def __init__(self, signal, out=None):
-        """
-        """
+        """ """
         self.signal = signal
         self.out = out
 
@@ -68,11 +69,14 @@ class OutLog:
     def flush(x):
         pass
 
+
 class WorkBackground(QtCore.QThread):
     """Run something in the background"""
+
     target = id
     signal = QtCore.Signal(str)
     finished = QtCore.Signal()
+
     def run(self):
         oldstdout = sys.stdout
         sys.stdout = OutLog(self.signal, sys.stdout)
@@ -82,6 +86,7 @@ class WorkBackground(QtCore.QThread):
 
         sys.stdout = oldstdout
         self.finished.emit()
+
 
 def createProgressDialog(work, onresult=id):
     """Create progress dialog"""
@@ -93,15 +98,18 @@ def createProgressDialog(work, onresult=id):
     ui.buttonBox.setEnabled(False)
 
     def onThreadOutput(text):
-        if not shiboken.isValid(ui) or not shiboken.isValid(ui.progressText): return
+        if not shiboken.isValid(ui) or not shiboken.isValid(ui.progressText):
+            return
 
         ui.progressText.moveCursor(QTextCursor.End)
         if text[0] == "\r":
-            #cursor = QTextCursor(ui.progressText.textCursor())
+            # cursor = QTextCursor(ui.progressText.textCursor())
             ui.progressText.moveCursor(QTextCursor.StartOfLine, QTextCursor.KeepAnchor)
-            ui.progressText.moveCursor(QTextCursor.PreviousCharacter, QTextCursor.KeepAnchor)
+            ui.progressText.moveCursor(
+                QTextCursor.PreviousCharacter, QTextCursor.KeepAnchor
+            )
 
-        ui.progressText.insertHtml(text.replace('\n', '<br />'))
+        ui.progressText.insertHtml(text.replace("\n", "<br />"))
 
     def enableButtons():
         ui.buttonBox.setEnabled(True)
@@ -123,30 +131,38 @@ def createProgressDialog(work, onresult=id):
 #######
 def addRecentAddon(widget, addon):
     recentAddons = widget.settings.value("addontools/recentaddons", [])
-    if not recentAddons: recentAddons = []
-    if type(recentAddons) is str: recentAddons = [recentAddons]
+    if not recentAddons:
+        recentAddons = []
+    if type(recentAddons) is str:
+        recentAddons = [recentAddons]
 
-    if addon in recentAddons: return False
+    if addon in recentAddons:
+        return False
 
     recentAddons.insert(0, addon)
     widget.settings.setValue("addontools/recentaddons", recentAddons)
 
     return True
 
+
 def removeRecentAddon(widget, addon):
     recentAddons = widget.settings.value("addontools/recentaddons", [])
-    if type(recentAddons) is str: recentAddons = [recentAddons]
+    if type(recentAddons) is str:
+        recentAddons = [recentAddons]
 
     recentAddons.remove(addon)
     widget.settings.setValue("addontools/recentaddons", recentAddons)
 
+
 def moveRecentAddon(widget, fr, to):
     recentAddons = widget.settings.value("addontools/recentaddons", [])
-    if type(recentAddons) is str: recentAddons = [recentAddons]
+    if type(recentAddons) is str:
+        recentAddons = [recentAddons]
 
     recentAddons.insert(to, recentAddons.pop(fr))
 
     widget.settings.setValue("addontools/recentaddons", recentAddons)
+
 
 illegalFilesFoundMessage = """\
 <h1>Illegal files found!</h1>
@@ -157,38 +173,49 @@ illegalFilesFoundMessage = """\
 
 <p>It is recommended to either remove those files or to copy paste the above list in the "Files to ignore" box</p>
 """
-def addonVerifyClicked(widget, show_ok = True):
+
+
+def addonVerifyClicked(widget, show_ok=True):
     verified, badlist = widget.currentAddon.verify_files()
     if verified:
-        if show_ok: errorMsg("No illegal files were found. You're good to go!")
+        if show_ok:
+            errorMsg("No illegal files were found. You're good to go!")
         return True
 
     dialog = QDialog()
     ui = progressdialog.Ui_Dialog()
     ui.setupUi(dialog)
-    ui.progressText.setText(illegalFilesFoundMessage % '<br />'.join(badlist))
+    ui.progressText.setText(illegalFilesFoundMessage % "<br />".join(badlist))
     ui.buttonBox.setEnabled(True)
     dialog.show()
     dialog.exec_()
 
     return False
 
-def addonCreateGMAClicked(widget):
-    fileName, _ = QFileDialog.getSaveFileName(None,
-        "Store GMA file", os.path.join(widget.settings.value("addontools/lastgmafolder", ''), 'out.gma'), "GMA files (*.gma)")
 
-    if not fileName: return
+def addonCreateGMAClicked(widget):
+    fileName, _ = QFileDialog.getSaveFileName(
+        None,
+        "Store GMA file",
+        os.path.join(widget.settings.value("addontools/lastgmafolder", ""), "out.gma"),
+        "GMA files (*.gma)",
+    )
+
+    if not fileName:
+        return
     # Force .gma extension
-    fileName = os.path.splitext(fileName)[0] + '.gma'
+    fileName = os.path.splitext(fileName)[0] + ".gma"
     folder, _ = os.path.split(fileName)
 
     # Store last used folder location
     widget.settings.setValue("addontools/lastgmafolder", folder)
 
     # Verify the addon
-    if not addonVerifyClicked(widget, False): return
+    if not addonVerifyClicked(widget, False):
+        return
 
     createProgressDialog(partial(widget.currentAddon.compress, fileName))
+
 
 def publishNew(widget, publisher):
     succeeded, output = publisher.create()
@@ -196,8 +223,13 @@ def publishNew(widget, publisher):
         widget.currentAddon.save_changes()
         print("<h1>Upload succeeded!</h1><br />")
         print("<p>The addon has been uploaded. Do check it out at </p>")
-        print('<a href="http://steamcommunity.com/sharedfiles/filedetails/?id=%s">http://steamcommunity.com/sharedfiles/filedetails/?id=%s</a>' % (output, output))
-        print("<br /><p>Note that you will have to change the visibility of this addon in the above link to make it visible for everyone.</p>")
+        print(
+            '<a href="http://steamcommunity.com/sharedfiles/filedetails/?id=%s">http://steamcommunity.com/sharedfiles/filedetails/?id=%s</a>'
+            % (output, output)
+        )
+        print(
+            "<br /><p>Note that you will have to change the visibility of this addon in the above link to make it visible for everyone.</p>"
+        )
         return
 
     print("<h1>Upload failed!</h1> <br />")
@@ -206,15 +238,23 @@ def publishNew(widget, publisher):
     print(output)
     print("</tt>")
 
+
 def addonPublishClicked(widget):
     if not widget.currentAddon.has_workshop_id() and not widget.currentAddon.getlogo():
-        errorMsg("Error: When uploading a new addon to the workshop, a 512x512 jpeg image must be given.\n"
-                 "Please either enter a workshop id or provide a 512x512 jpeg image.")
+        errorMsg(
+            "Error: When uploading a new addon to the workshop, a 512x512 jpeg image must be given.\n"
+            "Please either enter a workshop id or provide a 512x512 jpeg image."
+        )
         return
 
-    if not addonVerifyClicked(widget, False): return
+    if not addonVerifyClicked(widget, False):
+        return
 
-    changelog = widget.addonChangelog.toPlainText() or widget.currentAddon.getdefault_changelog() or ''
+    changelog = (
+        widget.addonChangelog.toPlainText()
+        or widget.currentAddon.getdefault_changelog()
+        or ""
+    )
 
     publisher = gmpublish.GmPublish(widget.currentAddon)
 
@@ -222,11 +262,22 @@ def addonPublishClicked(widget):
         createProgressDialog(partial(publisher.update, changelog))
         return
 
-    ok = QMessageBox.warning(None, "Upload new addon", "This will be uploaded as a new addon on the workshop. To update an existing addon, please fill in the workshop ID of that addon. Are you sure you want to upload this addon?", QMessageBox.Yes, QMessageBox.No) == QMessageBox.Yes
+    ok = (
+        QMessageBox.warning(
+            None,
+            "Upload new addon",
+            "This will be uploaded as a new addon on the workshop. To update an existing addon, please fill in the workshop ID of that addon. Are you sure you want to upload this addon?",
+            QMessageBox.Yes,
+            QMessageBox.No,
+        )
+        == QMessageBox.Yes
+    )
 
-    if not ok: return
+    if not ok:
+        return
 
     createProgressDialog(partial(publishNew, widget, publisher))
+
 
 def moveSelectedRecentAddon(widget, direction):
     selected = widget.recentAddons.selectedIndexes()
@@ -241,25 +292,35 @@ def moveSelectedRecentAddon(widget, direction):
         widget.recentAddons.model().insertRow(s.row() + direction, item)
 
         widget.recentAddons.selectionModel().clearSelection()
-        widget.recentAddons.selectionModel().select(widget.recentAddons.model().indexFromItem(item),
-            QItemSelectionModel.Select | QItemSelectionModel.Rows)
+        widget.recentAddons.selectionModel().select(
+            widget.recentAddons.model().indexFromItem(item),
+            QItemSelectionModel.Select | QItemSelectionModel.Rows,
+        )
 
         moveRecentAddon(widget, s.row(), s.row() + direction)
         break
 
     enableRecentAddonsUpDownButtons(widget)
 
+
 def addonMoveUpClicked(widget):
     moveSelectedRecentAddon(widget, -1)
+
 
 def addonMoveDownClicked(widget):
     moveSelectedRecentAddon(widget, 1)
 
-def addRecentFolderClicked(widget):
-    fileName, _ = QFileDialog.getOpenFileName(None,
-        "Open addon.json file", widget.settings.value("selectAddonLastFolder", None), "addon.json files (*.json)")
 
-    if not fileName: return
+def addRecentFolderClicked(widget):
+    fileName, _ = QFileDialog.getOpenFileName(
+        None,
+        "Open addon.json file",
+        widget.settings.value("selectAddonLastFolder", None),
+        "addon.json files (*.json)",
+    )
+
+    if not fileName:
+        return
 
     folder, _ = os.path.split(fileName)
     # Store last used folder location
@@ -271,17 +332,21 @@ def addRecentFolderClicked(widget):
         errorMsg("%s does not contain valid json!" % fileName)
         return
 
-    if not addRecentAddon(widget, fileName): return
+    if not addRecentAddon(widget, fileName):
+        return
 
     item = QStandardItem(shortenPath(fileName))
     item.path = fileName
     widget.recentAddons.model().insertRow(0, item)
 
     widget.recentAddons.selectionModel().clearSelection()
-    widget.recentAddons.selectionModel().select(widget.recentAddons.model().indexFromItem(item),
-        QItemSelectionModel.Select | QItemSelectionModel.Rows)
+    widget.recentAddons.selectionModel().select(
+        widget.recentAddons.model().indexFromItem(item),
+        QItemSelectionModel.Select | QItemSelectionModel.Rows,
+    )
 
     recentFolderSelected(widget, widget.recentAddons.model().indexFromItem(item))
+
 
 def removeRecentFolderClicked(widget):
     selected = widget.recentAddons.selectedIndexes()
@@ -290,14 +355,17 @@ def removeRecentFolderClicked(widget):
         widget.recentAddons.model().removeRow(s.row())
 
     # Select first item
-    if not widget.recentAddons.model().hasIndex(0, 0): return
+    if not widget.recentAddons.model().hasIndex(0, 0):
+        return
 
     widget.recentAddons.selectionModel().clearSelection()
     firstItem = widget.recentAddons.model().index(0, 0)
-    widget.recentAddons.selectionModel().select(firstItem,
-        QItemSelectionModel.Select | QItemSelectionModel.Rows)
+    widget.recentAddons.selectionModel().select(
+        firstItem, QItemSelectionModel.Select | QItemSelectionModel.Rows
+    )
 
     recentFolderSelected(widget, firstItem)
+
 
 def recentFolderSelected(widget, index):
     enableRecentAddonsUpDownButtons(widget)
@@ -308,22 +376,27 @@ def recentFolderSelected(widget, index):
     except Exception:
         return
 
-    widget.currentAddon = addonInfo or addoninfo.GModAddon(dict(), '.')
+    widget.currentAddon = addonInfo or addoninfo.GModAddon(dict(), ".")
 
-    if not addonInfo: return
+    if not addonInfo:
+        return
 
     widget.addonChangelog.setText(addonInfo.getdefault_changelog())
     widget.addonDefaultChangelog.setText(addonInfo.getdefault_changelog())
     widget.addonTitle.setText(addonInfo.gettitle())
     widget.addonDescription.setText(addonInfo.getdescription())
-    widget.addonIgnore.setText('\n'.join(addonInfo.getignored()))
+    widget.addonIgnore.setText("\n".join(addonInfo.getignored()))
 
     tags = addonInfo.gettags()
 
     widget.addonWorkshopid.setValue(addonInfo.getworkshopid())
     widget.addonType.setCurrentIndex(widget.addonType.findText(addonInfo.gettype()))
-    widget.addonTag1.setCurrentIndex(widget.addonTag1.findText(len(tags) > 0 and tags[0] or 'None'))
-    widget.addonTag2.setCurrentIndex(widget.addonTag2.findText(len(tags) > 1 and tags[1] or 'None'))
+    widget.addonTag1.setCurrentIndex(
+        widget.addonTag1.findText(len(tags) > 0 and tags[0] or "None")
+    )
+    widget.addonTag2.setCurrentIndex(
+        widget.addonTag2.findText(len(tags) > 1 and tags[1] or "None")
+    )
     widget.addonImage.setText(addonInfo.getlogo())
 
     widget.addonPublish.setEnabled(True)
@@ -334,16 +407,25 @@ def recentFolderSelected(widget, index):
     widget.addonSaveAs.setEnabled(True)
     widget.addonReset.setEnabled(True)
 
+
 def addonSaveClicked(widget):
     widget.currentAddon.save_changes()
 
-def addonSaveAsClicked(widget):
-    fileName, _ = QFileDialog.getSaveFileName(None,
-        "Store addon.json file", os.path.join(widget.settings.value("addontools/lastsaveasfolder", ''), 'addon.json'), "json files (*.json)")
 
-    if not fileName: return
+def addonSaveAsClicked(widget):
+    fileName, _ = QFileDialog.getSaveFileName(
+        None,
+        "Store addon.json file",
+        os.path.join(
+            widget.settings.value("addontools/lastsaveasfolder", ""), "addon.json"
+        ),
+        "json files (*.json)",
+    )
+
+    if not fileName:
+        return
     # Force .json extension
-    fileName = os.path.splitext(fileName)[0] + '.json'
+    fileName = os.path.splitext(fileName)[0] + ".json"
     folder, _ = os.path.split(fileName)
 
     # Store last used folder location
@@ -351,7 +433,8 @@ def addonSaveAsClicked(widget):
 
     widget.currentAddon.setfile(fileName)
     widget.currentAddon.save_changes()
-    if not addRecentAddon(widget, fileName): return
+    if not addRecentAddon(widget, fileName):
+        return
 
     # Add to recent addons list
     item = QStandardItem(shortenPath(fileName))
@@ -359,14 +442,18 @@ def addonSaveAsClicked(widget):
     widget.recentAddons.model().insertRow(0, item)
 
     widget.recentAddons.selectionModel().clearSelection()
-    widget.recentAddons.selectionModel().select(widget.recentAddons.model().indexFromItem(item),
-        QItemSelectionModel.Select | QItemSelectionModel.Rows)
+    widget.recentAddons.selectionModel().select(
+        widget.recentAddons.model().indexFromItem(item),
+        QItemSelectionModel.Select | QItemSelectionModel.Rows,
+    )
+
 
 def addonResetClicked(widget):
     selected = widget.recentAddons.selectedIndexes()
     for s in selected:
         recentFolderSelected(widget, s)
         break
+
 
 def updateAddonInfo(widget, key, target, fnvalue, *args):
     value = fnvalue(target) if callable(fnvalue) else fnvalue
@@ -377,103 +464,121 @@ def updateAddonInfo(widget, key, target, fnvalue, *args):
     else:
         widget.currentAddon.data[key] = value
 
+
 def updateAddonTags(widget, val):
     tag1 = widget.addonTag1.currentText()
     tag2 = widget.addonTag2.currentText()
 
     tags = []
-    if tag1 and tag1 != 'None': tags.append(tag1)
-    if tag2 and tag2 != 'None': tags.append(tag2)
+    if tag1 and tag1 != "None":
+        tags.append(tag1)
+    if tag2 and tag2 != "None":
+        tags.append(tag2)
 
-    widget.currentAddon.data['tags'] = tags
+    widget.currentAddon.data["tags"] = tags
+
 
 def selectAddonImage(widget):
-    fileName, _ = QFileDialog.getOpenFileName(None,
-        "Open jpg file", widget.settings.value("addontools/lastlogofolder", None), "jpeg files (*.jpg *.jpeg)")
+    fileName, _ = QFileDialog.getOpenFileName(
+        None,
+        "Open jpg file",
+        widget.settings.value("addontools/lastlogofolder", None),
+        "jpeg files (*.jpg *.jpeg)",
+    )
 
-    if not fileName: return
+    if not fileName:
+        return
 
     folder, _ = os.path.split(fileName)
     # Store last used folder location
     widget.settings.setValue("addontools/lastlogofolder", folder)
 
     widget.addonImage.setText(fileName)
-    widget.currentAddon.data['logo'] = fileName
+    widget.currentAddon.data["logo"] = fileName
+
 
 #######
 # GMA tools signals
 #######
 def split_path(p):
     """Helper to split a path into components"""
-    a,b = os.path.split(p)
+    a, b = os.path.split(p)
     return (split_path(a) if len(a) and len(b) else []) + [b]
+
 
 def folder_hierarchy(files):
     """Helper function that creates a hierarchy of folders and files"""
     hierarchy = dict()
-    hierarchy['name'] = "GMA File" + ' ' * 40
-    hierarchy['children'] = dict()
-    hierarchy['size'] = 0
-    hierarchy['path'] = ''
+    hierarchy["name"] = "GMA File" + " " * 40
+    hierarchy["children"] = dict()
+    hierarchy["size"] = 0
+    hierarchy["path"] = ""
 
     for f in files:
-        split = split_path(f['name'])
-        hierarchy['size'] = hierarchy['size'] + f['puresize']
-        cur_h = hierarchy # Current hierarchy
+        split = split_path(f["name"])
+        hierarchy["size"] = hierarchy["size"] + f["puresize"]
+        cur_h = hierarchy  # Current hierarchy
 
         i = 0
         for sub in split:
             i = i + 1
-            if not sub in cur_h['children']:
-                cur_h['children'][sub] = dict()
-                cur_h['children'][sub]['children'] = dict()
+            if not sub in cur_h["children"]:
+                cur_h["children"][sub] = dict()
+                cur_h["children"][sub]["children"] = dict()
 
-            cur_h = cur_h['children'][sub]
-            cur_h['name'] = sub
-            cur_h['path'] = '/'.join(split[0:i])
-            cur_h['size'] = 'size' in cur_h and cur_h['size'] + f['puresize'] or f['puresize']
+            cur_h = cur_h["children"][sub]
+            cur_h["name"] = sub
+            cur_h["path"] = "/".join(split[0:i])
+            cur_h["size"] = (
+                "size" in cur_h and cur_h["size"] + f["puresize"] or f["puresize"]
+            )
 
     return hierarchy
 
 
-def populate(model, hierarchy, root = None):
+def populate(model, hierarchy, root=None):
     """Populates the GMA file tree from a hierarchy created with folder_hierarchy"""
-    node = QStandardItem(hierarchy['name'])
-    size = QStandardItem(gmafile.sizeof_simple(hierarchy['size']))
-    node.filePath = size.filePath = hierarchy['path']
+    node = QStandardItem(hierarchy["name"])
+    size = QStandardItem(gmafile.sizeof_simple(hierarchy["size"]))
+    node.filePath = size.filePath = hierarchy["path"]
     root.appendRow([node, size]) if root else model.appendRow([node, size])
 
-    for child in iter(sorted(hierarchy['children'])):
-        populate(model, hierarchy['children'][child], node)
+    for child in iter(sorted(hierarchy["children"])):
+        populate(model, hierarchy["children"][child], node)
 
     return node
 
-def openGmaFile(widget, fileName, error = True):
-    if fileName == '': return
-    
+
+def openGmaFile(widget, fileName, error=True):
+    if fileName == "":
+        return
+
     try:
         info = gmafile.gmaInfo(fileName)
     except Exception:
-        if error: errorMsg("Could not recognise the format of this file!")
+        if error:
+            errorMsg("Could not recognise the format of this file!")
         return
 
     widget.settings.setValue("gmatools/lastgmafile", fileName)
 
-    widget.gmaName.setText(info['addon_name'])
-    widget.gmaDescription.setText('description' in info and info['description'] or info['addon_description'])
-    widget.gmaAuthor.setText(info['addon_author'])
-    widget.gmaAuthorID.setValue(float(info['steamid']))
-    widget.gmaTimestamp.setDateTime(QtCore.QDateTime.fromTime_t(info['timestamp']))
-    widget.gmaTags.setText('tags' in info and ', '.join(info['tags']) or '')
-    widget.gmaType.setText('type' in info and info['type'] or '')
+    widget.gmaName.setText(info["addon_name"])
+    widget.gmaDescription.setText(
+        "description" in info and info["description"] or info["addon_description"]
+    )
+    widget.gmaAuthor.setText(info["addon_author"])
+    widget.gmaAuthorID.setValue(float(info["steamid"]))
+    widget.gmaTimestamp.setDateTime(QtCore.QDateTime.fromTime_t(info["timestamp"]))
+    widget.gmaTags.setText("tags" in info and ", ".join(info["tags"]) or "")
+    widget.gmaType.setText("type" in info and info["type"] or "")
 
     # Tree view
     model = QStandardItemModel()
-    model.setHorizontalHeaderLabels(['File', 'Size'])
+    model.setHorizontalHeaderLabels(["File", "Size"])
     widget.gmaFiles.setModel(model)
 
     # Fill in data
-    hierarchy = folder_hierarchy(info['files'])
+    hierarchy = folder_hierarchy(info["files"])
     root = populate(model, hierarchy)
     rootIndex = model.indexFromItem(root)
     widget.gmaFiles.resizeColumnToContents(0)
@@ -491,20 +596,28 @@ def openGmaFile(widget, fileName, error = True):
 def gmaSelectEdited(widget, fileName):
     openGmaFile(widget, fileName, False)
 
+
 def gmaSelectEditingFinished(widget):
     openGmaFile(widget, widget.gmaSelect.text(), True)
 
-def gmaSelectFile(widget):
-    fileName, _ = QFileDialog.getOpenFileName(None,
-        "Open GMA file", widget.settings.value("selectGMALastFolder", None), "GMA files (*.gma)")
 
-    if not fileName: return
+def gmaSelectFile(widget):
+    fileName, _ = QFileDialog.getOpenFileName(
+        None,
+        "Open GMA file",
+        widget.settings.value("selectGMALastFolder", None),
+        "GMA files (*.gma)",
+    )
+
+    if not fileName:
+        return
 
     folder, _ = os.path.split(fileName)
     # Store last used folder location
     widget.settings.setValue("selectGMALastFolder", folder)
 
-    if not fileName: return
+    if not fileName:
+        return
 
     folder, _ = os.path.split(fileName)
     # Store last used folder location
@@ -513,35 +626,45 @@ def gmaSelectFile(widget):
     widget.gmaSelect.setText(fileName)
     openGmaFile(widget, fileName)
 
+
 def gmaExtract(widget):
     selected = widget.gmaFiles.selectedIndexes()
     selectedPaths = set()
     for i in selected:
-        if not i.model().itemFromIndex(i).filePath: continue
+        if not i.model().itemFromIndex(i).filePath:
+            continue
         selectedPaths.add(i.model().itemFromIndex(i).filePath)
 
     dialog = QFileDialog()
     dialog.setFileMode(QFileDialog.Directory)
     dialog.setOption(QFileDialog.ShowDirsOnly)
-    if not dialog.exec_(): return
+    if not dialog.exec_():
+        return
     selectedFiles = dialog.selectedFiles()
 
     destination = selectedFiles[0]
     if not selectedPaths:
-        destination = os.path.join(destination, re.sub('[\\/:"*?<>|]+', '_', widget.gmaName.text()))
+        destination = os.path.join(
+            destination, re.sub('[\\/:"*?<>|]+', "_", widget.gmaName.text())
+        )
 
     createProgressDialog(
-        partial(gmafile.extract, widget.gmaSelect.text(), destination, selectedPaths))
+        partial(gmafile.extract, widget.gmaSelect.text(), destination, selectedPaths)
+    )
+
 
 def gmaOpen(widget):
     selected = widget.gmaFiles.selectedIndexes()
     selectedPaths = set()
     for i in selected:
-        if not i.model().itemFromIndex(i).filePath: continue
+        if not i.model().itemFromIndex(i).filePath:
+            continue
         selectedPaths.add(i.model().itemFromIndex(i).filePath)
 
     createProgressDialog(
-        partial(gmafile.openFiles, widget.gmaSelect.text(), selectedPaths))
+        partial(gmafile.openFiles, widget.gmaSelect.text(), selectedPaths)
+    )
+
 
 #######
 # Workshop tools signals
@@ -555,46 +678,55 @@ def wsIdInfo(widget):
 
     return info
 
+
 def wsGetInfoClicked(widget):
     info = wsIdInfo(widget)
-    if not info: return
+    if not info:
+        return
 
     info = info[0]
-    if not 'title' in info:
+    if not "title" in info:
         errorMsg("Unable to retrieve addon info. Make sure the workshop ID is correct.")
         return
 
-    widget.wsName.setText(info['title'])
-    widget.wsDescription.setText(info['description'])
-    widget.wsAuthorSteam.setValue(float(info['creator']))
-    widget.wsBanned.setCheckState(info['banned'] != 0 and QtCore.Qt.Checked or QtCore.Qt.Unchecked)
-    widget.wsBanReason.setText(info['ban_reason'])
-    tags = ', '.join(list(filter(lambda x: x != "Addon", map(lambda x: x['tag'], info['tags']))))
+    widget.wsName.setText(info["title"])
+    widget.wsDescription.setText(info["description"])
+    widget.wsAuthorSteam.setValue(float(info["creator"]))
+    widget.wsBanned.setCheckState(
+        info["banned"] != 0 and QtCore.Qt.Checked or QtCore.Qt.Unchecked
+    )
+    widget.wsBanReason.setText(info["ban_reason"])
+    tags = ", ".join(
+        list(filter(lambda x: x != "Addon", map(lambda x: x["tag"], info["tags"])))
+    )
     widget.wsTags.setText(tags)
 
-
-    created = QtCore.QDateTime.fromTime_t(info['time_created'])
-    updated = QtCore.QDateTime.fromTime_t(info['time_updated'])
+    created = QtCore.QDateTime.fromTime_t(info["time_created"])
+    updated = QtCore.QDateTime.fromTime_t(info["time_updated"])
     widget.wsTimeCreated.setDateTime(created)
     widget.wsTimeUpdated.setDateTime(updated)
 
-    widget.wsViews.setValue(info['views'])
-    widget.wsSubscriptions.setValue(info['subscriptions'])
-    widget.wsFavorites.setValue(info['favorited'])
+    widget.wsViews.setValue(info["views"])
+    widget.wsSubscriptions.setValue(info["subscriptions"])
+    widget.wsFavorites.setValue(info["favorited"])
+
 
 def wsDownloadClicked(widget):
     dialog = QFileDialog()
     dialog.setFileMode(QFileDialog.Directory)
     dialog.setOption(QFileDialog.ShowDirsOnly)
-    if not dialog.exec_(): return
+    if not dialog.exec_():
+        return
     selectedFiles = dialog.selectedFiles()
 
     workshopid = widget.wsID.value()
     extract = widget.wsExtract.isChecked()
+
     def work():
         workshoputils.download([workshopid], selectedFiles[0], extract)
 
     createProgressDialog(work)
+
 
 def wsIDEdit(widget, val):
     widget.settings.setValue("workshoptools/lastworkshopid", val)
@@ -604,7 +736,8 @@ def lcacheSetGmodDirClicked(widget):
     dialog = QFileDialog()
     dialog.setFileMode(QFileDialog.Directory)
     dialog.setOption(QFileDialog.ShowDirsOnly)
-    if not dialog.exec_(): return
+    if not dialog.exec_():
+        return
     selectedFiles = dialog.selectedFiles()
 
     widget.gmodfolder.path = selectedFiles[0]
@@ -617,20 +750,22 @@ def lcacheSetGmodDirClicked(widget):
 
     setupLuaCacheView(widget)
 
+
 def lcacheFileSelected(widget, selected):
     if len(selected.indexes()) == 0:
         return
     ix = selected.indexes()[-1]
     path = widget.lcacheTree.model().filePath(ix)
-    text = widget.gmodfolder.extract_cache_file(path).decode('utf-8', 'replace')
+    text = widget.gmodfolder.extract_cache_file(path).decode("utf-8", "replace")
     if widget.lcacheSearchField.text():
         try:
-            pattern = re.compile('(%s)' % widget.lcacheSearchField.text())
-            text = re.sub(pattern, r'<b><u>\1</u></b>', text)
+            pattern = re.compile("(%s)" % widget.lcacheSearchField.text())
+            text = re.sub(pattern, r"<b><u>\1</u></b>", text)
         except:
             pass
 
-    widget.lcacheContents.setHtml('<pre>%s</pre>' % text)
+    widget.lcacheContents.setHtml("<pre>%s</pre>" % text)
+
 
 def lcacheExtractClicked(widget):
     selected = widget.lcacheTree.selectedIndexes()
@@ -638,7 +773,8 @@ def lcacheExtractClicked(widget):
     dialog = QFileDialog()
     dialog.setFileMode(QFileDialog.Directory)
     dialog.setOption(QFileDialog.ShowDirsOnly)
-    if not dialog.exec_(): return
+    if not dialog.exec_():
+        return
     selectedFiles = dialog.selectedFiles()
 
     items = set()
@@ -647,34 +783,39 @@ def lcacheExtractClicked(widget):
 
     widget.gmodfolder.extract_cache_files(selectedFiles[0], items)
 
+
 def lcacheExtractAllClicked(widget):
     dialog = QFileDialog()
     dialog.setFileMode(QFileDialog.Directory)
     dialog.setOption(QFileDialog.ShowDirsOnly)
-    if not dialog.exec_(): return
+    if not dialog.exec_():
+        return
     selectedFiles = dialog.selectedFiles()
 
     createProgressDialog(
-        partial(widget.gmodfolder.extract_cache_files, os.path.normpath(selectedFiles[0])))
+        partial(
+            widget.gmodfolder.extract_cache_files, os.path.normpath(selectedFiles[0])
+        )
+    )
+
 
 def lcacheSearch(widget):
     query = widget.lcacheSearchField.text()
 
     def onFinished(matches):
-        matches = matches or ['\0']
+        matches = matches or ["\0"]
         widget.lcacheTree.model().setNameFilters(matches)
 
-    createProgressDialog(
-        partial(widget.gmodfolder.search_cache, query),
-        onFinished
-        )
+    createProgressDialog(partial(widget.gmodfolder.search_cache, query), onFinished)
+
 
 def lcacheSearchFieldEdited(widget, txt):
-    if not hasattr(widget.lcacheTree, 'selectedThings'): 
+    if not hasattr(widget.lcacheTree, "selectedThings"):
         return
     lcacheFileSelected(widget, widget.lcacheTree.selectedThings)
 
-def shortenPath(path, maxI = 4):
+
+def shortenPath(path, maxI=4):
     """Simple function that shortens path names"""
     res = []
 
@@ -684,15 +825,17 @@ def shortenPath(path, maxI = 4):
         res.append(r)
         path = l
 
-    res.append('...')
+    res.append("...")
     l, r = os.path.splitdrive(path)
     res.append(l)
 
-    return '/'.join(list(reversed(res)))
+    return "/".join(list(reversed(res)))
+
 
 def enableRecentAddonsUpDownButtons(widget):
     recentAddons = widget.settings.value("addontools/recentaddons", [])
-    if type(recentAddons) is str: recentAddons = [recentAddons]
+    if type(recentAddons) is str:
+        recentAddons = [recentAddons]
 
     selected = widget.recentAddons.selectedIndexes()
 
@@ -709,14 +852,17 @@ def enableRecentAddonsUpDownButtons(widget):
         if s.row() == len(recentAddons) - 1:
             widget.addonMoveDown.setEnabled(False)
 
+
 def initRecentAddonsList(widget):
     model = QStandardItemModel()
 
     recentAddons = widget.settings.value("addontools/recentaddons", [])
-    if type(recentAddons) is str: recentAddons = [recentAddons]
+    if type(recentAddons) is str:
+        recentAddons = [recentAddons]
 
     widget.recentAddons.setModel(model)
-    if not recentAddons: return
+    if not recentAddons:
+        return
 
     for i in recentAddons:
         item = QStandardItem(shortenPath(i))
@@ -727,13 +873,16 @@ def initRecentAddonsList(widget):
         widget.removeFolder.setEnabled(True)
 
         # Select first item
-        if not widget.recentAddons.model().hasIndex(0, 0): return
+        if not widget.recentAddons.model().hasIndex(0, 0):
+            return
 
         firstItem = widget.recentAddons.model().index(0, 0)
-        widget.recentAddons.selectionModel().select(firstItem,
-            QItemSelectionModel.Select | QItemSelectionModel.Rows)
+        widget.recentAddons.selectionModel().select(
+            firstItem, QItemSelectionModel.Select | QItemSelectionModel.Rows
+        )
 
         recentFolderSelected(widget, firstItem)
+
 
 def setupLuaCacheView(widget):
     if not widget.gmodfolder.path:
@@ -748,32 +897,37 @@ def setupLuaCacheView(widget):
         widget.lcacheTree.selectedThings = selected
 
     widget.lcacheTree.selectionModel().selectionChanged.connect(sChanged)
-    widget.lcacheSearchField.textEdited.connect(partial(lcacheSearchFieldEdited, widget))
+    widget.lcacheSearchField.textEdited.connect(
+        partial(lcacheSearchFieldEdited, widget)
+    )
 
     model.setNameFilterDisables(False)
 
     cachedir = widget.gmodfolder.get_cache_folder()
     widget.lcacheTree.setRootIndex(model.setRootPath(cachedir))
     widget.lcacheTree.setSortingEnabled(True)
-    widget.lcacheTree.header().hideSection(2) # hide file type column
+    widget.lcacheTree.header().hideSection(2)  # hide file type column
+
 
 #######
 # Perform startup tasks
 #######
 def initialiseUI(widget):
-    widget.currentAddon = addoninfo.GModAddon(dict(), '.')
+    widget.currentAddon = addoninfo.GModAddon(dict(), ".")
     connectMainWindowSignals(widget)
-    
+
     # Addon tools init
     initRecentAddonsList(widget)
 
     # Gma tools init
-    lastGMA = widget.settings.value("gmatools/lastgmafile", '')
+    lastGMA = widget.settings.value("gmatools/lastgmafile", "")
     widget.gmaSelect.setText(lastGMA)
     openGmaFile(widget, lastGMA, False)
 
     # Workshop tools init
-    widget.wsID.setValue(float(widget.settings.value("workshoptools/lastworkshopid", 0)))
+    widget.wsID.setValue(
+        float(widget.settings.value("workshoptools/lastworkshopid", 0))
+    )
 
     if len(sys.argv) > 1:
         gmaFile = os.path.abspath(sys.argv[1])
@@ -784,11 +938,16 @@ def initialiseUI(widget):
     # Lua cache init
     widget.gmodfolder = GModFolder(widget.settings.value("lcache/gmoddir", None))
 
-    if not widget.gmodfolder.get_cache_folder() and not widget.gmodfolder.find_gmod_folder():
+    if (
+        not widget.gmodfolder.get_cache_folder()
+        and not widget.gmodfolder.find_gmod_folder()
+    ):
         return
 
-    widget.settings.setValue("lcache/gmoddir",
-        widget.settings.value("lcache/gmoddir", widget.gmodfolder.path))
+    widget.settings.setValue(
+        "lcache/gmoddir",
+        widget.settings.value("lcache/gmoddir", widget.gmodfolder.path),
+    )
     setupLuaCacheView(widget)
 
 
@@ -810,28 +969,46 @@ def connectMainWindowSignals(widget):
     widget.addonReset.clicked.connect(partial(addonResetClicked, widget))
     # Update addon info:
     widget.addonTitle.textEdited.connect(
-        partial(updateAddonInfo, widget, 'title', widget.addonTitle)
+        partial(updateAddonInfo, widget, "title", widget.addonTitle)
     )
     widget.addonDescription.textChanged.connect(
-        partial(updateAddonInfo, widget, 'description', widget.addonDescription, QTextEdit.toPlainText)
+        partial(
+            updateAddonInfo,
+            widget,
+            "description",
+            widget.addonDescription,
+            QTextEdit.toPlainText,
+        )
     )
     widget.addonDefaultChangelog.textChanged.connect(
-        partial(updateAddonInfo, widget, 'default_changelog', widget.addonDefaultChangelog, QTextEdit.toPlainText)
+        partial(
+            updateAddonInfo,
+            widget,
+            "default_changelog",
+            widget.addonDefaultChangelog,
+            QTextEdit.toPlainText,
+        )
     )
     widget.addonImage.textEdited.connect(
-        partial(updateAddonInfo, widget, 'logo', widget.addonImage)
+        partial(updateAddonInfo, widget, "logo", widget.addonImage)
     )
     widget.addonWorkshopid.valueChanged.connect(
-        partial(updateAddonInfo, widget, 'workshopid', widget.addonWorkshopid)
+        partial(updateAddonInfo, widget, "workshopid", widget.addonWorkshopid)
     )
     widget.addonIgnore.textChanged.connect(
-        partial(updateAddonInfo, widget, 'ignore', widget.addonIgnore,
+        partial(
+            updateAddonInfo,
+            widget,
+            "ignore",
+            widget.addonIgnore,
             # Filter out empty strings
-            lambda x: list(filter(bool, x.toPlainText().split('\n'))))
+            lambda x: list(filter(bool, x.toPlainText().split("\n"))),
+        )
     )
     widget.addonType.currentIndexChanged.connect(
-        partial(updateAddonInfo, widget, 'type', widget.addonType,
-            lambda x: x.currentText())
+        partial(
+            updateAddonInfo, widget, "type", widget.addonType, lambda x: x.currentText()
+        )
     )
     widget.addonTag1.currentIndexChanged.connect(partial(updateAddonTags, widget))
     widget.addonTag2.currentIndexChanged.connect(partial(updateAddonTags, widget))
@@ -855,6 +1032,9 @@ def connectMainWindowSignals(widget):
     widget.lcacheExtractAll.clicked.connect(partial(lcacheExtractAllClicked, widget))
     widget.lcacheSearchButton.clicked.connect(partial(lcacheSearch, widget))
 
+
 try:
-    if __name__ == '__main__': main()
-except KeyboardInterrupt: pass
+    if __name__ == "__main__":
+        main()
+except KeyboardInterrupt:
+    pass

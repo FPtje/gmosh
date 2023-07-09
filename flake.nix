@@ -14,6 +14,7 @@
           packages = with pkgs.${system}; [
             (python311.withPackages (p: with p; [
               construct
+              black
             ]))
           ];
         };
