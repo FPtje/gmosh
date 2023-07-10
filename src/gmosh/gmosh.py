@@ -7,11 +7,11 @@ import sys
 from glob import glob
 from itertools import chain
 
-import addoninfo
-import gmafile
-import workshoputils
-from _version import __version__
-from gmpublish import GmPublish
+from . import addoninfo
+from . import gmafile
+from . import workshoputils
+from ._version import __version__
+from .gmpublish import GmPublish
 
 # Define command line parameters
 parser = argparse.ArgumentParser(description="Garry's mod workshop cli wrapper.")
@@ -100,7 +100,8 @@ parser.add_argument(
 )
 
 
-def main(args):
+def main():
+    args = parser.parse_args()
     # working directory
     curdir = args.dir and args.dir[0] or os.getcwd()
 
@@ -419,16 +420,7 @@ def publish(addon, logo, message):
 
 if __name__ == "__main__":
     try:
-        args = parser.parse_args()
-        # Prevent "pipe closed" exceptions
-        if sys.platform == "linux":
-            from signal import SIG_DFL, SIGPIPE, signal
-
-            signal(SIGPIPE, SIG_DFL)
-
-        main(args)
-        if args.interactive:
-            input("Press Enter to continue")
+        main()
     except KeyboardInterrupt:
         # keyboard interrupts are allowed, print a newline
         print()

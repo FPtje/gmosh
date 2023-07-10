@@ -1,0 +1,19 @@
+[build-system]
+requires = [
+    "setuptools>=67.4",
+    "construct >=2.10"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gmosh"
+version = "v2.2.1"
+authors = [{name="Falco Peijnenburg"}]
+description = "Garry's mod workshop CLI tool and small UI"
+license = {file="LICENSE.txt"}
+
+[project.scripts]
+gmosh = "gmosh.gmosh:main"
+
+[options]
+packages = ["src"]

@@ -190,7 +190,7 @@ $ gmosh --help
 Traceback (most recent call last):
   File "C:\Python34\lib\site-packages\cx_Freeze\initscripts\Console.py", line 27, in <module>
     exec(code, m.__dict__)
-  File "src/gmosh.py", line 5, in <module>
+  File "src/gmosh/gmosh.py", line 5, in <module>
   File "c:\Python\64-bit\3.4\lib\importlib\_bootstrap.py", line 2214, in _find_and_load
   File "c:\Python\64-bit\3.4\lib\importlib\_bootstrap.py", line 2203, in _find_and_load_unlocked
   File "c:\Python\64-bit\3.4\lib\importlib\_bootstrap.py", line 1191, in _load_unlocked

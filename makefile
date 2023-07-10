@@ -1,18 +1,18 @@
 MODULES=addoninfo,gmafile,gmpublish,workshoputils
 
 gui:
-	uic -g python ui/mainwindow.ui -o src/view/mainwindow.py
-	uic -g python ui/progressdialog.ui -o src/view/progressdialog.py
+	uic -g python ui/mainwindow.ui -o src/gmosh/view/mainwindow.py
+	uic -g python ui/progressdialog.ui -o src/gmosh/view/progressdialog.py
 
 linux: gui
 	if [ ! -d bin ]; then mkdir bin; fi
-	cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
-	cxfreeze src/gmoshui.py --target-dir=bin --include-modules=$(MODULES),atexit
+	cxfreeze src/gmosh/gmosh.py --target-dir=bin --include-modules=$(MODULES)
+	cxfreeze src/gmosh/gmoshui.py --target-dir=bin --include-modules=$(MODULES),atexit
 
 osx: gui
 	if [ ! -d bin ]; then mkdir bin; fi
-	/Library/Frameworks/Python.framework/Versions/3.8/bin/cxfreeze src/gmosh.py --target-dir=bin --include-modules=$(MODULES)
-	/Library/Frameworks/Python.framework/Versions/3.8/bin/cxfreeze src/gmoshui.py --target-dir=bin --include-modules=$(MODULES),atexit
+	/Library/Frameworks/Python.framework/Versions/3.8/bin/cxfreeze src/gmosh/gmosh.py --target-dir=bin --include-modules=$(MODULES)
+	/Library/Frameworks/Python.framework/Versions/3.8/bin/cxfreeze src/gmosh/gmoshui.py --target-dir=bin --include-modules=$(MODULES),atexit
 
 install_linux: uninstall_linux
 	if [ ! -d /opt/gmosh ]; then mkdir -p /opt/gmosh; fi

@@ -7,7 +7,7 @@
         "test.jpg",
         "*.json"
     ],
-    "logo": "/home/falco/Programs/gmosh/src/test/test.jpg",
+    "logo": "/home/falco/Programs/gmosh/src/gmosh/test/test.jpg",
     "tags": [
         "fun",
         "cartoon"

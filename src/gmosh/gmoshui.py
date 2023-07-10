@@ -12,12 +12,12 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-import addoninfo
-import gmafile
-import gmpublish
-import workshoputils
-from _version import __version__
-from gmodfolder import GModFolder
+from . import addoninfo
+from . import gmafile
+from . import gmpublish
+from . import workshoputils
+from ._version import __version__
+from .gmodfolder import GModFolder
 from view import mainwindow, progressdialog
 
 

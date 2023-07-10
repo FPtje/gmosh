@@ -7,7 +7,7 @@ import re
 from fnmatch import fnmatch
 from functools import partial
 
-import gmafile
+from . import gmafile
 
 
 class GModAddon:

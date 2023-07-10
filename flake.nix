@@ -8,6 +8,9 @@
       pkgs = forAllSystems (system: nixpkgs.legacyPackages.${system});
     in
     {
+      packages = forAllSystems (system: {
+        default = pkgs.${system}.python311.pkgs.callPackage ./default.nix {};
+      });
 
       devShells = forAllSystems (system: {
         default = pkgs.${system}.mkShellNoCC {

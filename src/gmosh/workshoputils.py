@@ -9,7 +9,7 @@ import re
 import sys
 import urllib.request
 
-import gmafile
+from . import gmafile
 
 
 def workshopinfo(addons):
