@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
-import os.path
-import os
 import json
-import gmafile
+import os
+import os.path
 import re
-from functools import partial
 from fnmatch import fnmatch
+from functools import partial
+
+import gmafile
 
 
 class GModAddon:

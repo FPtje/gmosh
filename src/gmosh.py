@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 
-from _version import __version__
 import argparse
-import sys
-import os
-import addoninfo
-import workshoputils
-import gmafile
 import json
-from gmpublish import GmPublish
+import os
+import sys
 from glob import glob
 from itertools import chain
+
+import addoninfo
+import gmafile
+import workshoputils
+from _version import __version__
+from gmpublish import GmPublish
 
 # Define command line parameters
 parser = argparse.ArgumentParser(description="Garry's mod workshop cli wrapper.")
@@ -421,7 +422,7 @@ if __name__ == "__main__":
         args = parser.parse_args()
         # Prevent "pipe closed" exceptions
         if sys.platform == "linux":
-            from signal import signal, SIGPIPE, SIG_DFL
+            from signal import SIG_DFL, SIGPIPE, signal
 
             signal(SIGPIPE, SIG_DFL)
 

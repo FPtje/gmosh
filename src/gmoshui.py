@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 """Starts the user interface of gmoshui."""
 
-from _version import __version__
-from view import mainwindow, progressdialog
-from PySide2 import QtCore, QtGui
-from PySide2.QtWidgets import *
-from PySide2.QtGui import *
-from PySide2.QtCore import *
-from functools import partial
-import workshoputils
-import addoninfo
-import gmpublish
-import gmafile
-import sys
-import shiboken2 as shiboken
 import os
 import re
+import sys
+from functools import partial
+
+import shiboken2 as shiboken
+from PySide2 import QtCore, QtGui
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+
+import addoninfo
+import gmafile
+import gmpublish
+import workshoputils
+from _version import __version__
 from gmodfolder import GModFolder
+from view import mainwindow, progressdialog
 
 
 class ControlMainWindow(QMainWindow):

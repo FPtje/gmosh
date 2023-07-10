@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """The structure of a GMA file, parsing and building"""
 
+import json
 import os
+import subprocess
 import sys
 import tempfile
 import webbrowser  # Useful for opening files
-import subprocess
-from datetime import datetime
-from construct import *
-from time import time
 from binascii import crc32
+from datetime import datetime
 from struct import pack
-import json
+from time import time
+
+from construct import *
 
 GMA_VERSION = b"\x03".decode("utf-8")
 

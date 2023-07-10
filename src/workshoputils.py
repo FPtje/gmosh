@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Utilities related to interacting with the steam workshop"""
 
-import gmafile
-import re
 import http.client
-import lzma
 import json
+import lzma
 import os
+import re
 import sys
 import urllib.request
+
+import gmafile
 
 
 def workshopinfo(addons):
@@ -49,7 +50,7 @@ def download(addons, path, extr):
             return
 
         name = res["title"]
-        download = res["file_url"]
+        download_url = res["file_url"]
 
         print("Downloading '%s' from the workshop" % name)
 
@@ -57,13 +58,13 @@ def download(addons, path, extr):
         outfile = os.path.join(path, "%s.gma" % res["publishedfileid"])
 
         urllib.request.urlretrieve(
-            download,
+            download_url,
             lzmafile,
             lambda x, y, z: sys.stdout.write("\r{0:.2f}%".format(x * y / z * 100)),
         )
         sys.stdout.write("\r100.00%\n")
 
-        print("Downloaded '%s' from the workshop. Decompressing..." % name)
+        print(f"Downloaded '{name}' from the workshop. Decompressing...")
         with lzma.open(lzmafile) as lzmaF:
             with open(outfile, "wb") as gma:
                 gma.write(lzmaF.read())

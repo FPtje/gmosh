@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Represents the Garry's mod folder"""
 
-import os
 import lzma
+import os
 import re
 
 commonGModPaths = [

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-import sys
-import subprocess
-import re
 import os
+import re
+import subprocess
+import sys
 
 
 class GmPublish:
