@@ -11,14 +11,11 @@ from PySide2 import QtCore, QtGui
 from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
+from view import mainwindow, progressdialog
 
-from . import addoninfo
-from . import gmafile
-from . import gmpublish
-from . import workshoputils
+from . import addoninfo, gmafile, gmpublish, workshoputils
 from ._version import __version__
 from .gmodfolder import GModFolder
-from view import mainwindow, progressdialog
 
 
 class ControlMainWindow(QMainWindow):

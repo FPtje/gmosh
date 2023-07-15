@@ -1,4 +1,5 @@
 *.gma
+*.vdf
 package
 out
 # Byte-compiled / optimized / DLL files

@@ -3,13 +3,11 @@
 import argparse
 import json
 import os
-import sys
 from glob import glob
 from itertools import chain
+from pathlib import Path
 
-from . import addoninfo
-from . import gmafile
-from . import workshoputils
+from . import addoninfo, gmafile, workshoputils
 from ._version import __version__
 from .gmpublish import GmPublish
 
@@ -98,6 +96,11 @@ parser.add_argument(
     help="Prints GMosh version information.",
     version="%(prog)s {version}".format(version=__version__),
 )
+parser.add_argument(
+    "--generate-vdf",
+    action="store_true",
+    help="Generates a .vdf file for use with steamcmd. This implies --create-gma.",
+)
 
 
 def main():
@@ -153,6 +156,9 @@ def main():
     elif args.create_gma:
         # Create a GMA file from an existing addon
         creategma(addon, out)
+    elif args.generate_vdf:
+        gma_file = creategma(addon, out)
+        generate_vdf(addon, out, gma_file)
     else:
         # Publish the addon
         message = args.message and args.message[0] or addon.getdefault_changelog()
@@ -350,7 +356,7 @@ def dump_gma(input_files):
             print('Unable to parse "%s"' % f)
 
 
-def creategma(addon, files):
+def creategma(addon, files) -> Path:
     output_file = files[0]
     allowed, illegal_files = addon.compress(output_file)
     if not allowed:
@@ -358,6 +364,14 @@ def creategma(addon, files):
         for f in illegal_files:
             print("\t" + f)
         print("Please remove these files or add them to the ignore list of your addon.")
+
+    return Path(output_file) / "out.gma"
+
+
+def generate_vdf(addon, files, gma_file: Path) -> None:
+    output_dir = files[0]
+    vdf_file = Path(output_dir) / "out.vdf"
+    addon.generate_vdf(gma_file, vdf_file)
 
 
 def extract(gma_files, directories):

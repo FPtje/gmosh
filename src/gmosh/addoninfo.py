@@ -6,6 +6,7 @@ import os.path
 import re
 from fnmatch import fnmatch
 from functools import partial
+from pathlib import Path
 
 from . import gmafile
 
@@ -158,6 +159,21 @@ class GModAddon:
         gmafile.write(self, output)
 
         return True, []
+
+    def generate_vdf(self, gma_file: Path, output_path: Path) -> None:
+        """
+        Generate a VDF file to publish the addon.
+        Steamcmd can take a VDF file as input to publish an addon to the workshop.
+        """
+        with open(output_path, mode="w", encoding="utf-8") as vdf_file:
+            vdf_file.write(
+                '"workshopitem" {\n'
+                ' "appid" "4000"\n'
+                f' "publishedfileid" "{self.getworkshopid()}"\n'
+                f' "contentfolder" "{gma_file}"\n'
+                f' "changenote" "{self.getdefault_changelog()}"\n'
+                "}"
+            )
 
 
 class AddonNotFoundError(Exception):
